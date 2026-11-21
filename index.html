@@ -1,0 +1,1536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive gas containment simulator: the bromine-into-vacuum demo, with real numbers for the push of gas pressure against the pull of gravity. Why a beaker needs a lid and an atmosphere does not.">
+<meta property="og:title" content="Does Gas Need a Container?">
+<meta property="og:description" content="The flat-earth bromine-into-vacuum demo, simulated with real physics: gas pressure against gravity, at any size and any gravity.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23070a12'/%3E%3Ccircle cx='16' cy='20' r='7' fill='%23ff9a3c'/%3E%3Ccircle cx='16' cy='9' r='4' fill='none' stroke='%23f0b35b' stroke-width='1.5'/%3E%3C/svg%3E">
+<title>Does Gas Need a Container?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Same console language as the star-trail lab: one canvas per experiment, instrument panel beside it, readouts in mono. */
+:root{
+  --bg:#070a12; --panel:#0e1322; --panel2:#131a2e; --line:#222b45; --fg:#e8ebf4; --muted:#8f98ae;
+  --accent:#f0b35b; --br:#ff9a3c; --air:#8ab9ff; --steel:#ff8f9c; --ok:#7fd3a4; --warn:#ff9f6e;
+  --display:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;margin:0;
+  padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(38px,6vw,64px);line-height:1;margin:6px 0 10px;text-wrap:balance;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{max-width:70ch;color:var(--muted);margin:0;font-size:17px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font:600 15px var(--body);padding:10px 14px;cursor:pointer;margin-bottom:-1px}
+.tab .n{font-family:var(--mono);font-weight:400;color:var(--accent);margin-right:8px;font-size:13px}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.tab[disabled]{opacity:.45;cursor:default}
+.tab .soon{font-family:var(--mono);font-weight:400;font-size:11px;margin-left:6px;color:var(--muted)}
+.tab:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start}
+.stage{min-width:0;display:flex;flex-direction:column;gap:10px}
+canvas{display:block;width:100%;max-width:100%;border-radius:6px;background:#05070e;border:1px solid var(--line)}
+.controls{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.controls h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0;line-height:1.1}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
+.ctl .val{font-family:var(--mono);font-size:13px;color:var(--accent);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.ctl .hint{font-size:12px;color:var(--muted);line-height:1.35}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+.btn{appearance:none;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:6px;font:600 14px var(--body);padding:7px 11px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.on,.btn.primary{background:var(--accent);color:#1a1206;border-color:var(--accent)}
+.btn.small{font-size:13px;padding:5px 9px}
+.story{display:flex;flex-wrap:wrap;gap:6px}
+.note{background:var(--panel);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 6px 6px 0;font-size:15px;color:var(--fg);max-width:82ch}
+.note p{margin:0 0 8px} .note p:last-child{margin:0}
+.note .k{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+.steel{border-left-color:var(--steel)} .steel .k{color:var(--steel)}
+.model{border-left-color:var(--muted)} .model .k{color:var(--muted)}
+.note a,footer a{color:var(--accent)}
+/* The live balance: the equations with the current numbers substituted in. */
+.balance{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px}
+.balance .cell{min-width:0}
+.balance .lab{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.balance .big{font-family:var(--mono);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25}
+.balance .eq{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.balance .eq b{color:var(--fg);font-weight:600}
+.balance .push .big{color:var(--br)} .balance .hold .big{color:var(--air)}
+.balance .head{grid-column:1 / -1}
+.balance .forces{border-top:1px solid var(--line);padding-top:10px}
+.frow{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:13.5px;margin:4px 0}
+.frow i{font-style:normal;margin-right:4px} .frow .up{color:var(--ok)} .frow .dn{color:var(--steel)} .frow .wt{color:#fff}
+.cmp{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin:6px 0;font-variant-numeric:tabular-nums}
+.cmp th{text-align:left;font-weight:600;color:var(--fg);padding:4px 8px 6px 0;border-bottom:1px solid var(--line);vertical-align:bottom}
+.cmp th span,.cmp td span{font-weight:400;color:var(--muted);font-size:11px}
+.cmp td{padding:4px 8px 4px 0;color:var(--muted);border-bottom:1px solid var(--line)}
+.cmp td.m{color:var(--ok);font-weight:600}
+.cmp td:first-child{color:var(--fg)}
+.balance .forces{overflow-x:auto}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.balance .tot .big{color:var(--ok)}
+.meter{height:6px;border-radius:3px;background:var(--panel2);border:1px solid var(--line);margin:4px 0;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--ok)}
+.note .math{font-family:var(--mono);font-size:13px;color:var(--fg);background:var(--panel2);border-radius:4px;padding:8px 10px;overflow-x:auto}
+.balance .verdict{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:10px;font-size:15px}
+.balance .verdict b{color:var(--accent)}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:currentColor}
+.legend .b{color:var(--br)} .legend .a{color:var(--air)}
+.legend .t::before{border-radius:0;height:0;width:16px;border-top:2px dashed currentColor;background:none;vertical-align:3px}
+.legend .t{color:#e8ebf4}
+hr{border:0;border-top:1px solid var(--line);margin:2px 0}
+footer{color:var(--muted);font-size:13px;max-width:82ch}
+@media (max-width:860px){.panel{grid-template-columns:minmax(0,1fr)} .balance{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">funwithscience.net · gas containment lab</div>
+    <h1>Does Gas Need a <em>Container?</em></h1>
+    <p class="lede">A classic chemistry demo shows orange bromine vapour rushing into a vacuum the moment a valve opens. Flat-earth videos use it to argue that air cannot sit next to the vacuum of space without a dome. The demo is real. What it leaves out is the size of the apparatus compared with the height at which gravity starts to win. This lab puts both forces on screen with real numbers.</p>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="1"><span class="n">1</span>The two-bulb demo</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="2"><span class="n">2</span>A sealed tank</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="3"><span class="n">3</span>Heavy gas, open top</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="4"><span class="n">4</span>A column of air, and a dome</button>
+  </nav>
+
+  <section class="panel" id="panel-1" role="tabpanel">
+    <div class="stage">
+      <canvas id="c1" aria-label="Two glass bulbs joined by a valve, with gas molecules shown as moving dots, beside a chart of pressure against height"></canvas>
+      <div class="legend">
+        <span class="b">bromine (Br₂, 160 g/mol)</span>
+        <span class="a">air (29 g/mol)</span>
+        <span class="t">where gravity and pressure balance (theory)</span>
+      </div>
+
+      <div class="balance" aria-live="off">
+        <div class="cell push">
+          <div class="lab">Push: pressure difference between the bulbs, bottom − top</div>
+          <div class="big" id="bPush">—</div>
+          <div class="eq" id="bPushEq"></div>
+        </div>
+        <div class="cell hold">
+          <div class="lab">Hold: the difference gravity sustains at balance</div>
+          <div class="big" id="bHold">—</div>
+          <div class="eq" id="bHoldEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Scale height of bromine, H = RT / Mg</div>
+          <div class="big" id="bH">—</div>
+          <div class="eq" id="bHEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Bulb separation ÷ scale height, Δz / H</div>
+          <div class="big" id="bRatio">—</div>
+          <div class="eq" id="bRatioEq"></div>
+        </div>
+        <div class="cell head forces">
+          <div class="lab">Forces on the highlighted column of gas between the bulb centres · 1 m² cross-section</div>
+          <div class="eq frow">
+            <span><i class="up">▲</i> pressure below × A = <b id="fUp">—</b></span>
+            <span><i class="dn">▼</i> pressure above × A = <b id="fDn">—</b></span>
+            <span><i class="wt">▼</i> weight of the column = <b id="fWt">—</b></span>
+            <span>net = <b id="fNet">—</b></span>
+          </div>
+          <div class="eq" id="fNote"></div>
+        </div>
+        <div class="verdict" id="bVerdict"></div>
+      </div>
+
+      <div class="balance ledger">
+        <div class="cell head">
+          <div class="lab">Second law ledger · per mole of bromine, measured from the dots, relative to the sealed start, at fixed temperature</div>
+          <div class="eq">ΔS<sub>total</sub> = ΔS<sub>gas</sub> + ΔS<sub>surroundings</sub> = ΔS<sub>gas</sub> − M·g·Δz̄ / T &nbsp;≥ 0</div>
+        </div>
+        <div class="cell push">
+          <div class="lab">ΔS gas: entropy gained by spreading out</div>
+          <div class="big" id="sGas">—</div>
+          <div class="eq" id="sGasEq"></div>
+        </div>
+        <div class="cell hold">
+          <div class="lab">ΔS surroundings: heat drawn in to lift the gas</div>
+          <div class="big" id="sSur">—</div>
+          <div class="eq" id="sSurEq"></div>
+        </div>
+        <div class="cell tot">
+          <div class="lab">ΔS total, now</div>
+          <div class="big" id="sTot">—</div>
+          <div class="meter"><i id="sBar"></i></div>
+          <div class="eq" id="sTotEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">ΔS total if the gas were forced to fill evenly</div>
+          <div class="big" id="sUni">—</div>
+          <div class="eq" id="sUniEq"></div>
+        </div>
+        <div class="verdict" id="sVerdict"></div>
+      </div>
+
+      <div class="note">
+        <span class="k">The second law, with the algebra</span>
+        <p>"Gas must spread evenly because entropy always increases" is the second law for an isolated gas with no forces on it. With gravity present, lifting gas costs energy, and at constant temperature that energy arrives as heat from the surroundings, which lowers <em>their</em> entropy by Q / T. The law applies to the total:</p>
+        <p class="math">ΔS<sub>total</sub> = ΔS<sub>gas</sub> − ΔU<sub>gravity</sub> / T ≥ 0 &nbsp;&nbsp;(the same statement as: free energy F = U − TS can only fall)</p>
+        <p>Write that per mole for a gas with density profile n(z), then ask which profile makes it largest for a fixed amount of gas:</p>
+        <p class="math">maximise &nbsp;−R ∫ n ln n dV − (M g / T) ∫ n z dV &nbsp;&nbsp;⟹&nbsp;&nbsp; R ln n + M g z / T = constant &nbsp;&nbsp;⟹&nbsp;&nbsp; n(z) = n₀ · e<sup>−Mgz / RT</sup></p>
+        <p>The barometric profile is therefore the maximum-entropy state, the one the second law drives the gas toward. An even fill is the special case g = 0, or a container so short that Mgz / RT is effectively zero, which is every bench demo. The ledger above tracks all three terms live, and the last cell shows what an even fill would score.</p>
+      </div>
+
+      <div class="note">
+        <span class="k">What to notice</span>
+        <p>Open the valve at the default settings and the bromine fills the top bulb in a few hundredths of a second of real time in this model. Gravity is switched on the whole time, at full Earth strength. It loses because the bulb centres sit <b>17 cm</b> apart and bromine's scale height is <b>1.6 km</b>: the weight of that little gas can only support a pressure difference of about one pascal, against a push of tens of thousands.</p>
+        <p>Now change the odds. Make the same apparatus kilometres tall, or turn gravity up by a factor of ten thousand, and open the valve again. The top bulb stays visibly thinner even though the valve is wide open and nothing stops the gas rising into it. There is still a glass roof, and it still carries some load: at 6 km the glass at the very top feels about 2% of the pressure at the bottom, and at 20 km about 0.0003%. The taller the column, the less the lid has to do, which is the limit the later tabs take. Nothing about the gas changed. Only Δz / H did.</p>
+      </div>
+      <div class="note steel">
+        <span class="k">Their side of it</span>
+        <p>The flat-earth reading of this demo is correct as far as it goes: at bench scale a gas really does fill whatever volume it is given, and you really do need glass to keep it in. Nobody disputes that. The claim that fails is the extrapolation, that the same must hold for a layer of gas a hundred kilometres deep. A fair test of that is to scale this exact apparatus up and see if the behaviour changes. It does.</p>
+        <p>The other common objection is "pressure needs a container by definition." Press <b>Air in the top bulb</b> to see what does the containing when gas meets gas: each layer is held by the pressure of the layer next to it. The later tabs show the same thing with the weight of the gas above.</p>
+      </div>
+      <div class="note model">
+        <span class="k">What the model is, and isn't</span>
+        <p>Every dot is a real ballistic particle: it flies in a straight line, falls under the gravity you set, collides with other dots (conserving momentum and energy), and leaves the glass with a speed drawn from the wall temperature. The pressure profile on the right is counted from the dots, never painted on. The dashed line is the textbook prediction, P(z) = P₀·e<sup>−z/H</sup>.</p>
+        <p>The simplifications, stated plainly:</p>
+        <p><b>Mixing speed is not to scale.</b> Each dot stands for an enormous number of molecules. The dots travel about a third of a bulb radius between collisions, where real molecules manage about a ten-millionth of a metre. So this model cannot show how slow real diffusion into air is: here it takes roughly twice as long as into a vacuum, while in a real tube it takes tens of minutes. Use the air case for where the gas ends up, not how fast.</p>
+        <p><b>One temperature throughout.</b> Any individual dot slows as it climbs and speeds up as it falls, but the mix of speeds you find at every height is the same. Only the number thins out. The real lower atmosphere is not isothermal; it cools with height, which changes the numbers but not the argument.</p>
+        <p><b>Ideal gas, uniform gravity, 2D.</b> Real bromine would condense above about 23 kPa at 20 °C, or at any pressure shown once it is cold enough; the sliders go beyond that to show the trend. Gravity is held constant with height (real g falls about 0.6% over 20 km). The entropy figures are for this flat flask; a 3D pair of spheres gives slightly different values (about +0.93 and −3.73 at 6 km instead of +0.97 and −3.77) with the same signs. At the most extreme corners, a 20 km flask under thousands of g, the gas is a film thinner than one chart bar and the numbers are approximate.</p>
+      </div>
+    </div>
+
+    <aside class="controls">
+      <h2>The apparatus</h2>
+      <div class="btns">
+        <button class="btn primary" id="bValve">Open valve</button>
+        <button class="btn" id="bReset">Reset</button>
+        <button class="btn" id="bPlay">Pause</button>
+      </div>
+      <label class="check"><input type="checkbox" id="kArrows" checked> Show force arrows</label>
+      <div class="ctl"><div class="row"><span>Try</span></div>
+        <div class="story">
+          <button class="btn small" data-preset="demo">The bench demo</button>
+          <button class="btn small" data-preset="air">Air in the top bulb</button>
+          <button class="btn small" data-preset="tall">Make it 6 km tall</button>
+          <button class="btn small" data-preset="heavy">20,000 g gravity</button>
+        </div>
+      </div>
+      <hr>
+      <div class="ctl"><div class="row"><label for="sSize">Apparatus height</label><span class="val" id="vSize"></span></div><input type="range" id="sSize" min="0" max="10000" value="900"><div class="hint">Logarithmic, 10 cm to 20 km. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="sG">Gravity</label><span class="val" id="vG"></span></div><input type="range" id="sG" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Acts live.</div></div>
+      <div class="ctl"><div class="row"><label for="sP">Bromine starting pressure</label><span class="val" id="vP"></span></div><input type="range" id="sP" min="5" max="200" value="23"><div class="hint">Bromine's own vapour pressure at 20 °C is about 23 kPa.</div></div>
+      <div class="ctl"><div class="row"><label for="sA">Air in the top bulb</label><span class="val" id="vA"></span></div><input type="range" id="sA" min="0" max="101" value="0"><div class="hint">0 is a vacuum. 101 kPa is one atmosphere.</div></div>
+      <div class="ctl"><div class="row"><label for="sT">Temperature</label><span class="val" id="vT"></span></div><input type="range" id="sT" min="200" max="600" value="293"><div class="hint">Sets molecular speed. Acts live through the walls.</div></div>
+      <div class="ctl"><div class="row"><label for="sSpd">Playback speed</label><span class="val" id="vSpd"></span></div><input type="range" id="sSpd" min="-2" max="2" step="1" value="0"><div class="hint" id="hSpd"></div></div>
+    </aside>
+  </section>
+
+  <!-- ───────── Panel 2: a sealed tank ───────── -->
+  <section class="panel" id="panel-2" role="tabpanel" hidden>
+    <div class="stage">
+      <canvas id="c2" aria-label="A sealed upright gas tank with molecules shown as moving dots, beside a chart of pressure against height"></canvas>
+      <div class="legend">
+        <span class="b" id="t2Leg" style="color:#8ab9ff">nitrogen</span>
+        <span class="t">barometric law, P(z) = P₀·e^(−z/H)</span>
+      </div>
+
+      <div class="balance">
+        <div class="cell push">
+          <div class="lab">Pressure at the floor of the tank</div>
+          <div class="big" id="t2Pb">—</div>
+          <div class="eq" id="t2PbEq"></div>
+        </div>
+        <div class="cell hold">
+          <div class="lab">Pressure under the lid</div>
+          <div class="big" id="t2Pt">—</div>
+          <div class="eq" id="t2PtEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Scale height, H = RT / Mg</div>
+          <div class="big" id="t2H">—</div>
+          <div class="eq" id="t2HEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Tank height ÷ scale height, h / H</div>
+          <div class="big" id="t2R">—</div>
+          <div class="eq" id="t2REq"></div>
+        </div>
+        <div class="cell head forces">
+          <div class="lab">Forces on the highlighted slab of gas · 1 m² cross-section</div>
+          <div class="eq frow">
+            <span><i class="up">▲</i> pressure below × A = <b id="t2Up">—</b></span>
+            <span><i class="dn">▼</i> pressure above × A = <b id="t2Dn">—</b></span>
+            <span><i class="wt">▼</i> weight of the slab = <b id="t2Wt">—</b></span>
+            <span>net = <b id="t2Net">—</b></span>
+          </div>
+          <div class="eq" id="t2Note"></div>
+        </div>
+        <div class="cell head forces">
+          <div class="lab">The whole tank · real cylinder cross-section, 23 cm across (A = 0.0415 m²) · from the barometric law</div>
+          <div class="eq frow">
+            <span>force on the floor = <b id="t2Ff">—</b></span>
+            <span>force on the lid = <b id="t2Fl">—</b></span>
+            <span>difference = <b id="t2Fd">—</b></span>
+            <span>weight of the gas, m·g = <b id="t2Mg">—</b></span>
+          </div>
+          <div class="eq" id="t2MgEq"></div>
+        </div>
+        <div class="verdict" id="t2Verdict"></div>
+      </div>
+
+      <div class="note">
+        <span class="k">What to notice</span>
+        <p>Gravity does not stop at the wall of a container. In a sealed tank the gas at the floor is always a little denser than the gas under the lid, because each layer has to hold up the weight of everything above it. In a real 1.2 m cylinder of nitrogen the difference is about 0.014%, far too small to see in the dots, but it is there: the floor of the tank carries more force than the lid, and the difference is exactly the weight of the gas. That is why a full cylinder weighs more on a scale than an empty one.</p>
+        <p>Now drag <b>Tank height</b> up. Same gas, same walls, same lid. By a few kilometres the gradient is obvious; by a few tens of kilometres most of the gas is in the bottom of the tank and the lid is holding back very little. The walls and lid never changed what the gas does vertically. Gravity set the profile the whole time.</p>
+      </div>
+      <div class="note steel">
+        <span class="k">Their side of it</span>
+        <p>"You still have a lid." True, and at bench height the lid matters: open a 1.2 m cylinder at 200 atmospheres and the gas leaves at once. The point of this tab is narrower. Flat-earth arguments usually treat pressure in a container as one number, with gravity playing no part. The tank shows gravity acting on contained gas and producing a gradient, and it shows the load on the lid falling toward zero as the tank grows. Whether the lid can then be removed altogether is tab 4's question.</p>
+        <p>"Nobody builds a 50 km tank." Also true. The same gradient is what a barometer or an altimeter reads on the way up a tall building or a mountain, and that air is not in a tank at all.</p>
+      </div>
+      <div class="note model">
+        <span class="k">What the model is, and isn't</span>
+        <p>Same engine as tab 1: ballistic dots, real gravity, walls at one temperature, pressure counted from the dots. The vertical axis is to scale. The width is not: the tank is drawn wide enough to see into at every height, and the horizontal direction plays no part in any number shown. The number of dots is fixed, so each dot stands for more molecules as you raise the fill pressure. The gas is ideal and isothermal, and gravity is constant with height. At 200 atmospheres real nitrogen departs from the ideal-gas law by several percent, which shifts the mass of gas slightly and leaves the shape of the gradient alone.</p>
+      </div>
+    </div>
+
+    <aside class="controls">
+      <h2>The tank</h2>
+      <div class="btns">
+        <button class="btn" id="t2Reset">Reset</button>
+        <button class="btn" id="t2Play">Pause</button>
+      </div>
+      <div class="ctl"><div class="row"><span>Gas</span></div>
+        <div class="btns" id="t2Gas">
+          <button class="btn small on" data-gas="2">Nitrogen</button>
+          <button class="btn small" data-gas="3">Argon</button>
+          <button class="btn small" data-gas="4">Helium</button>
+        </div>
+      </div>
+      <div class="ctl"><div class="row"><span>Try</span></div>
+        <div class="story">
+          <button class="btn small" data-t2="1.2">Workshop cylinder</button>
+          <button class="btn small" data-t2="828">828 m tower</button>
+          <button class="btn small" data-t2="8849">Everest, 8.8 km</button>
+          <button class="btn small" data-t2="50000">50 km</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="t2Arrows" checked> Show force arrows</label>
+      <hr>
+      <div class="ctl"><div class="row"><label for="t2Size">Tank height</label><span class="val" id="t2vSize"></span></div><input type="range" id="t2Size" min="0" max="10000" value="717"><div class="hint">Logarithmic, 50 cm to 100 km. Acts live.</div></div>
+      <div class="ctl"><div class="row"><label for="t2G">Gravity</label><span class="val" id="t2vG"></span></div><input type="range" id="t2G" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Acts live.</div></div>
+      <div class="ctl"><div class="row"><label for="t2P">Fill pressure</label><span class="val" id="t2vP"></span></div><input type="range" id="t2P" min="0" max="1000" value="1000"><div class="hint">Average pressure of the gas at 20 °C. A full industrial cylinder is about 20,000 kPa (200 atm).</div></div>
+      <div class="ctl"><div class="row"><label for="t2Slab">Slab position</label><span class="val" id="t2vSlab"></span></div><input type="range" id="t2Slab" min="8" max="67" value="35"><div class="hint">Where in the tank to test the force balance.</div></div>
+      <div class="ctl"><div class="row"><label for="t2T">Temperature</label><span class="val" id="t2vT"></span></div><input type="range" id="t2T" min="200" max="600" value="293"><div class="hint">Sets molecular speed. Acts live through the walls.</div></div>
+      <div class="ctl"><div class="row"><label for="t2Spd">Playback speed</label><span class="val" id="t2vSpd"></span></div><input type="range" id="t2Spd" min="-2" max="2" step="1" value="0"><div class="hint" id="t2hSpd"></div></div>
+    </aside>
+  </section>
+
+  <!-- ───────── Panel 3: heavy gas in an open container ───────── -->
+  <section class="panel" id="panel-3" role="tabpanel" hidden>
+    <div class="stage">
+      <canvas id="c3" aria-label="An open-topped container holding a heavy gas, with air above and around it, beside a chart of pressure against height inside the container"></canvas>
+      <div class="legend">
+        <span class="b" id="t3Leg">heavy gas</span>
+        <span class="a">air (29 g/mol)</span>
+      </div>
+      <div class="balance">
+        <div class="cell push">
+          <div class="lab">Pressure just below the rim, inside the container</div>
+          <div class="big" id="t3Pin">—</div>
+          <div class="eq" id="t3PinEq"></div>
+        </div>
+        <div class="cell hold">
+          <div class="lab">Pressure just above the rim, from the atmosphere</div>
+          <div class="big" id="t3Pout">—</div>
+          <div class="eq" id="t3PoutEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Heavy gas still in the container</div>
+          <div class="big" id="t3Left">—</div>
+          <div class="eq" id="t3LeftEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Density, ρ = P·M / RT</div>
+          <div class="big" id="t3Rho">—</div>
+          <div class="eq" id="t3RhoEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Scale height of the heavy gas, H = RT / Mg</div>
+          <div class="big" id="t3H">—</div>
+          <div class="eq" id="t3HEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Container depth ÷ scale height, d / H</div>
+          <div class="big" id="t3R">—</div>
+          <div class="eq" id="t3REq"></div>
+        </div>
+        <div class="verdict" id="t3Verdict"></div>
+      </div>
+
+      <div class="note">
+        <span class="k">What to notice</span>
+        <p>Carbon dioxide and sulfur hexafluoride will sit in an open fish tank for many minutes with no lid. The reason is on the two top readouts: the gas in the tank and the air above it are at the same pressure. There is no unbalanced push at the rim, so nothing rushes out. Compare tab 1, where the gas faced a vacuum and the full pressure was unbalanced.</p>
+        <p>Press <b>Remove the air</b> and the heavy gas is gone in an instant, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it spreading upward is the atmosphere pressing down on it.</p>
+        <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. Being denser than air keeps the gas low and stops it being stirred out, but at fish-tank size gravity cannot hold it there for ever. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
+      </div>
+      <div class="note steel">
+        <span class="k">Their side of it</span>
+        <p>"So the gas does escape without a lid." At this size, yes, eventually, and the page shows it. An open tank of heavy gas is temporary. The claim being tested is narrower: that gas pressure always needs a solid barrier to oppose it. Here the barrier on top is another gas, and it works because it pushes back just as hard.</p>
+        <p>"Then why doesn't the atmosphere sort itself into layers, heaviest at the bottom?" Below about 100 km wind and convection stir the air far faster than gravity can sort it, so the mix is nearly uniform. Above that height stirring stops and the gases do separate by weight, with the lightest reaching highest. Both regimes are measured.</p>
+      </div>
+      <div class="note model">
+        <span class="k">What the model is, and isn't</span>
+        <p>The outer edges of the picture are open air, not walls: a dot that crosses an edge is gone, and the surrounding air sends dots in at the rate its pressure dictates. Heavy-gas dots that leave do not come back, as if the room were large.</p>
+        <p>Mixing speed is not to scale. Dots in this model travel a few percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre. The model empties a 30 cm tank in a fraction of a second of real time, where a real, undisturbed tank takes hours by diffusion alone (the estimate is shown in the readout) and minutes in a room with draughts. The model also has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, and where the gas ends up.</p>
+      </div>
+    </div>
+    <aside class="controls">
+      <h2>The open tank</h2>
+      <div class="btns">
+        <button class="btn" id="t3Reset">Reset</button>
+        <button class="btn" id="t3Play">Pause</button>
+      </div>
+      <div class="ctl"><div class="row"><span>Heavy gas</span></div>
+        <div class="btns" id="t3Gas">
+          <button class="btn small on" data-gas="6">SF₆ (146)</button>
+          <button class="btn small" data-gas="5">CO₂ (44)</button>
+        </div>
+      </div>
+      <div class="ctl"><div class="row"><span>Try</span></div>
+        <div class="story">
+          <button class="btn small" data-t3="bench">Fish tank, 30 cm</button>
+          <button class="btn small" data-t3="noair">Remove the air</button>
+          <button class="btn small" data-t3="deep">Make it 10 km deep</button>
+          <button class="btn small" data-t3="heavy">30,000 g gravity</button>
+        </div>
+      </div>
+      <hr>
+      <div class="ctl"><div class="row"><label for="t3Size">Container depth</label><span class="val" id="t3vSize"></span></div><input type="range" id="t3Size" min="0" max="10000" value="954"><div class="hint">Logarithmic, 10 cm to 10 km. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t3G">Gravity</label><span class="val" id="t3vG"></span></div><input type="range" id="t3G" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t3P">Heavy gas starting pressure</label><span class="val" id="t3vP"></span></div><input type="range" id="t3P" min="10" max="200" value="101"><div class="hint">Poured in gently, it starts at the pressure of the air around it.</div></div>
+      <div class="ctl"><div class="row"><label for="t3A">Atmospheric pressure outside</label><span class="val" id="t3vA"></span></div><input type="range" id="t3A" min="0" max="200" value="101"><div class="hint">0 is a vacuum. 101 kPa is one atmosphere.</div></div>
+      <div class="ctl"><div class="row"><label for="t3T">Temperature</label><span class="val" id="t3vT"></span></div><input type="range" id="t3T" min="200" max="600" value="293"><div class="hint">Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t3Spd">Playback speed</label><span class="val" id="t3vSpd"></span></div><input type="range" id="t3Spd" min="-2" max="2" step="1" value="0"><div class="hint" id="t3hSpd"></div></div>
+    </aside>
+  </section>
+
+  <!-- ───────── Panel 4: a column of air ───────── -->
+  <section class="panel" id="panel-4" role="tabpanel" hidden>
+    <div class="stage">
+      <canvas id="c4" aria-label="An open-topped column of air standing in open air, beside a chart of pressure against height inside and outside the column"></canvas>
+      <div class="legend">
+        <span class="a">air inside the column</span>
+        <span class="t" style="color:#f0b35b">air outside the column</span>
+        <span class="t">this model's law, P₀·e^(−z/H)</span>
+        <span class="t" style="color:#7fd3a4">measured atmosphere (1976 US Standard)</span>
+      </div>
+      <div class="balance">
+        <div class="cell push">
+          <div class="lab">Pressure at the ground · inside vs outside the column</div>
+          <div class="big" id="t4Pg">—</div>
+          <div class="eq" id="t4PgEq"></div>
+        </div>
+        <div class="cell hold">
+          <div class="lab">Pressure at the top of the view · inside vs outside</div>
+          <div class="big" id="t4Pt">—</div>
+          <div class="eq" id="t4PtEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Scale height of air, H = RT / Mg</div>
+          <div class="big" id="t4H">—</div>
+          <div class="eq" id="t4HEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab" id="t4TopLab">The top edge</div>
+          <div class="big" id="t4Top">—</div>
+          <div class="eq" id="t4TopEq"></div>
+        </div>
+        <div class="cell head forces">
+          <div class="lab">Forces on the highlighted slab of air inside the column · 1 m² cross-section</div>
+          <div class="eq frow">
+            <span><i class="up">▲</i> pressure below × A = <b id="t4Up">—</b></span>
+            <span><i class="dn">▼</i> pressure above × A = <b id="t4Dn">—</b></span>
+            <span><i class="wt">▼</i> weight of the slab = <b id="t4Wt">—</b></span>
+            <span>net = <b id="t4Net">—</b></span>
+          </div>
+          <div class="eq" id="t4Note"></div>
+        </div>
+        <div class="cell head forces">
+          <div class="lab">Three ideas, one set of measurements · air pressure at real altitudes</div>
+          <table class="cmp">
+            <thead><tr><th>Altitude</th><th>Measured</th><th>Gravity, no dome<br><span>this model at the temperature set</span></th><th>Dome, no gravity<br><span>gas simply fills the container</span></th><th>Dome and gravity<br><span>dome at the height set below</span></th></tr></thead>
+            <tbody id="t4Cmp"></tbody>
+          </table>
+          <div class="eq" id="t4CmpEq"></div>
+        </div>
+        <div class="verdict" id="t4Verdict"></div>
+      </div>
+
+      <div class="note">
+        <span class="k">What to notice</span>
+        <p>Start with a metre-tall open column of ordinary air. Inside and outside are the same pressure at every height, so the walls have nothing to hold: untick <b>Column walls</b> and nothing changes. Then make the column taller. The pressure inside falls with height, and the pressure outside falls with it, at the same rate, set by gravity and temperature alone. Remove the walls at any height and the two profiles stay on top of each other.</p>
+        <p>The top edge of the picture is open. With gravity on, the air above the frame is real air held down by its own weight, and it sends molecules back down as often as the air below sends them up. Raise the top to 100 km and that traffic stops in both directions: almost nothing gets that high, so there is nothing for a lid to hold.</p>
+      </div>
+      <div class="note">
+        <span class="k">What a dome would look like</span>
+        <p>Tick <b>Add a dome</b> and <b>Gravity off</b> to see the alternative. A dome with no gravity is a sealed container: the gas spreads evenly and the pressure is the same at every height, as tab 1 showed for any bench-sized vessel. That predicts sea-level pressure on the summit of Everest and at the top of a weather balloon's flight. The measured values are about a third and about one percent.</p>
+        <p>Tick the dome with gravity left on and the profile is the one you had without it. The gradient comes from the weight of the air, dome or no dome, and the dome is left carrying whatever pressure remains at its height. Put it at 100 km and that is about a third of a millionth of sea-level pressure, on a structure nobody has detected. With gravity present the dome explains nothing that gravity has not already explained; without gravity the dome predicts a uniform atmosphere that no barometer agrees with.</p>
+        <p>Turn gravity off without a dome and the air leaves. That much of the flat-earth argument is right: gas does need something to hold it. The candidates are a container or gravity, and the measured fall of pressure with height is what tells them apart.</p>
+      </div>
+      <div class="note steel">
+        <span class="k">Their side of it</span>
+        <p>"The gradient is caused by density and buoyancy, not gravity." Density sorting needs a direction to sort along and a force to do the sorting. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 7 to 8 km, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
+        <p>"The dome could be very high, where the pressure is tiny, so you would never notice it." Then it is doing no containing, which was the original claim. The argument started as "gas pressure requires a container" and has become "there may be a container where there is no pressure left to contain".</p>
+        <p>"Your model's line misses the measured points." It does, by the amount you would expect: this model holds the air at one temperature, and the real atmosphere is colder aloft than at the ground. Set the temperature to about 230 K, the average over the lowest 30 km, and the two nearly coincide.</p>
+      </div>
+      <div class="note model">
+        <span class="k">What the model is, and isn't</span>
+        <p>Open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The measured curve is the 1976 US Standard Atmosphere, a fit to balloon and rocket soundings, shown up to 85 km. Gravity is held constant with height and the air is ideal and at one temperature.</p>
+      </div>
+    </div>
+    <aside class="controls">
+      <h2>The column</h2>
+      <div class="btns">
+        <button class="btn" id="t4Reset">Reset</button>
+        <button class="btn" id="t4Play">Pause</button>
+      </div>
+      <label class="check"><input type="checkbox" id="t4Walls" checked> Column walls</label>
+      <label class="check"><input type="checkbox" id="t4Dome"> Add a dome at the top of the view</label>
+      <label class="check"><input type="checkbox" id="t4NoG"> Gravity off</label>
+      <label class="check"><input type="checkbox" id="t4Arrows" checked> Show force arrows</label>
+      <div class="ctl"><div class="row"><span>Try</span></div>
+        <div class="story">
+          <button class="btn small" data-t4="1">1 m column</button>
+          <button class="btn small" data-t4="8849">Everest, 8.8 km</button>
+          <button class="btn small" data-t4="35000">Balloon, 35 km</button>
+          <button class="btn small" data-t4="100000">100 km</button>
+        </div>
+      </div>
+      <hr>
+      <div class="ctl"><div class="row"><label for="t4Size">Column height</label><span class="val" id="t4vSize"></span></div><input type="range" id="t4Size" min="0" max="10000" value="537"><div class="hint">Logarithmic, 50 cm to 200 km. Also the height of the dome. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t4G">Gravity</label><span class="val" id="t4vG"></span></div><input type="range" id="t4G" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t4P">Pressure at the ground</label><span class="val" id="t4vP"></span></div><input type="range" id="t4P" min="20" max="200" value="101"><div class="hint">Sea-level air is 101 kPa.</div></div>
+      <div class="ctl"><div class="row"><label for="t4T">Temperature</label><span class="val" id="t4vT"></span></div><input type="range" id="t4T" min="180" max="400" value="288"><div class="hint">288 K is the sea-level average; about 230 K is the average over the lowest 30 km.</div></div>
+      <div class="ctl"><div class="row"><label for="t4Spd">Playback speed</label><span class="val" id="t4vSpd"></span></div><input type="range" id="t4Spd" min="-2" max="2" step="1" value="0"><div class="hint" id="t4hSpd"></div></div>
+    </aside>
+  </section>
+
+  <footer>
+    The demonstration is the standard school "diffusion of bromine" experiment, e.g. the Institute of Physics' <a href="https://spark.iop.org/sites/default/files/media/documents/episode-601-2-diffusion-of-bromine.doc">TAP 601-2</a>: sluggish into air, near-instant into a vacuum. The school version uses a single tube; the two-bulb layout drawn here is the form usually shown in flat-earth videos. Constants: R = 8.314 J/(mol·K), g = 9.807 m/s², 1 atm = 101.325 kPa. Bromine vapour is treated as an ideal gas.
+  </footer>
+</div>
+
+<script>
+/* ───────── Physics engine (no DOM). Shared by every tab. ─────────
+   Geometry is in apparatus units (u); S metres per unit converts to real lengths.
+   Velocities are real m/s, time is real seconds, gravity is real m/s². */
+const R_GAS=8.314462618, G0=9.80665, ATM=101325, T_REF=293.15;
+const SPECIES=[
+  {key:'br2',name:'Bromine',M:0.159808,color:'#ff9a3c',rad:2.5},
+  {key:'air',name:'Air',M:0.028964,color:'#8ab9ff',rad:1.9},
+  {key:'n2',name:'Nitrogen',M:0.0280134,color:'#8ab9ff',rad:2.1},
+  {key:'ar',name:'Argon',M:0.039948,color:'#c9a3ff',rad:2.2},
+  {key:'he',name:'Helium',M:0.0040026,color:'#7fd3a4',rad:1.8},
+  {key:'co2',name:'Carbon dioxide',M:0.0440095,color:'#ffd166',rad:2.3},
+  {key:'sf6',name:'Sulfur hexafluoride',M:0.146055,color:'#ff9a3c',rad:2.6},
+];
+function gauss(){let u=0;while(u===0)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(6.283185307*Math.random());}
+
+/* A plain upright tank: a box 1.1 units wide and 4.5 tall. No valve. */
+const Tank={
+  zmax:4.5, xmin:-0.55, xmax:0.55, zv:-1, hw:0.55, nx:0, nz:0,
+  sdf(x,z){
+    const qx=Math.abs(x)-this.hw, qz=Math.abs(z-2.25)-2.25, ox=Math.max(qx,0), oz=Math.max(qz,0);
+    const d=Math.hypot(ox,oz)+Math.min(Math.max(qx,qz),0);
+    if(d>0){const l=Math.hypot(ox,oz)||1e-9;this.nx=ox/l*(x<0?-1:1);this.nz=oz/l*(z<2.25?-1:1);}else{this.nx=0;this.nz=0;}
+    return d;
+  },
+  width(z){return z>=0&&z<=this.zmax?2*this.hw:0;}
+};
+
+/* Two bulbs of radius 1 joined by a neck, valve at mid-neck. z is up. */
+const TwoBulb={
+  zmax:4.5, xmin:-1, xmax:1, zv:2.25, cB:1.0, cT:3.5, neck:0.16, nz0:1.9, nz1:2.6, dzCentres:2.5,
+  // Signed distance to the union of the three shapes; writes outward normal to this.nx,this.nz.
+  nx:0, nz:0,
+  sdf(x,z){
+    let dx=x, dz=z-this.cB, l=Math.hypot(dx,dz)||1e-9, d=l-1, nx=dx/l, nz=dz/l;
+    dz=z-this.cT; l=Math.hypot(dx,dz)||1e-9;
+    if(l-1<d){d=l-1;nx=dx/l;nz=dz/l;}
+    const c=(this.nz0+this.nz1)/2, hh=(this.nz1-this.nz0)/2;
+    const qx=Math.abs(x)-this.neck, qz=Math.abs(z-c)-hh;
+    const ox=Math.max(qx,0), oz=Math.max(qz,0);
+    const db=Math.hypot(ox,oz)+Math.min(Math.max(qx,qz),0);
+    if(db<d){d=db;
+      if(db>0){const ll=Math.hypot(ox,oz)||1e-9;nx=ox/ll*(x<0?-1:1);nz=oz/ll*(z<c?-1:1);}
+      else{nx=0;nz=0;}
+    }
+    this.nx=nx;this.nz=nz;return d;
+  },
+  width(z){
+    let w=0,t=1-(z-this.cB)*(z-this.cB); if(t>0)w=2*Math.sqrt(t);
+    t=1-(z-this.cT)*(z-this.cT); if(t>0)w=Math.max(w,2*Math.sqrt(t));
+    if(z>=this.nz0&&z<=this.nz1)w=Math.max(w,2*this.neck);
+    return w;
+  }
+};
+
+class Sim{
+  constructor(geom,cap=8000){
+    this.g=geom; this.cap=cap; this.n=0;
+    this.x=new Float64Array(cap); this.z=new Float64Array(cap);
+    this.vx=new Float64Array(cap); this.vz=new Float64Array(cap);
+    this.sp=new Uint8Array(cap);
+    this.S=0.0667; this.T=T_REF; this.grav=G0; this.valveOpen=false;
+    this.dcol=0.05; this.lcol=0.6;        // collision range and free-path tuning length, units
+    this.cell=geom.cell||0.06; this.cols=Math.ceil((geom.xmax-geom.xmin)/this.cell)+1; this.rows=Math.ceil(geom.zmax/this.cell)+1;
+    this.head=new Int32Array(this.cols*this.rows); this.next=new Int32Array(cap);
+    this.NB=90; this.dzb=geom.zmax/this.NB;
+    this.binArea=new Float64Array(this.NB);
+    for(let i=0;i<this.NB;i++){let a=0;for(let k=0;k<10;k++)a+=geom.width((i+(k+.5)/10)*this.dzb);this.binArea[i]=a/10*this.dzb;}
+    this.vBin=geom.zv>0?Math.round(geom.zv/this.dzb):0;
+    this.areaTotal=0;for(let i=0;i<this.NB;i++)this.areaTotal+=this.binArea[i];
+    this.areaHalf=0;for(let i=0;i<this.vBin;i++)this.areaHalf+=this.binArea[i];
+  }
+  sigma(s){return Math.sqrt(R_GAS*this.T/SPECIES[s].M);}
+  clear(){this.n=0;}
+  add(count,s,top){
+    // Fill one side of the valve already in equilibrium: layer chosen with weight area·e^(−z/H), exponential within the layer.
+    const g=this.g,sg=this.sigma(s),k=this.dzb*this.S*this.grav/(sg*sg);
+    const a=top===true?this.vBin:0,b=top===false?this.vBin:this.NB,cdf=new Float64Array(b-a);let W=0;
+    for(let i=a;i<b;i++){W+=this.binArea[i]*Math.exp(-(i-a)*k);cdf[i-a]=W;}
+    for(let c=0;c<count&&this.n<this.cap;c++){
+      let x,z,tries=0;
+      do{
+        const r=Math.random()*W;let j=0;while(j<b-a-1&&cdf[j]<r)j++;
+        const u=Math.random(),t=k<1e-6?u:-Math.log(1-u*(1-Math.exp(-k)))/k;
+        z=(a+j+t)*this.dzb;x=(Math.random()-.5)*g.width(z);
+      }while(g.sdf(x,z)>-0.012&&++tries<200);
+      const i=this.n++;this.x[i]=x;this.z[i]=z;this.vx[i]=sg*gauss();this.vz[i]=sg*gauss();this.sp[i]=s;
+    }
+  }
+  step(dt){
+    const g=this.g,n=this.n,x=this.x,z=this.z,vx=this.vx,vz=this.vz,sp=this.sp,S=this.S,gr=this.grav,zv=g.zv,open=this.valveOpen;
+    const sig=this._sig||(this._sig=new Float64Array(SPECIES.length));for(let k=0;k<SPECIES.length;k++)sig[k]=this.sigma(k);
+    for(let i=0;i<n;i++){
+      const pz=z[i],px=x[i];
+      x[i]+=vx[i]*dt/S; z[i]+=(vz[i]*dt-0.5*gr*dt*dt)/S; vz[i]-=gr*dt;
+      const sg=sig[sp[i]],eps=Math.min(1e-4,0.01*sg*sg/(gr*S));
+      if(!open&&(pz-zv)*(z[i]-zv)<=0&&pz!==zv){          // closed valve: thermal wall across the neck
+        const nzv=pz>zv?1:-1; z[i]=zv+nzv*10*eps;
+        vz[i]=nzv*sg*Math.sqrt(-2*Math.log(1-Math.random())); vx[i]=sg*gauss();
+      }
+      let d=g.sdf(x[i],z[i]),it=0;
+      if(d>0){
+        let nx=g.nx,nz=g.nz;
+        while(d>0&&it++<3){x[i]-=g.nx*(d+eps);z[i]-=g.nz*(d+eps);d=g.sdf(x[i],z[i]);}
+        if(d>0){x[i]=px;z[i]=pz;}
+        // Thermal wall: leave with a speed drawn from the wall temperature (flux-weighted normal component).
+        const vn=sg*Math.sqrt(-2*Math.log(1-Math.random())),vt=sg*gauss();
+        vx[i]=-nx*vn-nz*vt; vz[i]=-nz*vn+nx*vt;
+      }
+    }
+    this.collide(dt);
+  }
+  collide(dt){
+    const g=this.g,n=this.n,x=this.x,z=this.z,vx=this.vx,vz=this.vz,sp=this.sp,head=this.head,next=this.next,cols=this.cols,rows=this.rows,cs=this.cell;
+    const d2=this.dcol*this.dcol,zv=g.zv,open=this.valveOpen;
+    head.fill(-1);
+    for(let i=0;i<n;i++){
+      let cx=((x[i]-g.xmin)/cs)|0,cz=(z[i]/cs)|0;
+      if(cx<0)cx=0;else if(cx>=cols)cx=cols-1; if(cz<0)cz=0;else if(cz>=rows)cz=rows-1;
+      const c=cz*cols+cx;next[i]=head[c];head[c]=i;
+    }
+    // Stochastic (DSMC-style) collisions: two dots closer than dcol scatter with a probability set by their
+    // relative speed, through a random angle in their centre-of-mass frame. Momentum and energy are conserved,
+    // and because the kick does not depend on where the dots sit, the gas keeps the ideal-gas law exactly.
+    const lS=this.lcol*this.S;
+    const pair=(i,j)=>{
+      const dx=x[i]-x[j],dz=z[i]-z[j],r2=dx*dx+dz*dz;
+      if(r2>=d2)return;
+      if(!open&&(z[i]-zv)*(z[j]-zv)<0)return;
+      if(g.blocked&&g.blocked(x[i],z[i],x[j],z[j]))return;
+      const rvx=vx[i]-vx[j],rvz=vz[i]-vz[j],vr=Math.hypot(rvx,rvz);
+      if(Math.random()*lS>=vr*dt)return;
+      const th=6.283185307*Math.random(),nrx=vr*Math.cos(th),nrz=vr*Math.sin(th);
+      const mi=SPECIES[sp[i]].M,mj=SPECIES[sp[j]].M,mt=mi+mj;
+      const cx=(mi*vx[i]+mj*vx[j])/mt,cz=(mi*vz[i]+mj*vz[j])/mt;
+      vx[i]=cx+mj/mt*nrx;vz[i]=cz+mj/mt*nrz;vx[j]=cx-mi/mt*nrx;vz[j]=cz-mi/mt*nrz;
+    };
+    for(let cz=0;cz<rows;cz++)for(let cx=0;cx<cols;cx++){
+      const c=cz*cols+cx;
+      for(let i=head[c];i>=0;i=next[i]){
+        for(let j=next[i];j>=0;j=next[j])pair(i,j);
+        if(cx+1<cols)for(let j=head[c+1];j>=0;j=next[j])pair(i,j);
+        if(cz+1<rows){
+          for(let j=head[c+cols];j>=0;j=next[j])pair(i,j);
+          if(cx>0)for(let j=head[c+cols-1];j>=0;j=next[j])pair(i,j);
+          if(cx+1<cols)for(let j=head[c+cols+1];j>=0;j=next[j])pair(i,j);
+        }
+      }
+    }
+  }
+  /* counts[s][bin] */
+  bin(out){
+    out[0].fill(0);out[1].fill(0);
+    for(let i=0;i<this.n;i++){let b=(this.z[i]/this.dzb)|0;if(b<0)b=0;else if(b>=this.NB)b=this.NB-1;out[this.sp[i]][b]++;}
+  }
+}
+
+/* Open-boundary variant: a box of gas with optional thin container walls standing inside it. Each edge can be solid
+   (a wall at the gas temperature), a reservoir (dots that cross are removed, and the gas beyond sends dots in at the
+   rate its own pressure dictates), or a vacuum (dots that cross are removed and nothing comes back). */
+const OpenBox={zmax:4.5,xmin:-1.2,xmax:1.2,zv:-1,wallX:0.7,wallZ:1.6,nx:0,nz:0,
+  sdf(){return -1;}, width(z){return z>=0&&z<=this.zmax?this.xmax-this.xmin:0;},
+  blocked(xi,zi,xj,zj){const w=this.wallX;return this.wallZ>0&&Math.min(zi,zj)<this.wallZ&&((xi-w)*(xj-w)<0||(xi+w)*(xj+w)<0);}};
+class OpenSim extends Sim{
+  constructor(geom,cap=8000){super(geom,cap);this.valveOpen=true;this.side='reservoir';this.top='reservoir';
+    this.resS=1;this.resN0=0;this.acc=[0,0,0];this.outTop=0;this.inTop=0;}
+  place(count,s,x0,x1,z0,z1){
+    const sg=this.sigma(s),a=this.S*this.grav/(sg*sg)*(z1-z0);
+    for(let c=0;c<count&&this.n<this.cap;c++){
+      const u=Math.random(),t=a<1e-6?u:-Math.log(1-u*(1-Math.exp(-a)))/a,i=this.n++;
+      this.x[i]=x0+Math.random()*(x1-x0);this.z[i]=z0+t*(z1-z0);this.vx[i]=sg*gauss();this.vz[i]=sg*gauss();this.sp[i]=s;
+    }
+  }
+  kill(i){const l=--this.n;this.x[i]=this.x[l];this.z[i]=this.z[l];this.vx[i]=this.vx[l];this.vz[i]=this.vz[l];this.sp[i]=this.sp[l];}
+  step(dt){
+    const g=this.g,x=this.x,z=this.z,vx=this.vx,vz=this.vz,sp=this.sp,S=this.S,gr=this.grav,wx=g.wallX,wz=g.wallZ;
+    const sig=this._sig||(this._sig=new Float64Array(SPECIES.length));for(let k=0;k<SPECIES.length;k++)sig[k]=this.sigma(k);
+    const ray=()=>Math.sqrt(-2*Math.log(1-Math.random()));
+    for(let i=this.n-1;i>=0;i--){
+      const px=x[i],pz=z[i],sg=sig[sp[i]];
+      x[i]+=vx[i]*dt/S; z[i]+=(vz[i]*dt-0.5*gr*dt*dt)/S; vz[i]-=gr*dt;
+      const eps=Math.min(1e-4,0.01*sg*sg/(gr*S+1e-300));
+      if(wz>0)for(let k=-1;k<=1;k+=2){const w=k*wx;
+        if((px-w)*(x[i]-w)<0&&pz+(z[i]-pz)*(w-px)/(x[i]-px)<wz){const sgn=px<w?-1:1;x[i]=w+sgn*1e-4;vx[i]=sgn*sg*ray();vz[i]=sg*gauss();}}
+      if(z[i]<0){z[i]=eps;vz[i]=sg*ray();vx[i]=sg*gauss();}
+      if(x[i]<g.xmin||x[i]>g.xmax){
+        if(this.side==='wall'){const sgn=x[i]<g.xmin?1:-1;x[i]=sgn>0?g.xmin+1e-4:g.xmax-1e-4;vx[i]=sgn*sg*ray();vz[i]=sg*gauss();}
+        else{this.kill(i);continue;}
+      }
+      if(z[i]>g.zmax){
+        if(this.top==='wall'){z[i]=g.zmax-eps;vz[i]=-sg*ray();vx[i]=sg*gauss();}
+        else{this.outTop++;this.kill(i);continue;}
+      }
+    }
+    if(this.resN0>0){
+      // Inflow from the gas beyond an open edge: flux = n·σ/√(2π) per unit length, with n following the barometric law.
+      const s=this.resS,sg=sig[s],k=S*gr/(sg*sg),f=this.resN0*sg/(S*2.5066282746)*dt,a=k*g.zmax;
+      if(this.top==='reservoir'){this.acc[0]+=f*Math.exp(-a)*(g.xmax-g.xmin);
+        while(this.acc[0]>=1&&this.n<this.cap){this.acc[0]--;const i=this.n++;x[i]=g.xmin+Math.random()*(g.xmax-g.xmin);z[i]=g.zmax-1e-4;vz[i]=-sg*ray();vx[i]=sg*gauss();sp[i]=s;this.inTop++;}}
+      if(this.side==='reservoir'){const len=a<1e-6?g.zmax:(1-Math.exp(-a))/k;
+        for(let q=0;q<2;q++){this.acc[1+q]+=f*len;
+          while(this.acc[1+q]>=1&&this.n<this.cap){this.acc[1+q]--;const i=this.n++,u=Math.random();
+            z[i]=(a<1e-6?u:-Math.log(1-u*(1-Math.exp(-a)))/a)*g.zmax;x[i]=q?g.xmax-1e-4:g.xmin+1e-4;vx[i]=(q?-1:1)*sg*ray();vz[i]=sg*gauss();sp[i]=s;}}}
+    }
+    this.collide(dt);
+  }
+}
+if(typeof module!=='undefined')module.exports={Sim,TwoBulb,Tank,OpenSim,OpenBox,SPECIES,R_GAS,G0,ATM,T_REF};
+
+/* ───────── Shared UI helpers ───────── */
+if(typeof document!=='undefined'){
+var ACTIVE=1;
+var $=id=>document.getElementById(id);
+var sup=e=>String(e).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]);
+var fmtN=(v,sig=3)=>{if(!isFinite(v))return'∞';if(v===0)return'0';var a=Math.abs(v);
+  if(a>=1e7||a<1e-3)return v.toExponential(sig-1).replace('e+','e').replace(/e(-?\d+)/,(m,e)=>' × 10'+sup(e));
+  var d=Math.max(0,sig-1-Math.floor(Math.log10(a)));return v.toLocaleString('en-GB',{maximumFractionDigits:d,minimumFractionDigits:0});};
+var fmtLen=m=>m>=1000?fmtN(m/1000)+' km':m>=1?fmtN(m)+' m':m>=0.01?fmtN(m*100)+' cm':fmtN(m*1000)+' mm';
+var fmtP=p=>{var a=Math.abs(p);return a>=1000?fmtN(p/1000)+' kPa':a>=1?fmtN(p)+' Pa':a>=1e-3?fmtN(p*1000)+' mPa':fmtN(p)+' Pa';};
+var fmtAtm=p=>fmtN(p/ATM,p/ATM<0.1?2:3)+' atm';
+var fmtTime=s=>s>=3600?fmtN(s/3600)+' h':s>=60?fmtN(s/60)+' min':s>=1?fmtN(s)+' s':s>=1e-3?fmtN(s*1e3)+' ms':fmtN(s*1e6)+' µs';
+
+var fmtF=f=>{var a=Math.abs(f);return a>=1000?fmtN(f/1000)+' kN':a>=1?fmtN(f)+' N':a>=1e-3?fmtN(f*1000)+' mN':fmtN(f)+' N';};
+var fmtS=v=>Math.abs(v)<5e-4?'0 J/(mol·K)':(v>0?'+':'−')+fmtN(Math.abs(v))+' J/(mol·K)';
+function drawArrow(ctx,x,y0,y1,col,w){
+  const d=y1>y0?1:-1,hd=Math.min(11,Math.abs(y1-y0));
+  ctx.strokeStyle='#05070e';ctx.lineWidth=w+3;ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1-d*hd*0.6);ctx.stroke();
+  ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1-d*hd*0.6);ctx.stroke();
+  ctx.fillStyle=col;ctx.strokeStyle='#05070e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x-8,y1-d*hd);ctx.lineTo(x+8,y1-d*hd);ctx.closePath();ctx.fill();ctx.stroke();
+}
+function drawTag(ctx,txt,x,y,col){
+  ctx.font='600 12px JetBrains Mono,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  const w=ctx.measureText(txt).width;ctx.fillStyle='rgba(5,7,14,.82)';ctx.fillRect(x-4,y-9,w+8,18);ctx.fillStyle=col;ctx.fillText(txt,x,y);
+}
+/* 1976 US Standard Atmosphere, pressure in Pa at height z in metres (layer definitions to 84.852 km, then the tabulated 100 km value; geopotential ≈ geometric height). */
+function stdAtm(z){
+  const b=[0,11000,20000,32000,47000,51000,71000,84852],L=[-0.0065,0,0.001,0.0028,0,-0.0028,-0.002,0],c=0.0341632;
+  if(z>84852)return 0.3734*Math.pow(0.03201/0.3734,(z-84852)/(100000-84852));   // tabulated 100 km value, log-interpolated
+  let T=288.15,P=101325;
+  for(let i=0;i<8;i++){const top=i<7?Math.min(z,b[i+1]):z,dh=top-b[i];if(dh<=0)break;
+    if(L[i]===0)P*=Math.exp(-c*dh/T);else{const T2=T+L[i]*dh;P*=Math.pow(T/T2,c/L[i]);T=T2;}
+    if(z<=(i<7?b[i+1]:Infinity))break;}
+  return P;
+}
+document.querySelectorAll('.tab[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+  ACTIVE=+b.dataset.tab;
+  document.querySelectorAll('.tab[data-tab]').forEach(o=>o.setAttribute('aria-selected',o===b?'true':'false'));
+  document.querySelectorAll('section.panel').forEach(p=>p.hidden=p.id!=='panel-'+ACTIVE);
+}));
+}
+
+/* ───────── Tab 1 UI ───────── */
+if(typeof document!=='undefined'){(function(){
+const BALLS_PER_ATM=2200;                 // dots in one bulb at 1 atm and 20 °C
+const sim=new Sim(TwoBulb);
+const NB=sim.NB;
+const cnt=[new Float64Array(NB),new Float64Array(NB)];
+const ema=[new Float64Array(NB),new Float64Array(NB)];
+const st={h:0.3,gMul:1,pBr:23e3,pAir:0,T:293,speedPow:0,playing:true,emaInit:false,
+  botE:[0,0],topE:[0,0],simTime:0,openedAt:null};
+
+
+const scaleS=()=>st.h/TwoBulb.zmax;
+const grav=()=>st.gMul*G0;
+const Hs=s=>R_GAS*st.T/(SPECIES[s].M*grav());       // scale height, m
+const nRef=()=>BALLS_PER_ATM/sim.areaHalf;          // dots per u² per atm at T_REF
+const binP=(c,i)=>c/sim.binArea[i]/nRef()*(st.T/T_REF)*ATM;   // Pa
+
+function reset(){
+  sim.clear();sim.S=scaleS();sim.T=st.T;sim.grav=grav();sim.valveOpen=false;
+  sim.add(Math.round(st.pBr/ATM*BALLS_PER_ATM*T_REF/st.T),0,false);
+  sim.add(Math.round(st.pAir/ATM*BALLS_PER_ATM*T_REF/st.T),1,true);
+  st.emaInit=false;st.simTime=0;st.openedAt=null;
+  $('bValve').textContent='Open valve';$('bValve').classList.add('primary');
+}
+
+/* Sliders */
+const sizeFrom=t=>0.1*Math.pow(2e5,t/10000), sizeTo=h=>Math.round(10000*Math.log(h/0.1)/Math.log(2e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/10000), gTo=g=>Math.round(10000*Math.log(g/0.1)/Math.log(1e6));
+function readSliders(resetting){
+  st.h=sizeFrom(+$('sSize').value);
+  let g=gFrom(+$('sG').value); if(Math.abs(Math.log10(g))<0.01)g=1; st.gMul=g;
+  st.pBr=+$('sP').value*1e3; st.pAir=+$('sA').value*1e3; st.T=+$('sT').value; st.speedPow=+$('sSpd').value;
+  $('vSize').textContent=fmtLen(st.h);
+  $('vG').textContent=fmtN(st.gMul)+' g';
+  $('vP').textContent=fmtN(st.pBr/1e3)+' kPa · '+fmtAtm(st.pBr);
+  $('vA').textContent=st.pAir===0?'vacuum':fmtN(st.pAir/1e3)+' kPa · '+fmtAtm(st.pAir);
+  $('vT').textContent=st.T+' K · '+Math.round(st.T-273.15)+' °C';
+  $('vSpd').textContent=(st.speedPow>=0?Math.pow(2,st.speedPow):'1/'+Math.pow(2,-st.speedPow))+'×';
+  sim.T=st.T;sim.grav=grav();
+  if(resetting)reset();
+}
+['sSize','sP','sA'].forEach(id=>$(id).addEventListener('input',()=>readSliders(true)));
+['sG','sT','sSpd'].forEach(id=>$(id).addEventListener('input',()=>readSliders(false)));
+$('bValve').onclick=()=>{sim.valveOpen=!sim.valveOpen;if(sim.valveOpen&&st.openedAt===null)st.openedAt=st.simTime;
+  $('bValve').textContent=sim.valveOpen?'Close valve':'Open valve';$('bValve').classList.toggle('primary',!sim.valveOpen);};
+$('bReset').onclick=reset;
+$('bPlay').onclick=()=>{st.playing=!st.playing;$('bPlay').textContent=st.playing?'Pause':'Play';};
+const PRESETS={demo:{h:0.3,g:1,p:23,a:0},air:{h:0.3,g:1,p:23,a:101},tall:{h:6000,g:1,p:23,a:0},heavy:{h:0.3,g:20000,p:23,a:0}};
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{const p=PRESETS[b.dataset.preset];
+  $('sSize').value=sizeTo(p.h);$('sG').value=gTo(p.g);$('sP').value=p.p;$('sA').value=p.a;$('sT').value=293;readSliders(true);});
+
+/* Balance prediction for (dots above the valve) ÷ (dots below it), from the real flask shape including the neck.
+   For the two round bulbs alone this is exactly e^(−Δz/H); the neck stubs nudge it up a little. */
+function qExact(s){
+  const k=sim.dzb*sim.S/Hs(s);let b=0,t=0;
+  for(let i=0;i<NB;i++){const w=sim.binArea[i]*Math.exp(-i*k);if(i<sim.vBin)b+=w;else t+=w;}
+  return b>0?t/b:0;
+}
+
+/* Stepping. Playback is scaled so a typical bromine molecule crosses the apparatus in a couple of seconds on screen. */
+let realPerScreenSec=0;
+function advance(){
+  const sBr=sim.sigma(0),mult=Math.pow(2,st.speedPow);
+  let nSub=Math.max(2,Math.ceil(6*mult));
+  let dt=mult*0.03*sim.S/sBr/nSub;
+  dt=Math.min(dt,0.05*sBr/sim.grav);             // keep the fall per step far below thermal speed
+  for(let k=0;k<nSub;k++)sim.step(dt);
+  st.simTime+=dt*nSub;realPerScreenSec=dt*nSub*60;
+}
+
+/* Theory: isothermal equilibrium P(z)=C·e^(−z/H) over the region a species can reach, normalised to its dot count. */
+const theory=[new Float64Array(NB),new Float64Array(NB)];
+function computeTheory(){
+  const S=sim.S,vb=sim.vBin;
+  for(let s=0;s<2;s++){
+    const H=Hs(s),th=theory[s];th.fill(0);
+    const regions=sim.valveOpen?[[0,NB]]:[[0,vb],[vb,NB]];
+    for(const [a,b] of regions){
+      let N=0,W=0;
+      for(let i=a;i<b;i++){N+=cnt[s][i];W+=sim.binArea[i]*Math.exp(-(i-a)*sim.dzb*S/H);}
+      if(N===0||W===0)continue;
+      const C=N/W;
+      for(let i=a;i<b;i++)th[i]=binP(C*sim.binArea[i]*Math.exp(-(i-a)*sim.dzb*S/H),i);
+    }
+  }
+}
+
+/* Force balance on the column of gas between the bulb centres, per 1 m² of cross-section, from the counted pressures:
+   up = P just below the column, down = P just above it, weight = Σ ρ g dz through it. */
+const FB={up:0,dn:0,wt:0,net:0,noise:0};
+function forces(){
+  const g=TwoBulb,win=Math.max(1,Math.min(5,Math.round(0.5*Hs(0)/(sim.dzb*sim.S)))),bLo=Math.round(g.cB/sim.dzb),bHi=Math.round(g.cT/sim.dzb);
+  const band=c=>{let n=0,a=0;for(let s=0;s<2;s++)for(let i=c-win;i<c+win;i++)n+=ema[s][i];for(let i=c-win;i<c+win;i++)a+=sim.binArea[i];
+    return {p:n/a/nRef()*(st.T/T_REF)*ATM,n};};
+  const lo=band(bLo),hi=band(bHi);let w=0;
+  for(let s=0;s<2;s++)for(let i=bLo;i<bHi;i++)w+=binP(ema[s][i],i)*SPECIES[s].M/(R_GAS*st.T)*grav()*sim.dzb*sim.S;
+  FB.up=lo.p;FB.dn=hi.p;FB.wt=w;FB.net=lo.p-hi.p-w;
+  FB.noise=Math.sqrt(lo.p*lo.p/Math.max(lo.n,1)+hi.p*hi.p/Math.max(hi.n,1));   // counting noise: √N scatter in the dots near each face
+}
+function arrow(x,y0,y1,col,w){
+  const d=y1>y0?1:-1,hd=Math.min(11,Math.abs(y1-y0));
+  ctx.strokeStyle='#05070e';ctx.lineWidth=w+3;ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1-d*hd*0.6);ctx.stroke();
+  ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1-d*hd*0.6);ctx.stroke();
+  ctx.fillStyle=col;ctx.strokeStyle='#05070e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x-8,y1-d*hd);ctx.lineTo(x+8,y1-d*hd);ctx.closePath();ctx.fill();ctx.stroke();
+}
+function tag(txt,x,y,col){
+  ctx.font='600 12px JetBrains Mono,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  const w=ctx.measureText(txt).width;ctx.fillStyle='rgba(5,7,14,.82)';ctx.fillRect(x-4,y-9,w+8,18);ctx.fillStyle=col;ctx.fillText(txt,x,y);
+}
+function drawForces(){
+  const g=TwoBulb,nw=g.neck*K,yB=Y(g.cB),yT=Y(g.cT);
+  ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=1;ctx.fillStyle='rgba(255,255,255,.07)';
+  ctx.fillRect(X(0)-nw,yT,2*nw,yB-yT);ctx.strokeRect(X(0)-nw,yT,2*nw,yB-yT);ctx.restore();
+  const m=Math.max(FB.up,FB.dn,FB.wt,1e-12),L=f=>f<=0?0:Math.max(7,78*f/m);
+  if(FB.up>0){arrow(X(0),yB+L(FB.up),yB,'#7fd3a4',5);tag('▲ '+fmtF(FB.up),X(0)+14,yB+Math.max(16,L(FB.up)/2),'#7fd3a4');}
+  if(FB.dn>0){arrow(X(0),yT-L(FB.dn),yT,'#ff8f9c',5);tag('▼ '+fmtF(FB.dn),X(0)+14,yT-Math.max(16,L(FB.dn)/2),'#ff8f9c');}
+  const yW=yT+34;
+  if(FB.wt>0){arrow(X(0)+nw+16,yW,yW+L(FB.wt),'#ffffff',3);tag('weight '+fmtF(FB.wt),X(0)+nw+30,yW+8,'#ffffff');}
+}
+
+/* Canvas */
+const cv=$('c1'),ctx=cv.getContext('2d');
+const W=820,Hc=600,K=118,CX=150,Y0=572;           // K px per unit; Y0 is z=0
+const X=x=>CX+x*K,Y=z=>Y0-z*K;
+function fit(){const dpr=Math.min(window.devicePixelRatio||1,2);cv.width=W*dpr;cv.height=Hc*dpr;cv.style.aspectRatio=W+'/'+Hc;ctx.setTransform(dpr,0,0,dpr,0,0);}
+fit();window.addEventListener('resize',fit);
+function flaskPath(){
+  const g=TwoBulb,a=Math.acos(g.neck);
+  ctx.beginPath();
+  ctx.arc(X(0),Y(g.cB),K,-a,-(Math.PI-a)+2*Math.PI,false);
+  ctx.arc(X(0),Y(g.cT),K,Math.PI-a,2*Math.PI+a,false);
+  ctx.closePath();
+}
+function draw(){
+  const g=TwoBulb;
+  ctx.clearRect(0,0,W,Hc);
+  // Tint: the colour you would see, from the counted bromine pressure in each layer.
+  ctx.save();flaskPath();ctx.clip();
+  const pRef=Math.max(st.pBr,1),aRef=Math.max(st.pAir,st.pBr,1);
+  for(let i=0;i<NB;i++){
+    if(sim.binArea[i]<0.004)continue;
+    const y=Y((i+1)*sim.dzb),hh=sim.dzb*K+0.6;
+    const pb=binP(ema[0][i],i),pa=binP(ema[1][i],i);
+    if(pa>0){ctx.fillStyle='rgba(110,160,255,'+Math.min(0.22,0.22*pa/aRef).toFixed(3)+')';ctx.fillRect(X(-1),y,2*K,hh);}
+    if(pb>0){ctx.fillStyle='rgba(255,130,30,'+Math.min(0.62,0.5*pb/pRef).toFixed(3)+')';ctx.fillRect(X(-1),y,2*K,hh);}
+  }
+  ctx.restore();
+  // Dots
+  for(let s=1;s>=0;s--){
+    ctx.fillStyle=SPECIES[s].color;const r=SPECIES[s].rad;ctx.beginPath();
+    for(let i=0;i<sim.n;i++)if(sim.sp[i]===s){const px=X(sim.x[i]),py=Y(sim.z[i]);ctx.moveTo(px+r,py);ctx.arc(px,py,r,0,6.2832);}
+    ctx.fill();
+  }
+  if($('kArrows').checked)drawForces();
+  // Glass
+  flaskPath();ctx.strokeStyle='rgba(200,215,255,.75)';ctx.lineWidth=2;ctx.stroke();
+  // Valve
+  const vy=Y(g.zv),nw=g.neck*K;
+  ctx.fillStyle='#131a2e';ctx.strokeStyle='#f0b35b';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.rect(X(0)+nw+2,vy-5,30,10);ctx.fill();ctx.stroke();
+  ctx.save();ctx.translate(X(0),vy);if(sim.valveOpen)ctx.rotate(Math.PI/2);
+  ctx.fillStyle='#f0b35b';ctx.fillRect(-nw-2,-2.5,2*nw+4,5);ctx.restore();
+  ctx.font='12px JetBrains Mono,monospace';ctx.fillStyle='#f0b35b';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(sim.valveOpen?'valve open':'valve closed',X(0)+nw+38,vy);
+
+  // Height ruler
+  const RX=300;ctx.strokeStyle='#39456b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(RX,Y(0));ctx.lineTo(RX,Y(g.zmax));ctx.stroke();
+  ctx.fillStyle='#8f98ae';ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='left';
+  [[0,'0'],[g.cB,fmtLen(g.cB*sim.S)],[g.cT,fmtLen(g.cT*sim.S)],[g.zmax,fmtLen(g.zmax*sim.S)]].forEach(([z,l])=>{
+    ctx.beginPath();ctx.moveTo(RX-4,Y(z));ctx.lineTo(RX+4,Y(z));ctx.stroke();ctx.fillText(l,RX+8,Y(z));});
+  // Δz bracket
+  ctx.strokeStyle='#f0b35b';ctx.beginPath();ctx.moveTo(RX-12,Y(g.cB));ctx.lineTo(RX-12,Y(g.cT));ctx.stroke();
+  ctx.save();ctx.translate(RX-18,Y((g.cB+g.cT)/2)+60);ctx.rotate(-Math.PI/2);ctx.fillStyle='#f0b35b';ctx.textAlign='center';ctx.fillText('Δz = '+fmtLen(g.dzCentres*sim.S),0,0);ctx.restore();
+
+  // Pressure profile chart, sharing the height axis with the flask
+  const C0=400,C1=796,cw=C1-C0;
+  let pMax=Math.max(st.pBr,st.pAir,1)*1.2;
+  for(let i=0;i<NB;i++)if(sim.binArea[i]>0.03)pMax=Math.max(pMax,theory[0][i]*1.1,theory[1][i]*1.1);
+  ctx.strokeStyle='#222b45';ctx.lineWidth=1;ctx.fillStyle='#8f98ae';ctx.textAlign='center';ctx.textBaseline='top';
+  for(let k=0;k<=4;k++){const xx=C0+cw*k/4;ctx.beginPath();ctx.moveTo(xx,Y(0));ctx.lineTo(xx,Y(g.zmax));ctx.stroke();ctx.fillText(fmtN(pMax*k/4/1e3,2),xx,Y(0)+5);}
+  ctx.textBaseline='alphabetic';ctx.textAlign='right';ctx.fillText('partial pressure, kPa',C1,Y(g.zmax)-8);
+  ctx.textAlign='left';ctx.fillText('counted from the dots',C0,Y(g.zmax)-8);
+  ctx.setLineDash([3,4]);ctx.strokeStyle='#f0b35b';ctx.beginPath();ctx.moveTo(C0,vy);ctx.lineTo(C1,vy);ctx.stroke();ctx.setLineDash([]);
+  const px=p=>C0+Math.min(1,p/pMax)*cw;
+  // bromine bars
+  ctx.fillStyle='rgba(255,154,60,.8)';
+  for(let i=0;i<NB;i++){if(sim.binArea[i]<0.03)continue;const p=binP(ema[0][i],i);if(p>0)ctx.fillRect(C0,Y((i+1)*sim.dzb)+0.5,px(p)-C0,sim.dzb*K-1);}
+  // air step line
+  if(st.pAir>0){ctx.strokeStyle='#8ab9ff';ctx.lineWidth=2;ctx.beginPath();let first=true;
+    for(let i=0;i<NB;i++){if(sim.binArea[i]<0.03)continue;const p=px(binP(ema[1][i],i));
+      if(first){ctx.moveTo(p,Y(i*sim.dzb));first=false;}else ctx.lineTo(p,Y(i*sim.dzb));ctx.lineTo(p,Y((i+1)*sim.dzb));}
+    ctx.stroke();}
+  // theory
+  ctx.setLineDash([6,5]);ctx.lineWidth=1.5;
+  for(let s=0;s<2;s++){ctx.strokeStyle=s===0?'#ffe1bf':'#d5e5ff';
+    let pen=false;ctx.beginPath();
+    for(let i=0;i<NB;i++){const t=theory[s][i];if(sim.binArea[i]<0.03||t<=0){pen=false;continue;}
+      const xx=px(t),yy=Y((i+.5)*sim.dzb);if(!pen){ctx.moveTo(xx,yy);pen=true;}else ctx.lineTo(xx,yy);}
+    ctx.stroke();}
+  ctx.setLineDash([]);
+}
+
+/* Live numbers */
+function readouts(){
+  const g=TwoBulb,vb=sim.vBin,S=sim.S,gr=grav(),dz=g.dzCentres*S;
+  const toP=n=>n/sim.areaHalf/nRef()*(st.T/T_REF)*ATM;
+  const pB=[toP(st.botE[0]),toP(st.botE[1])],pT=[toP(st.topE[0]),toP(st.topE[1])];
+  const pBot=pB[0]+pB[1],pTop=pT[0]+pT[1],push=pBot-pTop;
+  const H=[Hs(0),Hs(1)];
+  // Pressure difference the weight of the gas supports between bulb centres, per species, exact isothermal form.
+  // Uses the mean of each species over both bulbs, so it is the equilibrium this amount of gas is heading to.
+  let hold=0,rho=0;
+  for(let s=0;s<2;s++){const mean=(pB[s]+pT[s])/2,r=qExact(s);hold+=2*mean*(1-r)/(1+r);rho+=mean*SPECIES[s].M/(R_GAS*st.T);}
+  const ratio=dz/H[0],rCen=Math.exp(-ratio),rEq=qExact(0);
+  $('bPush').textContent=(push<0?'−':'')+fmtP(Math.abs(push));
+  $('bPushEq').innerHTML='P<sub>bottom</sub> − P<sub>top</sub> = <b>'+fmtP(pBot)+'</b> − <b>'+fmtP(pTop)+'</b>';
+  $('bHold').textContent=fmtP(hold);
+  $('bHoldEq').innerHTML=ratio<0.3
+    ?'ρ · g · Δz = <b>'+fmtN(rho)+' kg/m³</b> × <b>'+fmtN(gr)+' m/s²</b> × <b>'+fmtLen(dz)+'</b>'
+    :'difference between the two bulb-average pressures at balance (the ρ·g·Δz shortcut only works when Δz ≪ H)';
+  $('bH').textContent=fmtLen(H[0]);
+  $('bHEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>0.1598 kg/mol</b> × <b>'+fmtN(gr)+' m/s²</b>)'+(st.pAir>0?' · air: <b>'+fmtLen(H[1])+'</b>':'');
+  $('bRatio').textContent=fmtN(ratio);
+  const share=st.botE[0]>0?st.topE[0]/st.botE[0]:0;
+  $('bRatioEq').innerHTML='balance predicts top ÷ bottom = <b>'+fmtN(rEq*100,4)+'%</b>'+(Math.abs(rEq-rCen)>5e-4?' (e<sup>−Δz/H</sup> = '+fmtN(rCen*100,3)+'% centre to centre, plus the neck)':' = e<sup>−Δz/H</sup>')+(sim.valveOpen?' · counted now: <b>'+fmtN(share*100)+'%</b>':'');
+  let v;
+  const times=hold>0?Math.abs(push)/hold:Infinity;
+  if(!sim.valveOpen){
+    v=times>3?'Valve closed. The push is <b>'+fmtN(times,2)+'×</b> bigger than anything gravity can hold over this height. Open the valve and the gas will rush '+(push>0?'up':'down')+'.'
+      :'Valve closed. Push and hold are the same order of magnitude here, so gravity will keep a visible share of the gas in the bottom bulb.';
+  }else if(rEq>0.98){
+    v='Valve open. Over <b>'+fmtLen(dz)+'</b> gravity is negligible: the balance point is a top bulb at '+fmtN(rEq*100,4)+'% of the bottom, which is "evenly full" to any eye or gauge. This is the regime every bench demo lives in.';
+  }else if(rEq>0.5){
+    v='Valve open. Gravity is now a real player: the balance point leaves the top bulb at <b>'+fmtN(rEq*100)+'%</b> of the bottom pressure, with the valve wide open and nothing stopping the gas from rising.';
+  }else{
+    v='Valve open. <b>Gravity wins.</b> The balance point leaves the top bulb at only '+fmtN(rEq*100,2)+'% of the bottom pressure. The gas has a free path upward and mostly declines to take it.';
+  }
+  $('fUp').textContent=fmtF(FB.up);$('fDn').textContent=fmtF(FB.dn);$('fWt').textContent=fmtF(FB.wt);
+  $('fNet').textContent=fmtF(Math.abs(FB.net))+(FB.net>0?' up':FB.net<0?' down':'');
+  $('fNote').innerHTML=Math.abs(FB.net)<3*FB.noise+1e-9
+    ?(FB.wt>FB.noise?'Balanced to within the dot-counting noise (about ±'+fmtF(FB.noise)+'): the pressure from below equals the pressure from above plus the weight.':'Pressure below and above agree to within the dot-counting noise (about ±'+fmtF(FB.noise)+'). The weight term is far below what the dots can resolve at this size.')
+    :!sim.valveOpen?'The closed valve is carrying this net force. It is the only thing here doing any containing.'
+    :'Unbalanced, so the gas is accelerating '+(FB.net>0?'upward':'downward')+' until the three forces cancel.';
+  $('bVerdict').innerHTML=v;
+  $('hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time'+(st.openedAt!==null?' · valve opened '+fmtTime(st.simTime-st.openedAt)+' ago':'');
+}
+
+/* Second law ledger. Molar quantities for bromine: s = −R Σ f ln(f/a) over height layers, u = M g Σ f z.
+   Ψ = s − u/T is what the second law maximises at fixed T (it is −F/T up to a constant). */
+const NC=18,GRP=NB/NC;   // 18 layers so the valve sits on a layer edge
+function psiOf(fr,nEff){
+  let s=0,u=0,occ=0;
+  for(let j=0;j<NC;j++){let F=0,A=0;for(let i=j*GRP;i<(j+1)*GRP;i++){F+=fr[i];A+=sim.binArea[i];u+=fr[i]*(i+.5)*sim.dzb;}
+    if(F>0){s-=R_GAS*F*Math.log(F/A);if(F>1e-4)occ++;}}
+  if(nEff)s+=R_GAS*(occ-1)/(2*nEff);   // Miller–Madow correction: entropy counted from a finite sample reads low
+  u*=SPECIES[0].M*grav()*sim.S;
+  return {s,u};
+}
+const frTmp=new Float64Array(NB),emaL=new Float64Array(NB),A_L=0.02;   // slow average for the ledger
+function refState(kind){
+  const H=Hs(0),end=kind==='start'?sim.vBin:NB;let W=0;
+  for(let i=0;i<NB;i++){frTmp[i]=i<end?sim.binArea[i]*(kind==='uniform'?1:Math.exp(-i*sim.dzb*sim.S/H)):0;W+=frTmp[i];}
+  for(let i=0;i<NB;i++)frTmp[i]/=W;
+  return psiOf(frTmp);
+}
+function ledger(){
+  let N=0;for(let i=0;i<NB;i++)N+=emaL[i];
+  if(N<=0){['sGas','sSur','sTot','sUni'].forEach(id=>$(id).textContent='—');$('sVerdict').textContent='No bromine in the apparatus.';return;}
+  const start=refState('start'),eq=refState('eq'),uni=refState('uniform');
+  for(let i=0;i<NB;i++)frTmp[i]=emaL[i]/N;
+  const now=psiOf(frTmp,N*Math.max(1,2/A_L/14*Math.pow(2,st.speedPow))),T=st.T,Mg=SPECIES[0].M*grav();
+  const dSg=now.s-start.s,dU=now.u-start.u,dSs=-dU/T,dSt=dSg+dSs;
+  const maxT=(eq.s-start.s)-(eq.u-start.u)/T,uniT=(uni.s-start.s)-(uni.u-start.u)/T;
+  $('sGas').textContent=fmtS(dSg);
+  $('sGasEq').innerHTML='−R Σ f ln(f / a) over height layers; a free doubling of volume is R ln 2 = <b>5.76</b>';
+  $('sSur').textContent=fmtS(dSs);
+  $('sSurEq').innerHTML='−M g Δz̄ / T = −<b>0.1598</b> × <b>'+fmtN(grav())+'</b> × <b>'+fmtLen(Math.abs(dU/Mg))+'</b>'+(dU<0?' (fall)':' (rise)')+' ÷ <b>'+T+' K</b>';
+  $('sTot').textContent=fmtS(dSt);
+  $('sBar').style.width=Math.max(0,Math.min(100,maxT>0?100*dSt/maxT:0))+'%';
+  $('sTotEq').innerHTML='maximum possible (the balance profile): <b>'+fmtS(maxT)+'</b> · dot-counting scatter about ±0.03';
+  $('sUni').textContent=fmtS(uniT);
+  const short=maxT-uniT;
+  $('sUniEq').innerHTML=short<5e-3?'same as the maximum to within <b>'+fmtN(Math.max(short,1e-12),2)+'</b> J/(mol·K)':'that is <b>'+fmtN(short)+'</b> J/(mol·K) <b>below</b> the maximum';
+  $('sVerdict').innerHTML=!sim.valveOpen&&st.openedAt===null
+    ?'Sealed start: nothing has changed yet. Opening the valve can raise total entropy by up to <b>'+fmtN(maxT)+' J/(mol·K)</b>.'
+    :short<5e-3
+      ?'Total entropy climbs to its maximum and stays there, apart from dot-counting jitter. At this size the maximum <b>is</b> the even fill: the gravity term is too small to register. Second law satisfied, and the bench demo is exactly what it predicts.'
+      :'Total entropy still goes up on average (the dot count is small enough to see it jitter), and it peaks at the gravity-stratified profile. An even fill would score <b>'+fmtN(short)+' J/(mol·K) lower</b>, so at this temperature the second law makes the thin top bulb the equilibrium, not merely an allowed state.'+(uniT<0?' At this size the even fill comes out <b>negative</b>: it would have lower total entropy than the sealed start, so the gas cannot get there on its own.':'');
+}
+
+let frame=0;
+function tick(){
+  if(ACTIVE!==1){requestAnimationFrame(tick);return;}
+  if(st.playing)advance();
+  sim.bin(cnt);
+  const a=st.emaInit?0.06:1;
+  const vb=sim.vBin;let b=[0,0],t=[0,0];
+  for(let s=0;s<2;s++)for(let i=0;i<NB;i++){ema[s][i]+=a*(cnt[s][i]-ema[s][i]);if(i<vb)b[s]+=cnt[s][i];else t[s]+=cnt[s][i];}
+  const aL=st.emaInit?A_L:1;for(let i=0;i<NB;i++)emaL[i]+=aL*(cnt[0][i]-emaL[i]);
+  for(let s=0;s<2;s++){st.botE[s]+=a*(b[s]-st.botE[s]);st.topE[s]+=a*(t[s]-st.topE[s]);}
+  st.emaInit=true;
+  computeTheory();forces();draw();
+  if(frame++%6===0){readouts();ledger();}
+  requestAnimationFrame(tick);
+}
+readSliders(true);tick();
+})();}
+
+/* ───────── Tab 2 UI: a sealed tank ───────── */
+if(typeof document!=='undefined'){(function(){
+const NDOTS=2500, A_CYL=Math.PI*0.115*0.115;       // real cylinder cross-section, m²
+const sim=new Sim(Tank);sim.valveOpen=true;sim.lcol=2;   // more dots than tab 1, so stretch the free path to match
+const NB=sim.NB,cnt=new Float64Array(NB),ema=new Float64Array(NB),theory=new Float64Array(NB);
+const st={h:1.2,gMul:1,pFill:20e6,T:293,gas:2,slab:0.35,speedPow:0,playing:true,emaInit:false};
+const sizeFrom=t=>0.5*Math.pow(2e5,t/10000), sizeTo=h=>Math.round(10000*Math.log(h/0.5)/Math.log(2e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/10000);
+const pFrom=t=>1e4*Math.pow(2000,t/1000);          // 10 kPa to 20 MPa
+const grav=()=>st.gMul*G0, H=()=>R_GAS*st.T/(SPECIES[st.gas].M*grav());
+const pMean=()=>st.pFill*st.T/T_REF;               // sealed gas: average pressure follows temperature
+const binP=(c,i)=>c/sim.binArea[i]/(NDOTS/sim.areaTotal)*pMean();
+function reset(){sim.clear();sim.S=st.h/Tank.zmax;sim.T=st.T;sim.grav=grav();sim.add(NDOTS,st.gas,'all');st.emaInit=false;}
+function read(resetting){
+  st.h=sizeFrom(+$('t2Size').value);let g=gFrom(+$('t2G').value);if(Math.abs(Math.log10(g))<0.01)g=1;st.gMul=g;
+  st.pFill=pFrom(+$('t2P').value);st.T=+$('t2T').value;st.slab=+$('t2Slab').value/100;st.speedPow=+$('t2Spd').value;
+  $('t2vSize').textContent=fmtLen(st.h);$('t2vG').textContent=fmtN(st.gMul)+' g';
+  $('t2vP').textContent=fmtN(st.pFill/1e3)+' kPa · '+fmtN(st.pFill/ATM)+' atm';
+  $('t2vT').textContent=st.T+' K · '+Math.round(st.T-273.15)+' °C';
+  $('t2vSlab').textContent=Math.round(st.slab*100)+'% to '+Math.round(st.slab*100+25)+'% of height';
+  $('t2vSpd').textContent=(st.speedPow>=0?Math.pow(2,st.speedPow):'1/'+Math.pow(2,-st.speedPow))+'×';
+  sim.S=st.h/Tank.zmax;sim.T=st.T;sim.grav=grav();
+  if(resetting)reset();
+}
+['t2Size','t2G','t2P','t2Slab','t2T','t2Spd'].forEach(id=>$(id).addEventListener('input',()=>read(false)));
+$('t2Reset').onclick=reset;
+$('t2Play').onclick=()=>{st.playing=!st.playing;$('t2Play').textContent=st.playing?'Pause':'Play';};
+function legend(){$('t2Leg').textContent=SPECIES[st.gas].name.toLowerCase()+' ('+fmtN(SPECIES[st.gas].M*1000)+' g/mol)';$('t2Leg').style.color=SPECIES[st.gas].color;}
+document.querySelectorAll('#t2Gas [data-gas]').forEach(b=>b.onclick=()=>{st.gas=+b.dataset.gas;
+  document.querySelectorAll('#t2Gas .btn').forEach(o=>o.classList.toggle('on',o===b));legend();reset();});
+document.querySelectorAll('[data-t2]').forEach(b=>b.onclick=()=>{$('t2Size').value=sizeTo(+b.dataset.t2);$('t2G').value=1667;read(true);});
+
+let realPerScreenSec=0;
+function advance(){
+  const sg=sim.sigma(st.gas),mult=Math.pow(2,st.speedPow);
+  let nSub=Math.max(2,Math.ceil(6*mult)),dt=mult*0.03*sim.S/sg/nSub;
+  dt=Math.min(dt,0.05*sg/sim.grav);
+  for(let k=0;k<nSub;k++)sim.step(dt);realPerScreenSec=dt*nSub*60;
+}
+/* Exact isothermal profile for this amount of gas, in the same layers the dots are counted in. */
+function computeTheory(){
+  const k=sim.dzb*sim.S/H();let W=0;
+  for(let i=0;i<NB;i++){theory[i]=Math.exp(-i*k);W+=theory[i];}
+  for(let i=0;i<NB;i++)theory[i]=theory[i]/W*NB*pMean();
+}
+/* Pressure at an exact height from the barometric law, normalised to the gas in the tank. */
+function pAt(z){const x=st.h/H();return x<1e-9?pMean():pMean()*x*Math.exp(-z/H())/(1-Math.exp(-x));}
+
+const cv=$('c2'),ctx=cv.getContext('2d');
+const W=820,Hc=600,K=118,CX=150,Y0=572,X=x=>CX+x*K,Y=z=>Y0-z*K;
+function fit(){const dpr=Math.min(window.devicePixelRatio||1,2);cv.width=W*dpr;cv.height=Hc*dpr;cv.style.aspectRatio=W+'/'+Hc;ctx.setTransform(dpr,0,0,dpr,0,0);}
+fit();window.addEventListener('resize',fit);
+function arrow(x,y0,y1,col,w){
+  const d=y1>y0?1:-1,hd=Math.min(11,Math.abs(y1-y0));
+  ctx.strokeStyle='#05070e';ctx.lineWidth=w+3;ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1-d*hd*0.6);ctx.stroke();
+  ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y1-d*hd*0.6);ctx.stroke();
+  ctx.fillStyle=col;ctx.strokeStyle='#05070e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x-8,y1-d*hd);ctx.lineTo(x+8,y1-d*hd);ctx.closePath();ctx.fill();ctx.stroke();
+}
+function tag(txt,x,y,col){
+  ctx.font='600 12px JetBrains Mono,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  const w=ctx.measureText(txt).width;ctx.fillStyle='rgba(5,7,14,.82)';ctx.fillRect(x-4,y-9,w+8,18);ctx.fillStyle=col;ctx.fillText(txt,x,y);
+}
+/* Slab force balance from the counted layers: pressure in the layers at its lower face, at its upper face, weight summed through it. */
+const FB={up:0,dn:0,wt:0,net:0,noise:0,b0:0,b1:0};
+function forces(){
+  const b0=Math.round(st.slab*NB),b1=b0+Math.round(0.25*NB),win=Math.max(1,Math.min(6,Math.round(0.5*H()/(sim.dzb*sim.S))));
+  const band=(a,b)=>{let n=0;for(let i=a;i<b;i++)n+=ema[i];return {p:binP(n/(b-a),a),n};};
+  const lo=band(b0-win,b0+win),hi=band(b1-win,b1+win);let w=0;
+  for(let i=b0;i<b1;i++)w+=binP(ema[i],i)*SPECIES[st.gas].M/(R_GAS*st.T)*grav()*sim.dzb*sim.S;
+  FB.up=lo.p;FB.dn=hi.p;FB.wt=w;FB.net=lo.p-hi.p-w;FB.b0=b0;FB.b1=b1;
+  FB.noise=Math.sqrt(lo.p*lo.p/Math.max(lo.n,1)+hi.p*hi.p/Math.max(hi.n,1));
+}
+function draw(){
+  const g=Tank,xl=X(-g.hw),xr=X(g.hw),yt=Y(g.zmax),yb=Y(0),col=SPECIES[st.gas].color;
+  ctx.clearRect(0,0,W,Hc);
+  const pRef=Math.max(pMean(),theory[0]);
+  ctx.save();ctx.beginPath();ctx.rect(xl,yt,xr-xl,yb-yt);ctx.clip();
+  for(let i=0;i<NB;i++){ctx.globalAlpha=Math.min(0.5,0.5*binP(ema[i],i)/pRef);ctx.fillStyle=col;ctx.fillRect(xl,Y((i+1)*sim.dzb),xr-xl,sim.dzb*K+0.6);}
+  ctx.restore();ctx.globalAlpha=1;
+  ctx.fillStyle=col;const r=SPECIES[st.gas].rad;ctx.beginPath();
+  for(let i=0;i<sim.n;i++){const px=X(sim.x[i]),py=Y(sim.z[i]);ctx.moveTo(px+r,py);ctx.arc(px,py,r,0,6.2832);}
+  ctx.fill();
+  if($('t2Arrows').checked){
+    const ys0=Y(FB.b0*sim.dzb),ys1=Y(FB.b1*sim.dzb);
+    ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.fillStyle='rgba(255,255,255,.09)';
+    ctx.fillRect(xl,ys1,xr-xl,ys0-ys1);ctx.strokeRect(xl,ys1,xr-xl,ys0-ys1);ctx.restore();
+    const m=Math.max(FB.up,FB.dn,FB.wt,1e-12),L=f=>f<=0?0:Math.max(7,70*f/m);
+    arrow(X(-0.2),ys0+L(FB.up),ys0,'#7fd3a4',5);tag('▲ '+fmtF(FB.up),xr+10,ys0+14,'#7fd3a4');
+    arrow(X(-0.2),ys1-L(FB.dn),ys1,'#ff8f9c',5);tag('▼ '+fmtF(FB.dn),xr+10,ys1-14,'#ff8f9c');
+    arrow(X(0.25),ys1+6,ys1+6+L(FB.wt),'#ffffff',3);tag('weight '+fmtF(FB.wt),xr+10,(ys0+ys1)/2,'#ffffff');
+  }
+  ctx.strokeStyle='rgba(200,215,255,.8)';ctx.lineWidth=2.5;ctx.strokeRect(xl,yt,xr-xl,yb-yt);
+  ctx.fillStyle='#39456b';ctx.fillRect(X(0)-9,yt-14,18,13);ctx.fillRect(X(0)-16,yt-20,32,7);
+  ctx.fillStyle='#8f98ae';ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('lid',X(0)-34,yt-8);ctx.fillText('floor',X(0),yb+16);
+  const RX=300;ctx.strokeStyle='#39456b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(RX,yb);ctx.lineTo(RX,yt);ctx.stroke();
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  for(let k=0;k<=4;k++){const z=g.zmax*k/4;ctx.beginPath();ctx.moveTo(RX-4,Y(z));ctx.lineTo(RX+4,Y(z));ctx.stroke();ctx.fillText(k===0?'0':fmtLen(z*sim.S),RX+8,Y(z));}
+  const C0=400,C1=796,cw=C1-C0;let pMax=Math.max(theory[0],pMean())*1.15;
+  ctx.strokeStyle='#222b45';ctx.textAlign='center';ctx.textBaseline='top';
+  const unit=pMax>=2e6?[1e6,'MPa']:pMax>=2e3?[1e3,'kPa']:[1,'Pa'];
+  for(let k=0;k<=4;k++){const xx=C0+cw*k/4;ctx.beginPath();ctx.moveTo(xx,yb);ctx.lineTo(xx,yt);ctx.stroke();ctx.fillText(fmtN(pMax*k/4/unit[0],2),xx,yb+5);}
+  ctx.textBaseline='alphabetic';ctx.textAlign='right';ctx.fillText('pressure, '+unit[1],C1,yt-8);ctx.textAlign='left';ctx.fillText('counted from the dots',C0,yt-8);
+  const px=p=>C0+Math.min(1,p/pMax)*cw;
+  ctx.globalAlpha=0.8;ctx.fillStyle=col;
+  for(let i=0;i<NB;i++){const p=binP(ema[i],i);if(p>0)ctx.fillRect(C0,Y((i+1)*sim.dzb)+0.5,px(p)-C0,sim.dzb*K-1);}
+  ctx.globalAlpha=1;ctx.setLineDash([6,5]);ctx.lineWidth=1.5;ctx.strokeStyle='#ffffff';ctx.beginPath();
+  for(let i=0;i<NB;i++){const xx=px(theory[i]),yy=Y((i+.5)*sim.dzb);if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}
+  ctx.stroke();ctx.setLineDash([]);
+}
+function readouts(){
+  const Hh=H(),x=st.h/Hh,pb=pAt(0),pt=pAt(st.h),gr=grav(),M=SPECIES[st.gas].M;
+  let cb=0,ct=0,tb=0,tt=0;for(let i=0;i<5;i++){cb+=ema[i];ct+=ema[NB-1-i];tb+=theory[i];tt+=theory[NB-1-i];}
+  $('t2Pb').textContent=fmtP(pb);$('t2Pt').textContent=fmtP(pt);
+  $('t2PbEq').innerHTML='P₀, from the barometric law · bottom 5% of the tank, counted: <b>'+fmtP(binP(cb/5,0))+'</b> (law: '+fmtP(tb/5)+')';
+  $('t2PtEq').innerHTML='P₀ · e<sup>−h/H</sup> = <b>'+fmtN(Math.exp(-x)*100,x<0.01?6:4)+'%</b> of the floor · top 5% of the tank, counted: <b>'+fmtP(binP(ct/5,0))+'</b> (law: '+fmtP(tt/5)+')';
+  $('t2H').textContent=fmtLen(Hh);
+  $('t2HEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>'+fmtN(M,4)+' kg/mol</b> × <b>'+fmtN(gr)+' m/s²</b>)';
+  $('t2R').textContent=fmtN(x);
+  $('t2REq').innerHTML='floor is denser than the lid by a factor e<sup>h/H</sup> = <b>'+(x<0.01?'1 + '+fmtN(x,3):fmtN(Math.exp(x)))+'</b>';
+  $('t2Up').textContent=fmtF(FB.up);$('t2Dn').textContent=fmtF(FB.dn);$('t2Wt').textContent=fmtF(FB.wt);
+  $('t2Net').textContent=fmtF(Math.abs(FB.net))+(FB.net>0?' up':FB.net<0?' down':'');
+  $('t2Note').innerHTML=Math.abs(FB.net)<3*FB.noise+1e-9
+    ?(FB.wt>FB.noise?'Balanced to within the dot-counting noise (about ±'+fmtF(FB.noise)+'): the gas below pushes up as hard as the gas above pushes down plus the slab\'s own weight.'
+      :'Pressure below and above agree to within the dot-counting noise (about ±'+fmtF(FB.noise)+'). The slab\'s weight is real but smaller than '+NDOTS.toLocaleString('en-GB')+' dots can resolve at this height. Make the tank taller.')
+    :'Settling: the gas is still rearranging after a change.';
+  const Ff=pb*A_CYL,Fl=pt*A_CYL,mass=pMean()*A_CYL*st.h*M/(R_GAS*st.T);
+  $('t2Ff').textContent=fmtF(Ff);$('t2Fl').textContent=fmtF(Fl);$('t2Fd').textContent=fmtF(Ff-Fl);$('t2Mg').textContent=fmtF(mass*gr);
+  $('t2MgEq').innerHTML='gas in the tank: m = P̄·V·M / RT = <b>'+(mass>=1000?fmtN(mass/1000)+' t':mass>=1?fmtN(mass)+' kg':fmtN(mass*1000)+' g')+'</b>. The floor carries more than the lid by exactly the weight of the gas, at every height and every gravity.';
+  const lidPct=Math.exp(-x)*100;
+  $('t2Verdict').innerHTML=x<0.01
+    ?'At <b>'+fmtLen(st.h)+'</b> the gradient is real but tiny: the floor is '+fmtN(x*100,2)+'% denser than the lid. A bench-sized container hides gravity\'s effect on gas; it does not switch it off.'
+    :x<1?'At <b>'+fmtLen(st.h)+'</b> the lid sees <b>'+fmtN(lidPct)+'%</b> of the floor pressure. Same sealed tank, same gas: gravity alone made the difference.'
+    :'At <b>'+fmtLen(st.h)+'</b> the lid sees only <b>'+fmtN(lidPct,2)+'%</b> of the floor pressure. Most of the gas never gets near it. The weight of the gas is doing most of the containing, and the lid '+(lidPct<1?'almost none.':'the rest.');
+  $('t2hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
+}
+let frame=0;
+function tick(){
+  if(ACTIVE!==2){requestAnimationFrame(tick);return;}
+  if(st.playing)advance();
+  cnt.fill(0);for(let i=0;i<sim.n;i++){let b=(sim.z[i]/sim.dzb)|0;if(b<0)b=0;else if(b>=NB)b=NB-1;cnt[b]++;}
+  const a=st.emaInit?0.04:1;for(let i=0;i<NB;i++)ema[i]+=a*(cnt[i]-ema[i]);st.emaInit=true;
+  computeTheory();forces();draw();
+  if(frame++%6===0)readouts();
+  requestAnimationFrame(tick);
+}
+legend();read(true);tick();
+})();}
+
+/* ───────── Tab 3 UI: heavy gas in an open container ───────── */
+if(typeof document!=='undefined'){(function(){
+const NREF=260;                                   // dots per unit² per atm at 20 °C
+const geo=Object.assign({},OpenBox,{wallX:0.7,wallZ:1.6,cell:0.1}),sim=new OpenSim(geo);sim.lcol=0.05;sim.dcol=0.1;   // frequent collisions: mixing is slow next to free flight
+const NB=sim.NB,WX=geo.wallX,WZ=geo.wallZ,RIM=Math.round(WZ/sim.dzb),ABIN=2*WX*sim.dzb;
+const cnt=[new Float64Array(NB),new Float64Array(NB)],ema=[new Float64Array(NB),new Float64Array(NB)];
+const D_REAL={5:1.6e-5,6:0.9e-5};                 // diffusion coefficient in air at 1 atm, m²/s (approximate)
+const st={d:0.3,gMul:1,pPool:101e3,pAir:101e3,T:293,gas:6,speedPow:0,playing:true,emaInit:false,n0:1,simTime:0,half:null};
+const sizeFrom=t=>0.1*Math.pow(1e5,t/10000),sizeTo=d=>Math.round(10000*Math.log(d/0.1)/Math.log(1e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/10000),gTo=g=>Math.round(10000*Math.log(g/0.1)/Math.log(1e6));
+const grav=()=>st.gMul*G0,Hs=s=>R_GAS*st.T/(SPECIES[s].M*grav());
+const toP=c=>c/ABIN/NREF*(st.T/T_REF)*ATM;
+function reset(){
+  sim.clear();sim.S=st.d/WZ;sim.T=st.T;sim.grav=grav();sim.side='reservoir';sim.top='reservoir';sim.resS=1;
+  const k=T_REF/st.T,nA=st.pAir/ATM*NREF*k;sim.resN0=nA;sim.acc=[0,0,0];
+  sim.place(Math.round(st.pPool/ATM*NREF*k*2*WX*WZ),st.gas,-WX+0.01,WX-0.01,0,WZ);
+  sim.place(Math.round(nA*(geo.xmax-WX)*WZ),1,geo.xmin,-WX-0.01,0,WZ);
+  sim.place(Math.round(nA*(geo.xmax-WX)*WZ),1,WX+0.01,geo.xmax,0,WZ);
+  sim.place(Math.round(nA*(geo.xmax-geo.xmin)*(geo.zmax-WZ)),1,geo.xmin,geo.xmax,WZ,geo.zmax);
+  st.n0=Math.max(1,inside());st.emaInit=false;st.simTime=0;st.half=null;
+}
+function inside(){let c=0;for(let i=0;i<sim.n;i++)if(sim.sp[i]===st.gas&&sim.z[i]<WZ&&Math.abs(sim.x[i])<WX)c++;return c;}
+function read(resetting){
+  st.d=sizeFrom(+$('t3Size').value);let g=gFrom(+$('t3G').value);if(Math.abs(Math.log10(g))<0.01)g=1;st.gMul=g;
+  st.pPool=+$('t3P').value*1e3;st.pAir=+$('t3A').value*1e3;st.T=+$('t3T').value;st.speedPow=+$('t3Spd').value;
+  $('t3vSize').textContent=fmtLen(st.d);$('t3vG').textContent=fmtN(st.gMul)+' g';
+  $('t3vP').textContent=fmtN(st.pPool/1e3)+' kPa · '+fmtAtm(st.pPool);
+  $('t3vA').textContent=st.pAir===0?'vacuum':fmtN(st.pAir/1e3)+' kPa · '+fmtAtm(st.pAir);
+  $('t3vT').textContent=st.T+' K · '+Math.round(st.T-273.15)+' °C';
+  $('t3vSpd').textContent=(st.speedPow>=0?Math.pow(2,st.speedPow):'1/'+Math.pow(2,-st.speedPow))+'×';
+  if(resetting)reset();
+}
+['t3Size','t3G','t3P','t3A','t3T'].forEach(id=>$(id).addEventListener('input',()=>read(true)));
+$('t3Spd').addEventListener('input',()=>read(false));
+$('t3Reset').onclick=reset;
+$('t3Play').onclick=()=>{st.playing=!st.playing;$('t3Play').textContent=st.playing?'Pause':'Play';};
+function legend(){$('t3Leg').textContent=SPECIES[st.gas].name.toLowerCase()+' ('+fmtN(SPECIES[st.gas].M*1000)+' g/mol)';$('t3Leg').style.color=SPECIES[st.gas].color;}
+document.querySelectorAll('#t3Gas [data-gas]').forEach(b=>b.onclick=()=>{st.gas=+b.dataset.gas;
+  document.querySelectorAll('#t3Gas .btn').forEach(o=>o.classList.toggle('on',o===b));legend();reset();});
+const PRE={bench:{d:0.3,g:1,a:101},noair:{d:0.3,g:1,a:0},deep:{d:10000,g:1,a:101},heavy:{d:0.3,g:30000,a:101}};
+document.querySelectorAll('[data-t3]').forEach(b=>b.onclick=()=>{const p=PRE[b.dataset.t3];
+  $('t3Size').value=sizeTo(p.d);$('t3G').value=gTo(p.g);$('t3P').value=101;$('t3A').value=p.a;$('t3T').value=293;read(true);});
+
+let realPerScreenSec=0;
+function advance(){
+  const sg=sim.sigma(st.gas),sa=sim.sigma(1),mult=Math.pow(2,st.speedPow);
+  let nSub=Math.max(2,Math.ceil(8*mult)),dt=mult*0.03*sim.S/sg/nSub;
+  dt=Math.min(dt,0.05*sg/sim.grav,0.2*sim.lcol*sim.S/sa);   // last term keeps the collision chance per step small
+  for(let k=0;k<nSub;k++)sim.step(dt);st.simTime+=dt*nSub;realPerScreenSec=dt*nSub*60;
+}
+const cv=$('c3'),ctx=cv.getContext('2d');
+const W=820,Hc=600,K=118,CX=158,Y0=572,X=x=>CX+x*K,Y=z=>Y0-z*K;
+function fit(){const dpr=Math.min(window.devicePixelRatio||1,2);cv.width=W*dpr;cv.height=Hc*dpr;cv.style.aspectRatio=W+'/'+Hc;ctx.setTransform(dpr,0,0,dpr,0,0);}
+fit();window.addEventListener('resize',fit);
+const M={in:0,out:0,inH:0,inA:0,noise:0};
+function measure(){
+  let h=0,a=0,o=0;const w=6;
+  for(let i=RIM-w;i<RIM;i++){h+=ema[0][i];a+=ema[1][i];}
+  for(let i=RIM;i<RIM+w;i++)o+=ema[0][i]+ema[1][i];
+  M.inH=toP(h/w);M.inA=toP(a/w);M.in=M.inH+M.inA;M.out=toP(o/w);
+  M.noise=Math.sqrt(M.in*M.in/Math.max(h+a,1)+M.out*M.out/Math.max(o,1));
+}
+function draw(){
+  const col=SPECIES[st.gas].color,yt=Y(geo.zmax),yb=Y(0),xl=X(geo.xmin),xr=X(geo.xmax);
+  ctx.clearRect(0,0,W,Hc);
+  for(let s=1;s>=0;s--){const sp=s?1:st.gas,r=SPECIES[sp].rad;ctx.fillStyle=SPECIES[sp].color;ctx.globalAlpha=s?0.75:1;ctx.beginPath();
+    for(let i=0;i<sim.n;i++)if(sim.sp[i]===sp){const px=X(sim.x[i]),py=Y(sim.z[i]);ctx.moveTo(px+r,py);ctx.arc(px,py,r,0,6.2832);}
+    ctx.fill();}
+  ctx.globalAlpha=1;
+  // open edges (dashed) and the ground
+  ctx.setLineDash([3,5]);ctx.strokeStyle='#39456b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(xl,yb);ctx.lineTo(xl,yt);ctx.lineTo(xr,yt);ctx.lineTo(xr,yb);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='#8f98ae';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xl,yb);ctx.lineTo(xr,yb);ctx.stroke();
+  // container
+  ctx.strokeStyle='rgba(200,215,255,.9)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(X(-WX),Y(WZ));ctx.lineTo(X(-WX),yb);ctx.lineTo(X(WX),yb);ctx.lineTo(X(WX),Y(WZ));ctx.stroke();
+  // rim arrows
+  const m=Math.max(M.in,M.out,1e-9),L=f=>f<=0?0:Math.max(7,60*f/m),yr=Y(WZ);
+  if(M.in>0){drawArrow(ctx,X(-0.25),yr+L(M.in)+4,yr+4,'#7fd3a4',5);drawTag(ctx,'▲ '+fmtP(M.in),X(-0.1),yr+26,'#7fd3a4');}
+  if(M.out>0){drawArrow(ctx,X(0.25),yr-L(M.out)-4,yr-4,'#ff8f9c',5);drawTag(ctx,'▼ '+fmtP(M.out),X(-0.62),yr-26,'#ff8f9c');}
+  ctx.fillStyle='#8f98ae';ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('open air: edges are not walls',X(0),yt+14);
+  // ruler
+  const RX=318;ctx.strokeStyle='#39456b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(RX,yb);ctx.lineTo(RX,yt);ctx.stroke();
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  [[0,'0'],[WZ,fmtLen(WZ*sim.S)+' rim'],[geo.zmax,fmtLen(geo.zmax*sim.S)]].forEach(([z,l])=>{ctx.beginPath();ctx.moveTo(RX-4,Y(z));ctx.lineTo(RX+4,Y(z));ctx.stroke();ctx.fillText(l,RX+8,Y(z));});
+  // chart: partial pressures above the container footprint
+  const C0=430,C1=796,cw=C1-C0;let pMax=Math.max(st.pPool,st.pAir,1e3)*1.25;
+  ctx.strokeStyle='#222b45';ctx.textAlign='center';ctx.textBaseline='top';
+  for(let k=0;k<=4;k++){const xx=C0+cw*k/4;ctx.beginPath();ctx.moveTo(xx,yb);ctx.lineTo(xx,yt);ctx.stroke();ctx.fillText(fmtN(pMax*k/4/1e3,2),xx,yb+5);}
+  ctx.textBaseline='alphabetic';ctx.textAlign='right';ctx.fillText('partial pressure, kPa',C1,yt-8);ctx.textAlign='left';ctx.fillText('counted over the tank',C0,yt-8);
+  ctx.setLineDash([3,4]);ctx.strokeStyle='#f0b35b';ctx.beginPath();ctx.moveTo(C0,yr);ctx.lineTo(C1,yr);ctx.stroke();ctx.setLineDash([]);
+  const px=p=>C0+Math.min(1,p/pMax)*cw;
+  ctx.fillStyle=col;ctx.globalAlpha=0.8;
+  for(let i=0;i<NB;i++){const p=toP(ema[0][i]);if(p>0)ctx.fillRect(C0,Y((i+1)*sim.dzb)+0.5,px(p)-C0,sim.dzb*K-1);}
+  ctx.globalAlpha=1;ctx.strokeStyle='#8ab9ff';ctx.lineWidth=2;ctx.beginPath();
+  for(let i=0;i<NB;i++){const p=px(toP(ema[1][i]));if(i===0)ctx.moveTo(p,Y(0));else ctx.lineTo(p,Y(i*sim.dzb));ctx.lineTo(p,Y((i+1)*sim.dzb));}
+  ctx.stroke();
+}
+function readouts(){
+  const g=st.gas,Mh=SPECIES[g].M,Ma=SPECIES[1].M,gr=grav(),Hh=Hs(g),Ha=Hs(1),x=st.d/Hh;
+  $('t3Pin').textContent=fmtP(M.in);$('t3PinEq').innerHTML='heavy gas <b>'+fmtP(M.inH)+'</b> + air <b>'+fmtP(M.inA)+'</b>';
+  $('t3Pout').textContent=fmtP(M.out);
+  const net=M.in-M.out;
+  $('t3PoutEq').innerHTML='net push at the rim: <b>'+fmtP(Math.abs(net))+(net>0?' outward':' inward')+'</b>'+(Math.abs(net)<3*M.noise?' (within dot-counting noise of ±'+fmtP(M.noise)+', i.e. balanced)':'');
+  const left=inside()/st.n0;if(st.half===null&&left<=0.5)st.half=st.simTime;
+  $('t3Left').textContent=fmtN(Math.min(100,left*100))+'%';
+  const tReal=st.d*st.d/D_REAL[g]*(st.pAir>0?st.pAir/ATM:0);
+  $('t3LeftEq').innerHTML='model time since start: <b>'+fmtTime(st.simTime)+'</b>'+(st.half!==null?' · half gone after <b>'+fmtTime(st.half)+'</b>':'')+
+    (st.pAir>0&&st.d<=10?'<br>real still-air estimate, d² / D = <b>'+fmtTime(tReal)+'</b> (D ≈ '+fmtN(D_REAL[g]*1e4,2)+' cm²/s at 1 atm)':'');
+  const rh=st.pPool*Mh/(R_GAS*st.T),ra=st.pAir*Ma/(R_GAS*st.T);
+  $('t3Rho').textContent=fmtN(rh)+' kg/m³';
+  $('t3RhoEq').innerHTML='at its starting pressure · air outside: <b>'+fmtN(ra)+' kg/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+'<br>extra weight per m² of pool, (ρ − ρ<sub>air</sub>)·g·d = <b>'+fmtP((rh-ra)*gr*st.d)+'</b>';
+  $('t3H').textContent=fmtLen(Hh);
+  $('t3HEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>'+fmtN(Mh,4)+' kg/mol</b> × <b>'+fmtN(gr)+' m/s²</b>) · air: <b>'+fmtLen(Ha)+'</b>';
+  $('t3R').textContent=fmtN(x);
+  const sep=Math.exp(-st.d*(1/Hh-1/Ha));
+  $('t3REq').innerHTML='balanced against gravity, the heavy gas at the rim is <b>'+fmtN(Math.exp(-x)*100,x<0.01?5:3)+'%</b> as dense as at the floor (air: '+fmtN(Math.exp(-st.d/Ha)*100,x<0.01?5:3)+'%)';
+  let v;
+  if(st.pAir===0)v='<b>No atmosphere.</b> Nothing pushes back at the rim, so the full '+fmtP(st.pPool)+' is unbalanced and the gas leaves at once. Sides alone contain nothing.';
+  else if(st.pPool>st.pAir*1.15)v='The pool starts at higher pressure than the air, so the excess pushes out until the two match. After that only slow mixing remains.';
+  else if(x<0.05)v='<b>Pressure balanced at the rim.</b> The atmosphere is doing the job a lid would do. What remains is molecule-by-molecule mixing, which gravity is too weak to prevent at this size (d / H = '+fmtN(x,2)+'): the pool is long-lived but temporary.';
+  else if(x<1)v='Pressure balanced at the rim, and gravity is now helping: the heavy gas thins by '+fmtN((1-Math.exp(-x))*100,2)+'% between floor and rim. The pool leaks more slowly the deeper the container.';
+  else v='<b>Gravity keeps the heavy gas low.</b> At this depth it is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so very little of it reaches the rim to mix away, and the pool outlasts the bench version many times over. That is sorting by weight under an open top. It is still not permanent: what does cross the rim sinks to the ground outside.';
+  $('t3Verdict').innerHTML=v;
+  $('t3hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
+}
+let frame=0;
+function tick(){
+  if(ACTIVE!==3){requestAnimationFrame(tick);return;}
+  if(st.playing)advance();
+  cnt[0].fill(0);cnt[1].fill(0);
+  for(let i=0;i<sim.n;i++)if(Math.abs(sim.x[i])<WX){let b=(sim.z[i]/sim.dzb)|0;if(b>=NB)b=NB-1;if(b<0)b=0;cnt[sim.sp[i]===1?1:0][b]++;}
+  const a=st.emaInit?0.08:1;for(let s=0;s<2;s++)for(let i=0;i<NB;i++)ema[s][i]+=a*(cnt[s][i]-ema[s][i]);st.emaInit=true;
+  measure();draw();
+  if(frame++%6===0)readouts();
+  requestAnimationFrame(tick);
+}
+legend();read(true);tick();
+})();}
+
+/* ───────── Tab 4 UI: a column of air, with and without a dome ───────── */
+if(typeof document!=='undefined'){(function(){
+const NT=2600,geo=Object.assign({},OpenBox,{wallX:0.5,wallZ:4.5}),sim=new OpenSim(geo);sim.lcol=0.6;
+const NB=sim.NB,WX=0.5,AIN=2*WX*sim.dzb,AOUT=(geo.xmax-geo.xmin-2*WX)*sim.dzb;
+const cIn=new Float64Array(NB),cOut=new Float64Array(NB),eIn=new Float64Array(NB),eOut=new Float64Array(NB);
+const st={h:1,gMul:1,pG:101325,T:288,speedPow:0,playing:true,emaInit:false,n0:1,outE:0,inE:0,lastOut:0,lastIn:0};
+const sizeFrom=t=>0.5*Math.pow(4e5,t/10000),sizeTo=h=>Math.round(10000*Math.log(h/0.5)/Math.log(4e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/10000);
+const noG=()=>$('t4NoG').checked,dome=()=>$('t4Dome').checked;
+const grav=()=>noG()?0:st.gMul*G0,H=()=>R_GAS*st.T/(SPECIES[1].M*(st.gMul*G0));
+const toP=(c,area)=>c/area/st.n0*st.pG;
+const law=z=>noG()?st.pG:st.pG*Math.exp(-z/H());
+function modes(){
+  sim.grav=grav();geo.wallZ=$('t4Walls').checked?geo.zmax:0;
+  sim.top=dome()?'wall':noG()?'vacuum':'reservoir';
+  sim.side=noG()?(dome()?'wall':'vacuum'):'reservoir';
+}
+function reset(){
+  sim.clear();sim.S=st.h/geo.zmax;sim.T=st.T;modes();
+  const sg=sim.sigma(1),k=sim.S*sim.grav/(sg*sg),a=k*geo.zmax,len=a<1e-6?geo.zmax:(1-Math.exp(-a))/k;
+  st.n0=NT/((geo.xmax-geo.xmin)*len);sim.resN0=st.n0;sim.resS=1;sim.acc=[0,0,0];
+  sim.place(NT,1,geo.xmin,geo.xmax,0,geo.zmax);
+  st.emaInit=false;st.outE=st.inE=0;st.lastOut=sim.outTop;st.lastIn=sim.inTop;
+}
+function read(resetting){
+  st.h=sizeFrom(+$('t4Size').value);let g=gFrom(+$('t4G').value);if(Math.abs(Math.log10(g))<0.01)g=1;st.gMul=g;
+  st.pG=+$('t4P').value===101?101325:+$('t4P').value*1e3;st.T=+$('t4T').value;st.speedPow=+$('t4Spd').value;
+  $('t4vSize').textContent=fmtLen(st.h);$('t4vG').textContent=fmtN(st.gMul)+' g';
+  $('t4vP').textContent=fmtN(st.pG/1e3)+' kPa · '+fmtAtm(st.pG);
+  $('t4vT').textContent=st.T+' K · '+Math.round(st.T-273.15)+' °C';
+  $('t4vSpd').textContent=(st.speedPow>=0?Math.pow(2,st.speedPow):'1/'+Math.pow(2,-st.speedPow))+'×';
+  if(resetting)reset();
+}
+['t4Size','t4G','t4P','t4T'].forEach(id=>$(id).addEventListener('input',()=>read(true)));
+$('t4Spd').addEventListener('input',()=>read(false));
+$('t4Walls').addEventListener('change',modes);
+$('t4Dome').addEventListener('change',()=>{if(noG())reset();else modes();});   // with gravity on, adding or removing the dome acts live
+$('t4NoG').addEventListener('change',reset);
+$('t4Reset').onclick=reset;
+$('t4Play').onclick=()=>{st.playing=!st.playing;$('t4Play').textContent=st.playing?'Pause':'Play';};
+document.querySelectorAll('[data-t4]').forEach(b=>b.onclick=()=>{$('t4Size').value=sizeTo(+b.dataset.t4);$('t4G').value=1667;read(true);});
+
+let realPerScreenSec=0;
+function advance(){
+  const sg=sim.sigma(1),mult=Math.pow(2,st.speedPow);
+  let nSub=Math.max(2,Math.ceil(6*mult)),dt=mult*0.03*sim.S/sg/nSub;
+  if(sim.grav>0)dt=Math.min(dt,0.05*sg/sim.grav);
+  for(let k=0;k<nSub;k++)sim.step(dt);realPerScreenSec=dt*nSub*60;
+}
+const cv=$('c4'),ctx=cv.getContext('2d');
+const W=820,Hc=600,K=118,CX=158,Y0=572,X=x=>CX+x*K,Y=z=>Y0-z*K;
+function fit(){const dpr=Math.min(window.devicePixelRatio||1,2);cv.width=W*dpr;cv.height=Hc*dpr;cv.style.aspectRatio=W+'/'+Hc;ctx.setTransform(dpr,0,0,dpr,0,0);}
+fit();window.addEventListener('resize',fit);
+const B0=Math.round(0.35*NB),B1=Math.round(0.6*NB),FB={up:0,dn:0,wt:0,net:0,noise:0};
+function forces(){
+  const kk=sim.grav>0?0.5*H()/(sim.dzb*sim.S):99,win=Math.max(1,Math.min(6,Math.round(kk)));
+  const band=c=>{let n=0;for(let i=c-win;i<c+win;i++)n+=eIn[i];return {p:toP(n/(2*win),AIN),n};};
+  const lo=band(B0),hi=band(B1);let w=0;
+  for(let i=B0;i<B1;i++)w+=toP(eIn[i],AIN)*SPECIES[1].M/(R_GAS*st.T)*sim.grav*sim.dzb*sim.S;
+  FB.up=lo.p;FB.dn=hi.p;FB.wt=w;FB.net=lo.p-hi.p-w;FB.noise=Math.sqrt(lo.p*lo.p/Math.max(lo.n,1)+hi.p*hi.p/Math.max(hi.n,1));
+}
+function draw(){
+  const yt=Y(geo.zmax),yb=Y(0),xl=X(geo.xmin),xr=X(geo.xmax),walls=$('t4Walls').checked;
+  ctx.clearRect(0,0,W,Hc);
+  ctx.fillStyle='#8ab9ff';const r=2;ctx.beginPath();
+  for(let i=0;i<sim.n;i++){const px=X(sim.x[i]),py=Y(sim.z[i]);ctx.moveTo(px+r,py);ctx.arc(px,py,r,0,6.2832);}
+  ctx.fill();
+  if($('t4Arrows').checked){
+    const ys0=Y(B0*sim.dzb),ys1=Y(B1*sim.dzb);
+    ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.fillStyle='rgba(255,255,255,.08)';
+    ctx.fillRect(X(-WX),ys1,2*WX*K,ys0-ys1);ctx.strokeRect(X(-WX),ys1,2*WX*K,ys0-ys1);ctx.restore();
+    const m=Math.max(FB.up,FB.dn,FB.wt,1e-12),L=f=>f<=0?0:Math.max(7,70*f/m);
+    if(FB.up>0){drawArrow(ctx,X(-0.2),ys0+L(FB.up),ys0,'#7fd3a4',5);drawTag(ctx,'▲ '+fmtF(FB.up),X(0.62),ys0+14,'#7fd3a4');}
+    if(FB.dn>0){drawArrow(ctx,X(-0.2),ys1-L(FB.dn),ys1,'#ff8f9c',5);drawTag(ctx,'▼ '+fmtF(FB.dn),X(0.62),ys1-14,'#ff8f9c');}
+    if(FB.wt>0){drawArrow(ctx,X(0.25),ys1+6,ys1+6+L(FB.wt),'#ffffff',3);drawTag(ctx,'weight '+fmtF(FB.wt),X(0.62),(ys0+ys1)/2,'#ffffff');}
+  }
+  // edges: dashed where open, solid where walled
+  const edge=(solid,pts)=>{ctx.setLineDash(solid?[]:[3,5]);ctx.strokeStyle=solid?'rgba(255,200,120,.95)':'#39456b';ctx.lineWidth=solid?4:1;ctx.beginPath();ctx.moveTo(pts[0],pts[1]);for(let i=2;i<pts.length;i+=2)ctx.lineTo(pts[i],pts[i+1]);ctx.stroke();ctx.setLineDash([]);};
+  edge(sim.side==='wall',[xl,yb,xl,yt]);edge(sim.side==='wall',[xr,yb,xr,yt]);edge(sim.top==='wall',[xl,yt,xr,yt]);
+  ctx.strokeStyle='#8f98ae';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xl,yb);ctx.lineTo(xr,yb);ctx.stroke();
+  if(walls){ctx.strokeStyle='rgba(200,215,255,.9)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(X(-WX),yt);ctx.lineTo(X(-WX),yb);ctx.moveTo(X(WX),yt);ctx.lineTo(X(WX),yb);ctx.stroke();}
+  else{ctx.setLineDash([2,6]);ctx.strokeStyle='rgba(200,215,255,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X(-WX),yt);ctx.lineTo(X(-WX),yb);ctx.moveTo(X(WX),yt);ctx.lineTo(X(WX),yb);ctx.stroke();ctx.setLineDash([]);}
+  ctx.fillStyle=sim.top==='wall'?'#ffc878':'#8f98ae';ctx.font='11px JetBrains Mono,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText(sim.top==='wall'?'dome':sim.top==='vacuum'?'open to vacuum':'open: more air above',X(0),yt-6);
+  const RX=318;ctx.fillStyle='#8f98ae';ctx.strokeStyle='#39456b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(RX,yb);ctx.lineTo(RX,yt);ctx.stroke();
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  for(let k=0;k<=4;k++){const z=geo.zmax*k/4;ctx.beginPath();ctx.moveTo(RX-4,Y(z));ctx.lineTo(RX+4,Y(z));ctx.stroke();ctx.fillText(k===0?'0':fmtLen(z*sim.S),RX+8,Y(z));}
+  // chart
+  const C0=430,C1=796,cw=C1-C0,pMax=st.pG*1.2;
+  ctx.strokeStyle='#222b45';ctx.textAlign='center';ctx.textBaseline='top';
+  for(let k=0;k<=4;k++){const xx=C0+cw*k/4;ctx.beginPath();ctx.moveTo(xx,yb);ctx.lineTo(xx,yt);ctx.stroke();ctx.fillText(fmtN(pMax*k/4/1e3,2),xx,yb+5);}
+  ctx.textBaseline='alphabetic';ctx.textAlign='right';ctx.fillText('pressure, kPa',C1,yt-8);ctx.textAlign='left';ctx.fillText('counted from the dots',C0,yt-8);
+  const px=p=>C0+Math.min(1,p/pMax)*cw;
+  ctx.fillStyle='rgba(138,185,255,.8)';
+  for(let i=0;i<NB;i++){const p=toP(eIn[i],AIN);if(p>0)ctx.fillRect(C0,Y((i+1)*sim.dzb)+0.5,px(p)-C0,sim.dzb*K-1);}
+  ctx.strokeStyle='#f0b35b';ctx.lineWidth=2;ctx.beginPath();
+  for(let i=0;i<NB;i++){const p=px(toP(eOut[i],AOUT));if(i===0)ctx.moveTo(p,Y(0));else ctx.lineTo(p,Y(i*sim.dzb));ctx.lineTo(p,Y((i+1)*sim.dzb));}
+  ctx.stroke();
+  ctx.setLineDash([6,5]);ctx.lineWidth=1.5;ctx.strokeStyle='#ffffff';ctx.beginPath();
+  for(let i=0;i<=NB;i++){const xx=px(law(i*sim.dzb*sim.S)),yy=Y(i*sim.dzb);if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}
+  ctx.stroke();
+  ctx.setLineDash([2,4]);ctx.lineWidth=2.5;ctx.strokeStyle='#7fd3a4';ctx.beginPath();let pen=false;
+  for(let i=0;i<=NB;i++){const zm=i*sim.dzb*sim.S;if(zm>85000)break;const xx=px(stdAtm(zm)),yy=Y(i*sim.dzb);if(!pen){ctx.moveTo(xx,yy);pen=true;}else ctx.lineTo(xx,yy);}
+  ctx.stroke();ctx.setLineDash([]);
+}
+const ALT=[['Denver',1609],['Everest summit',8849],['Airliner cruise',11000],['Weather balloon',30000],['Edge of space',100000]];
+function readouts(){
+  const Hh=H(),sum=(e,a,b)=>{let n=0;for(let i=a;i<b;i++)n+=e[i];return n/(b-a);};
+  const gi=toP(sum(eIn,0,9),AIN),go=toP(sum(eOut,0,9),AOUT),ti=toP(sum(eIn,NB-9,NB),AIN),to=toP(sum(eOut,NB-9,NB),AOUT);
+  const lawAvg=(a,b)=>{let p=0;for(let i=a;i<b;i++)p+=law((i+.5)*sim.dzb*sim.S);return p/(b-a);};
+  $('t4Pg').textContent=fmtP(gi)+' · '+fmtP(go);$('t4PgEq').innerHTML='bottom 10% of the view, counted from the dots · law: <b>'+fmtP(lawAvg(0,9))+'</b>';
+  $('t4Pt').textContent=fmtP(ti)+' · '+fmtP(to);$('t4PtEq').innerHTML='top 10% of the view, counted from the dots · law: <b>'+fmtP(lawAvg(NB-9,NB))+'</b>';
+  $('t4H').textContent=noG()?'∞ (gravity off)':fmtLen(Hh);
+  $('t4HEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>0.02896 kg/mol</b> × <b>'+fmtN(grav())+' m/s²</b>) · column height ÷ H = <b>'+(noG()?'0':fmtN(st.h/Hh))+'</b>';
+  const dO=sim.outTop-st.lastOut,dI=sim.inTop-st.lastIn;st.lastOut=sim.outTop;st.lastIn=sim.inTop;
+  st.outE+=0.15*(dO*10-st.outE);st.inE+=0.15*(dI*10-st.inE);
+  const pTop=law(st.h);
+  if(dome()){$('t4TopLab').textContent='Load on the dome';$('t4Top').textContent=fmtP(pTop);
+    $('t4TopEq').innerHTML='pressure the dome must hold at <b>'+fmtLen(st.h)+'</b>: <b>'+fmtN(pTop/st.pG*100,3)+'%</b> of the ground pressure, or <b>'+fmtF(pTop)+'</b> on every m²';}
+  else{$('t4TopLab').textContent='Traffic across the open top edge';$('t4Top').textContent=fmtN(st.outE,2)+' out · '+fmtN(st.inE,2)+' in';
+    $('t4TopEq').innerHTML='dots per second of screen time · air pressure at that height: <b>'+fmtP(sim.top==='vacuum'?0:pTop)+'</b>';}
+  $('t4Up').textContent=fmtF(FB.up);$('t4Dn').textContent=fmtF(FB.dn);$('t4Wt').textContent=fmtF(FB.wt);
+  $('t4Net').textContent=fmtF(Math.abs(FB.net))+(FB.net>0?' up':FB.net<0?' down':'');
+  $('t4Note').innerHTML=Math.abs(FB.net)<3*FB.noise+1e-9
+    ?(FB.wt>FB.noise?'Balanced to within the dot-counting noise (about ±'+fmtF(FB.noise)+'): each layer of air is held up by the layer below and held down by the layer above plus its own weight. No wall or lid appears in that sum.'
+      :'Pressure below and above agree to within the dot-counting noise (about ±'+fmtF(FB.noise)+'). The slab\'s weight is real but too small for the dots to resolve at this height.')
+    :'Not balanced: the air is still moving.';
+  $('t4Cmp').innerHTML=ALT.map(([n,z])=>{const m=stdAtm(z),gp=st.pG*Math.exp(-z/Hh);
+    return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+(z<=st.h?fmtP(gp):z===100000&&st.h<z?'above the dome':'above the dome')+'</td></tr>';}).join('');
+  $('t4CmpEq').innerHTML='Measured: 1976 US Standard Atmosphere. "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
+  let v;
+  if(noG()&&dome())v='<b>Dome, no gravity.</b> A sealed box: the gas spreads evenly and reads '+fmtP(st.pG)+' at every height. Barometers on mountains, aircraft and balloons do not read that.';
+  else if(noG())v='<b>No gravity, no dome.</b> Nothing holds the air and it leaves. Gas does need something to keep it. The question is which thing, and the measured fall of pressure with height answers it.';
+  else if(dome())v='<b>Dome and gravity.</b> The profile is the one gravity sets. The dome sits at '+fmtLen(st.h)+' holding '+fmtN(pTop/st.pG*100,3)+'% of ground pressure'+(pTop/st.pG<1e-3?', which is next to nothing: it is not what keeps the air down.':'.');
+  else if(st.h/Hh<0.01)v='<b>Open column, '+fmtLen(st.h)+' tall.</b> Inside and outside are at the same pressure, so the walls carry no load. Untick the walls: nothing happens. The air above the frame is what balances the air in it.';
+  else v='<b>Open column, '+fmtLen(st.h)+' tall.</b> Inside and outside fall off together, to '+fmtN(Math.exp(-st.h/Hh)*100,3)+'% of ground pressure at the top. The walls never mattered; gravity sets the profile'+(st.h/Hh>8?', and at this height there is almost nothing left for a lid to hold.':'.');
+  $('t4Verdict').innerHTML=v;
+  $('t4hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
+}
+let frame=0;
+function tick(){
+  if(ACTIVE!==4){requestAnimationFrame(tick);return;}
+  if(st.playing)advance();
+  cIn.fill(0);cOut.fill(0);
+  for(let i=0;i<sim.n;i++){let b=(sim.z[i]/sim.dzb)|0;if(b>=NB)b=NB-1;if(b<0)b=0;(Math.abs(sim.x[i])<WX?cIn:cOut)[b]++;}
+  const a=st.emaInit?0.03:1;for(let i=0;i<NB;i++){eIn[i]+=a*(cIn[i]-eIn[i]);eOut[i]+=a*(cOut[i]-eOut[i]);}st.emaInit=true;
+  forces();draw();
+  if(frame++%6===0)readouts();
+  requestAnimationFrame(tick);
+}
+read(true);tick();
+})();}
+</script>
+</body>
+</html>
