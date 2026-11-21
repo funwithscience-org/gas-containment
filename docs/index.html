@@ -69,6 +69,10 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
 .balance .forces{border-top:1px solid var(--line);padding-top:10px}
 .frow{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:13.5px;margin:4px 0}
 .frow i{font-style:normal;margin-right:4px} .frow .up{color:var(--ok)} .frow .dn{color:var(--steel)} .frow .wt{color:#fff}
+.fig{margin:0;max-width:82ch}
+.fig img{display:block;width:100%;height:auto;border-radius:6px;border:1px solid var(--line)}
+.fig figcaption{font-size:14px;color:var(--muted);margin-top:8px}
+.fig figcaption b{color:var(--fg)}
 .cmp{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin:6px 0;font-variant-numeric:tabular-nums}
 .cmp th{text-align:left;font-weight:600;color:var(--fg);padding:4px 8px 6px 0;border-bottom:1px solid var(--line);vertical-align:bottom}
 .cmp th span,.cmp td span{font-weight:400;color:var(--muted);font-size:11px}
@@ -483,6 +487,11 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <p>Start with a metre-tall open column of ordinary air. Inside and outside are the same pressure at every height, so the walls have nothing to hold: untick <b>Column walls</b> and nothing changes. Then make the column taller. The pressure inside falls with height, and the pressure outside falls with it, at the same rate, set by gravity and temperature alone. Remove the walls at any height and the two profiles stay on top of each other.</p>
         <p>The top edge of the picture is open. With gravity on, the air above the frame is real air held down by its own weight, and it sends molecules back down as often as the air below sends them up. Raise the top to 100 km and that traffic stops in both directions: almost nothing gets that high, so there is nothing for a lid to hold.</p>
       </div>
+      <figure class="fig">
+        <a href="pressure-altitude.png"><img src="pressure-altitude.png" alt="Chart of atmospheric pressure against altitude from sea level to low Earth orbit. A NOAA radiosonde trace lies on top of the 1976 US Standard Atmosphere curve, with markers for Denver, Mount Rainier, airliner cruise altitude, a weather balloon at 100,000 feet, weather-radar echo tops, missile-defence intercepts between 50 and 150 km, and satellites between 390 and 554 km." loading="lazy" width="1346" height="1080"></a>
+        <figcaption><b>The measurements behind the green curve.</b> The red dashed trace is a NOAA radiosonde sounding (NCEI IGRA archive), pressure read by an instrument carried up under a balloon. It lies on top of the 1976 Standard Atmosphere for as high as the balloon went. The markers are things that have been tracked at those heights: weather balloons, radar echo tops, interceptor missiles and satellites. Pressure keeps falling the whole way and reaches no step, floor or boundary. Click the chart for full size.</figcaption>
+      </figure>
+
       <div class="note">
         <span class="k">What a dome would look like</span>
         <p>Tick <b>Add a dome</b> and <b>Gravity off</b> to see the alternative. A dome with no gravity is a sealed container: the gas spreads evenly and the pressure is the same at every height, as tab 1 showed for any bench-sized vessel. That predicts sea-level pressure on the summit of Everest and at the top of a weather balloon's flight. The observed values are about a third and about one percent.</p>
@@ -1524,7 +1533,7 @@ function readouts(){
     :'Not balanced: the air is still moving.';
   $('t4Cmp').innerHTML=ALT.map(([n,z])=>{const m=stdAtm(z),gp=st.pG*Math.exp(-z/Hh);
     return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+fmtP(gp)+'</td></tr>';}).join('');
-  $('t4CmpEq').innerHTML='Standard atmosphere: the 1976 US Standard, a mid-latitude yearly average built from balloon and rocket soundings; a given day and place differs by a few percent (measured on Everest\'s summit: 33.7 kPa). "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
+  $('t4CmpEq').innerHTML='Standard atmosphere: the 1976 US Standard, a mid-latitude yearly average built from balloon and rocket soundings; a given day and place differs by a few percent (measured on Everest\'s summit: 33.7 kPa). The chart below shows a radiosonde sounding lying on the same curve. "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
   let v;
   if(noG()&&dome())v='<b>Dome, no gravity.</b> A sealed box: the gas spreads evenly and reads '+fmtP(st.pG)+' at every height. Barometers on mountains, aircraft and balloons do not read that.';
   else if(noG())v='<b>No gravity, no dome.</b> Nothing holds the air and it leaves. Gas does need something to keep it. The question is which thing, and the measured fall of pressure with height answers it.';
