@@ -227,8 +227,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         </div>
       </div>
       <hr>
-      <div class="ctl"><div class="row"><label for="sSize">Apparatus height</label><span class="val" id="vSize"></span></div><input type="range" id="sSize" min="0" max="10000" value="900"><div class="hint">Logarithmic, 10 cm to 20 km. Resets the run.</div></div>
-      <div class="ctl"><div class="row"><label for="sG">Gravity</label><span class="val" id="vG"></span></div><input type="range" id="sG" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Acts live.</div></div>
+      <div class="ctl"><div class="row"><label for="sSize">Apparatus height</label><span class="val" id="vSize"></span></div><input type="range" id="sSize" min="0" max="100000" value="9001"><div class="hint">Logarithmic, 10 cm to 20 km. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="sG">Gravity</label><span class="val" id="vG"></span></div><input type="range" id="sG" min="0" max="100000" value="16667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Acts live.</div></div>
       <div class="ctl"><div class="row"><label for="sP">Bromine starting pressure</label><span class="val" id="vP"></span></div><input type="range" id="sP" min="5" max="200" value="23"><div class="hint">Bromine's own vapour pressure at 20 °C is about 23 kPa.</div></div>
       <div class="ctl"><div class="row"><label for="sA">Air in the top bulb</label><span class="val" id="vA"></span></div><input type="range" id="sA" min="0" max="101" value="0"><div class="hint">0 is a vacuum. 101 kPa is one atmosphere.</div></div>
       <div class="ctl"><div class="row"><label for="sT">Temperature</label><span class="val" id="vT"></span></div><input type="range" id="sT" min="200" max="600" value="293"><div class="hint">Sets molecular speed. Acts live through the walls.</div></div>
@@ -296,12 +296,12 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       </div>
       <div class="note steel">
         <span class="k">Their side of it</span>
-        <p>"You still have a lid." True, and at bench height the lid matters: open a 1.2 m cylinder at 200 atmospheres and the gas leaves at once. The point of this tab is narrower. Flat-earth arguments usually treat pressure in a container as one number, with gravity playing no part. The tank shows gravity acting on contained gas and producing a gradient, and it shows the load on the lid falling toward zero as the tank grows. Whether the lid can then be removed altogether is tab 4's question.</p>
+        <p>"You still have a lid." True, and at bench height the lid matters: open a 1.2 m cylinder at 200 bar and the gas rushes out until it is down to the pressure of the room. The point of this tab is narrower. Flat-earth arguments usually treat pressure in a container as one number, with gravity playing no part. The tank shows gravity acting on contained gas and producing a gradient, and it shows the load on the lid falling toward zero as the tank grows. Whether the lid can then be removed altogether is tab 4's question.</p>
         <p>"Nobody builds a 50 km tank." Also true. The same gradient is what a barometer or an altimeter reads on the way up a tall building or a mountain, and that air is not in a tank at all.</p>
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
-        <p>Same engine as tab 1: ballistic dots, real gravity, walls at one temperature, pressure counted from the dots. The vertical axis is to scale. The width is not: the tank is drawn wide enough to see into at every height, and the horizontal direction plays no part in any number shown. The number of dots is fixed, so each dot stands for more molecules as you raise the fill pressure. The gas is ideal and isothermal, and gravity is constant with height. At 200 atmospheres real nitrogen departs from the ideal-gas law by several percent, which shifts the mass of gas slightly and leaves the shape of the gradient alone.</p>
+        <p>Same engine as tab 1: ballistic dots, real gravity, walls at one temperature, pressure counted from the dots. The vertical axis is to scale. The width is not: the tank is drawn wide enough to see into at every height, and the horizontal direction plays no part in any number shown. The number of dots is fixed, so each dot stands for more molecules as you raise the fill pressure. The gas is ideal and isothermal, and gravity is constant with height. At 200 bar real nitrogen departs from the ideal-gas law by several percent, which shifts the mass of gas slightly and leaves the shape of the gradient alone. In the tallest tanks at that fill the floor pressure passes 1,000 bar, where no real gas is close to ideal; lower the fill pressure for a realistic tall case.</p>
       </div>
     </div>
 
@@ -328,9 +328,9 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       </div>
       <label class="check"><input type="checkbox" id="t2Arrows" checked> Show force arrows</label>
       <hr>
-      <div class="ctl"><div class="row"><label for="t2Size">Tank height</label><span class="val" id="t2vSize"></span></div><input type="range" id="t2Size" min="0" max="10000" value="717"><div class="hint">Logarithmic, 50 cm to 100 km. Acts live.</div></div>
-      <div class="ctl"><div class="row"><label for="t2G">Gravity</label><span class="val" id="t2vG"></span></div><input type="range" id="t2G" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Acts live.</div></div>
-      <div class="ctl"><div class="row"><label for="t2P">Fill pressure</label><span class="val" id="t2vP"></span></div><input type="range" id="t2P" min="0" max="1000" value="1000"><div class="hint">Average pressure of the gas at 20 °C. A full industrial cylinder is about 20,000 kPa (200 atm).</div></div>
+      <div class="ctl"><div class="row"><label for="t2Size">Tank height</label><span class="val" id="t2vSize"></span></div><input type="range" id="t2Size" min="0" max="100000" value="7173"><div class="hint">Logarithmic, 50 cm to 100 km. Acts live.</div></div>
+      <div class="ctl"><div class="row"><label for="t2G">Gravity</label><span class="val" id="t2vG"></span></div><input type="range" id="t2G" min="0" max="100000" value="16667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Acts live.</div></div>
+      <div class="ctl"><div class="row"><label for="t2P">Fill pressure</label><span class="val" id="t2vP"></span></div><input type="range" id="t2P" min="0" max="1000" value="1000"><div class="hint">Average pressure of the gas at 20 °C. A full industrial cylinder is about 20,000 kPa (200 bar).</div></div>
       <div class="ctl"><div class="row"><label for="t2Slab">Slab position</label><span class="val" id="t2vSlab"></span></div><input type="range" id="t2Slab" min="8" max="67" value="35"><div class="hint">Where in the tank to test the force balance.</div></div>
       <div class="ctl"><div class="row"><label for="t2T">Temperature</label><span class="val" id="t2vT"></span></div><input type="range" id="t2T" min="200" max="600" value="293"><div class="hint">Sets molecular speed. Acts live through the walls.</div></div>
       <div class="ctl"><div class="row"><label for="t2Spd">Playback speed</label><span class="val" id="t2vSpd"></span></div><input type="range" id="t2Spd" min="-2" max="2" step="1" value="0"><div class="hint" id="t2hSpd"></div></div>
@@ -352,7 +352,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <div class="eq" id="t3PinEq"></div>
         </div>
         <div class="cell hold">
-          <div class="lab">Pressure just above the rim, from the atmosphere</div>
+          <div class="lab">Total pressure just above the rim</div>
           <div class="big" id="t3Pout">—</div>
           <div class="eq" id="t3PoutEq"></div>
         </div>
@@ -383,17 +383,17 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="k">What to notice</span>
         <p>Carbon dioxide and sulfur hexafluoride will sit in an open fish tank for many minutes with no lid. The reason is on the two top readouts: the gas in the tank and the air above it are at the same pressure. There is no unbalanced push at the rim, so nothing rushes out. Compare tab 1, where the gas faced a vacuum and the full pressure was unbalanced.</p>
         <p>Press <b>Remove the air</b> and the heavy gas is gone in an instant, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it spreading upward is the atmosphere pressing down on it.</p>
-        <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. Being denser than air keeps the gas low and stops it being stirred out, but at fish-tank size gravity cannot hold it there for ever. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
+        <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. In a real tank, being denser than air also keeps the gas low and stops it being stirred out (the model does not show that part), but at fish-tank size gravity cannot hold it there for ever. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
       </div>
       <div class="note steel">
         <span class="k">Their side of it</span>
         <p>"So the gas does escape without a lid." At this size, yes, eventually, and the page shows it. An open tank of heavy gas is temporary. The claim being tested is narrower: that gas pressure always needs a solid barrier to oppose it. Here the barrier on top is another gas, and it works because it pushes back just as hard.</p>
-        <p>"Then why doesn't the atmosphere sort itself into layers, heaviest at the bottom?" Below about 100 km wind and convection stir the air far faster than gravity can sort it, so the mix is nearly uniform. Above that height stirring stops and the gases do separate by weight, with the lightest reaching highest. Both regimes are measured.</p>
+        <p>"Then why doesn't the atmosphere sort itself into layers, heaviest at the bottom?" Below about 100 km turbulence stirs the air far faster than gravity can sort it, so the mix is nearly uniform. Above that height stirring stops and the gases do separate by weight, with the lightest reaching highest. Both regimes are measured.</p>
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
         <p>The outer edges of the picture are open air, not walls: a dot that crosses an edge is gone, and the surrounding air sends dots in at the rate its pressure dictates. Heavy-gas dots that leave do not come back, as if the room were large.</p>
-        <p>Mixing speed is not to scale. Dots in this model travel a few percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre. The model empties a 30 cm tank in a fraction of a second of real time, where a real, undisturbed tank takes hours by diffusion alone (the estimate is shown in the readout) and minutes in a room with draughts. The model also has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, and where the gas ends up.</p>
+        <p>Mixing speed is not to scale. Dots in this model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre. The model empties a 30 cm tank in a fraction of a second of real time, where a real, undisturbed tank takes of the order of an hour or more by diffusion alone (the estimate is shown in the readout) and minutes in a room with draughts. The model also has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, and where the gas ends up.</p>
       </div>
     </div>
     <aside class="controls">
@@ -417,9 +417,9 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         </div>
       </div>
       <hr>
-      <div class="ctl"><div class="row"><label for="t3Size">Container depth</label><span class="val" id="t3vSize"></span></div><input type="range" id="t3Size" min="0" max="10000" value="954"><div class="hint">Logarithmic, 10 cm to 10 km. Resets the run.</div></div>
-      <div class="ctl"><div class="row"><label for="t3G">Gravity</label><span class="val" id="t3vG"></span></div><input type="range" id="t3G" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
-      <div class="ctl"><div class="row"><label for="t3P">Heavy gas starting pressure</label><span class="val" id="t3vP"></span></div><input type="range" id="t3P" min="10" max="200" value="101"><div class="hint">Poured in gently, it starts at the pressure of the air around it.</div></div>
+      <div class="ctl"><div class="row"><label for="t3Size">Container depth</label><span class="val" id="t3vSize"></span></div><input type="range" id="t3Size" min="0" max="100000" value="9542"><div class="hint">Logarithmic, 10 cm to 10 km. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t3G">Gravity</label><span class="val" id="t3vG"></span></div><input type="range" id="t3G" min="0" max="100000" value="16667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t3P">Heavy gas starting pressure</label><span class="val" id="t3vP"></span></div><input type="range" id="t3P" min="10" max="200" value="101"><div class="hint">Average pressure of the heavy gas in the tank at the start. Poured in gently at bench size, it matches the air outside.</div></div>
       <div class="ctl"><div class="row"><label for="t3A">Atmospheric pressure outside</label><span class="val" id="t3vA"></span></div><input type="range" id="t3A" min="0" max="200" value="101"><div class="hint">0 is a vacuum. 101 kPa is one atmosphere.</div></div>
       <div class="ctl"><div class="row"><label for="t3T">Temperature</label><span class="val" id="t3vT"></span></div><input type="range" id="t3T" min="200" max="600" value="293"><div class="hint">Resets the run.</div></div>
       <div class="ctl"><div class="row"><label for="t3Spd">Playback speed</label><span class="val" id="t3vSpd"></span></div><input type="range" id="t3Spd" min="-2" max="2" step="1" value="0"><div class="hint" id="t3hSpd"></div></div>
@@ -434,7 +434,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="a">air inside the column</span>
         <span class="t" style="color:#f0b35b">air outside the column</span>
         <span class="t">this model's law, P₀·e^(−z/H)</span>
-        <span class="t" style="color:#7fd3a4">measured atmosphere (1976 US Standard)</span>
+        <span class="t" style="color:#7fd3a4">standard atmosphere (1976, average of soundings)</span>
       </div>
       <div class="balance">
         <div class="cell push">
@@ -468,9 +468,9 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <div class="eq" id="t4Note"></div>
         </div>
         <div class="cell head forces">
-          <div class="lab">Three ideas, one set of measurements · air pressure at real altitudes</div>
+          <div class="lab">Three ideas against the measured atmosphere · air pressure at real altitudes</div>
           <table class="cmp">
-            <thead><tr><th>Altitude</th><th>Measured</th><th>Gravity, no dome<br><span>this model at the temperature set</span></th><th>Dome, no gravity<br><span>gas simply fills the container</span></th><th>Dome and gravity<br><span>dome at the height set below</span></th></tr></thead>
+            <thead><tr><th>Altitude</th><th>Standard atmosphere<br><span>average of measurements</span></th><th>Gravity, no dome<br><span>this model at the temperature set</span></th><th>Dome, no gravity<br><span>gas simply fills the container</span></th><th>Dome and gravity<br><span>anywhere below the dome</span></th></tr></thead>
             <tbody id="t4Cmp"></tbody>
           </table>
           <div class="eq" id="t4CmpEq"></div>
@@ -485,19 +485,19 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       </div>
       <div class="note">
         <span class="k">What a dome would look like</span>
-        <p>Tick <b>Add a dome</b> and <b>Gravity off</b> to see the alternative. A dome with no gravity is a sealed container: the gas spreads evenly and the pressure is the same at every height, as tab 1 showed for any bench-sized vessel. That predicts sea-level pressure on the summit of Everest and at the top of a weather balloon's flight. The measured values are about a third and about one percent.</p>
-        <p>Tick the dome with gravity left on and the profile is the one you had without it. The gradient comes from the weight of the air, dome or no dome, and the dome is left carrying whatever pressure remains at its height. Put it at 100 km and that is about a third of a millionth of sea-level pressure, on a structure nobody has detected. With gravity present the dome explains nothing that gravity has not already explained; without gravity the dome predicts a uniform atmosphere that no barometer agrees with.</p>
+        <p>Tick <b>Add a dome</b> and <b>Gravity off</b> to see the alternative. A dome with no gravity is a sealed container: the gas spreads evenly and the pressure is the same at every height, as tab 1 showed for any bench-sized vessel. That predicts sea-level pressure on the summit of Everest and at the top of a weather balloon's flight. The observed values are about a third and about one percent.</p>
+        <p>Tick the dome with gravity left on and the profile is the one you had without it. The gradient comes from the weight of the air, dome or no dome, and the dome is left carrying whatever pressure remains at its height. Put it at 100 km and the pressure left is a few millionths of sea level in this constant-temperature model (0.7 Pa), and about a third of a millionth in the real, colder atmosphere (0.03 Pa), on a structure nobody has detected. With gravity present the dome explains nothing that gravity has not already explained; without gravity the dome predicts a uniform atmosphere that no barometer agrees with.</p>
         <p>Turn gravity off without a dome and the air leaves. That much of the flat-earth argument is right: gas does need something to hold it. The candidates are a container or gravity, and the measured fall of pressure with height is what tells them apart.</p>
       </div>
       <div class="note steel">
         <span class="k">Their side of it</span>
-        <p>"The gradient is caused by density and buoyancy, not gravity." Density sorting needs a direction to sort along and a force to do the sorting. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 7 to 8 km, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
+        <p>"The gradient is caused by density and buoyancy, not gravity." Density sorting needs a direction to sort along and a force to do the sorting. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 6 to 8.5 km depending on the temperature of the layer, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
         <p>"The dome could be very high, where the pressure is tiny, so you would never notice it." Then it is doing no containing, which was the original claim. The argument started as "gas pressure requires a container" and has become "there may be a container where there is no pressure left to contain".</p>
-        <p>"Your model's line misses the measured points." It does, by the amount you would expect: this model holds the air at one temperature, and the real atmosphere is colder aloft than at the ground. Set the temperature to about 230 K, the average over the lowest 30 km, and the two nearly coincide.</p>
+        <p>"Your model's line misses the standard curve." It does, by the amount you would expect: this model holds the air at one temperature, and the real atmosphere is colder aloft than at the ground. Set the temperature to about 230 K, the average over the lowest 30 km, and the line meets the standard curve at the ground and at 30 km and stays within about 13% in between. A single temperature cannot do better, because the real air is warm at the bottom and cold above.</p>
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
-        <p>Open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The measured curve is the 1976 US Standard Atmosphere, a fit to balloon and rocket soundings, shown up to 85 km. Gravity is held constant with height and the air is ideal and at one temperature.</p>
+        <p>Open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The green curve is the 1976 US Standard Atmosphere, an agreed mid-latitude average built from balloon and rocket soundings, shown up to 86 km. Real days and latitudes differ from it by a few percent. Gravity is held constant with height and the air is ideal and at one temperature.</p>
       </div>
     </div>
     <aside class="controls">
@@ -519,8 +519,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         </div>
       </div>
       <hr>
-      <div class="ctl"><div class="row"><label for="t4Size">Column height</label><span class="val" id="t4vSize"></span></div><input type="range" id="t4Size" min="0" max="10000" value="537"><div class="hint">Logarithmic, 50 cm to 200 km. Also the height of the dome. Resets the run.</div></div>
-      <div class="ctl"><div class="row"><label for="t4G">Gravity</label><span class="val" id="t4vG"></span></div><input type="range" id="t4G" min="0" max="10000" value="1667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t4Size">Column height</label><span class="val" id="t4vSize"></span></div><input type="range" id="t4Size" min="0" max="100000" value="5374"><div class="hint">Logarithmic, 50 cm to 200 km. Also the height of the dome. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t4G">Gravity</label><span class="val" id="t4vG"></span></div><input type="range" id="t4G" min="0" max="100000" value="16667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
       <div class="ctl"><div class="row"><label for="t4P">Pressure at the ground</label><span class="val" id="t4vP"></span></div><input type="range" id="t4P" min="20" max="200" value="101"><div class="hint">Sea-level air is 101 kPa.</div></div>
       <div class="ctl"><div class="row"><label for="t4T">Temperature</label><span class="val" id="t4vT"></span></div><input type="range" id="t4T" min="180" max="400" value="288"><div class="hint">288 K is the sea-level average; about 230 K is the average over the lowest 30 km.</div></div>
       <div class="ctl"><div class="row"><label for="t4Spd">Playback speed</label><span class="val" id="t4vSpd"></span></div><input type="range" id="t4Spd" min="-2" max="2" step="1" value="0"><div class="hint" id="t4hSpd"></div></div>
@@ -710,19 +710,24 @@ class OpenSim extends Sim{
     const g=this.g,x=this.x,z=this.z,vx=this.vx,vz=this.vz,sp=this.sp,S=this.S,gr=this.grav,wx=g.wallX,wz=g.wallZ;
     const sig=this._sig||(this._sig=new Float64Array(SPECIES.length));for(let k=0;k<SPECIES.length;k++)sig[k]=this.sigma(k);
     const ray=()=>Math.sqrt(-2*Math.log(1-Math.random()));
+    // After a dot is re-emitted by a wall (or injected), let it fly a random part of the step. Parking it on the wall
+    // lets a collision randomise it before it moves, and frequent collisions then pump heat in at the boundary.
+    const fly=i=>{const r=Math.random()*dt,xb=x[i];x[i]+=vx[i]*r/S;z[i]+=(vz[i]*r-0.5*gr*r*r)/S;vz[i]-=gr*r;
+      if(wz>0&&z[i]<wz&&((xb-wx)*(x[i]-wx)<0||(xb+wx)*(x[i]+wx)<0))x[i]=xb;
+      if(z[i]<0)z[i]=1e-6;};
     for(let i=this.n-1;i>=0;i--){
       const px=x[i],pz=z[i],sg=sig[sp[i]];
       x[i]+=vx[i]*dt/S; z[i]+=(vz[i]*dt-0.5*gr*dt*dt)/S; vz[i]-=gr*dt;
       const eps=Math.min(1e-4,0.01*sg*sg/(gr*S+1e-300));
       if(wz>0)for(let k=-1;k<=1;k+=2){const w=k*wx;
-        if((px-w)*(x[i]-w)<0&&pz+(z[i]-pz)*(w-px)/(x[i]-px)<wz){const sgn=px<w?-1:1;x[i]=w+sgn*1e-4;vx[i]=sgn*sg*ray();vz[i]=sg*gauss();}}
-      if(z[i]<0){z[i]=eps;vz[i]=sg*ray();vx[i]=sg*gauss();}
+        if((px-w)*(x[i]-w)<0&&pz+(z[i]-pz)*(w-px)/(x[i]-px)<wz){const sgn=px<w?-1:1;x[i]=w+sgn*1e-4;vx[i]=sgn*sg*ray();vz[i]=sg*gauss();fly(i);}}
+      if(z[i]<0){z[i]=eps;vz[i]=sg*ray();vx[i]=sg*gauss();fly(i);}
       if(x[i]<g.xmin||x[i]>g.xmax){
-        if(this.side==='wall'){const sgn=x[i]<g.xmin?1:-1;x[i]=sgn>0?g.xmin+1e-4:g.xmax-1e-4;vx[i]=sgn*sg*ray();vz[i]=sg*gauss();}
+        if(this.side==='wall'){const sgn=x[i]<g.xmin?1:-1;x[i]=sgn>0?g.xmin+1e-4:g.xmax-1e-4;vx[i]=sgn*sg*ray();vz[i]=sg*gauss();fly(i);}
         else{this.kill(i);continue;}
       }
       if(z[i]>g.zmax){
-        if(this.top==='wall'){z[i]=g.zmax-eps;vz[i]=-sg*ray();vx[i]=sg*gauss();}
+        if(this.top==='wall'){z[i]=g.zmax-eps;vz[i]=-sg*ray();vx[i]=sg*gauss();fly(i);}
         else{this.outTop++;this.kill(i);continue;}
       }
     }
@@ -730,11 +735,13 @@ class OpenSim extends Sim{
       // Inflow from the gas beyond an open edge: flux = n·σ/√(2π) per unit length, with n following the barometric law.
       const s=this.resS,sg=sig[s],k=S*gr/(sg*sg),f=this.resN0*sg/(S*2.5066282746)*dt,a=k*g.zmax;
       if(this.top==='reservoir'){this.acc[0]+=f*Math.exp(-a)*(g.xmax-g.xmin);
-        while(this.acc[0]>=1&&this.n<this.cap){this.acc[0]--;const i=this.n++;x[i]=g.xmin+Math.random()*(g.xmax-g.xmin);z[i]=g.zmax-1e-4;vz[i]=-sg*ray();vx[i]=sg*gauss();sp[i]=s;this.inTop++;}}
+        while(this.acc[0]>=1&&this.n<this.cap){this.acc[0]--;const i=this.n++;x[i]=g.xmin+Math.random()*(g.xmax-g.xmin);z[i]=g.zmax-1e-4;vz[i]=-sg*ray();vx[i]=sg*gauss();sp[i]=s;this.inTop++;fly(i);}
+        if(this.n>=this.cap)this.acc[0]=Math.min(this.acc[0],2);}
       if(this.side==='reservoir'){const len=a<1e-6?g.zmax:(1-Math.exp(-a))/k;
         for(let q=0;q<2;q++){this.acc[1+q]+=f*len;
           while(this.acc[1+q]>=1&&this.n<this.cap){this.acc[1+q]--;const i=this.n++,u=Math.random();
-            z[i]=(a<1e-6?u:-Math.log(1-u*(1-Math.exp(-a)))/a)*g.zmax;x[i]=q?g.xmax-1e-4:g.xmin+1e-4;vx[i]=(q?-1:1)*sg*ray();vz[i]=sg*gauss();sp[i]=s;}}}
+            z[i]=(a<1e-6?u:-Math.log(1-u*(1-Math.exp(-a)))/a)*g.zmax;x[i]=q?g.xmax-1e-4:g.xmin+1e-4;vx[i]=(q?-1:1)*sg*ray();vz[i]=sg*gauss();sp[i]=s;fly(i);}
+          if(this.n>=this.cap)this.acc[1+q]=Math.min(this.acc[1+q],2);}}
     }
     this.collide(dt);
   }
@@ -746,7 +753,7 @@ if(typeof document!=='undefined'){
 var ACTIVE=1;
 var $=id=>document.getElementById(id);
 var sup=e=>String(e).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]);
-var fmtN=(v,sig=3)=>{if(!isFinite(v))return'∞';if(v===0)return'0';var a=Math.abs(v);
+var fmtN=(v,sig=3)=>{if(!isFinite(v))return'∞';if(v===0)return'0';v=Number(v.toPrecision(sig));var a=Math.abs(v);
   if(a>=1e7||a<1e-3)return v.toExponential(sig-1).replace('e+','e').replace(/e(-?\d+)/,(m,e)=>' × 10'+sup(e));
   var d=Math.max(0,sig-1-Math.floor(Math.log10(a)));return v.toLocaleString('en-GB',{maximumFractionDigits:d,minimumFractionDigits:0});};
 var fmtLen=m=>m>=1000?fmtN(m/1000)+' km':m>=1?fmtN(m)+' m':m>=0.01?fmtN(m*100)+' cm':fmtN(m*1000)+' mm';
@@ -754,7 +761,7 @@ var fmtP=p=>{var a=Math.abs(p);return a>=1000?fmtN(p/1000)+' kPa':a>=1?fmtN(p)+'
 var fmtAtm=p=>fmtN(p/ATM,p/ATM<0.1?2:3)+' atm';
 var fmtTime=s=>s>=3600?fmtN(s/3600)+' h':s>=60?fmtN(s/60)+' min':s>=1?fmtN(s)+' s':s>=1e-3?fmtN(s*1e3)+' ms':fmtN(s*1e6)+' µs';
 
-var fmtF=f=>{var a=Math.abs(f);return a>=1000?fmtN(f/1000)+' kN':a>=1?fmtN(f)+' N':a>=1e-3?fmtN(f*1000)+' mN':fmtN(f)+' N';};
+var fmtF=f=>{var a=Math.abs(f);return a>=1e6?fmtN(f/1e6)+' MN':a>=1000?fmtN(f/1000)+' kN':a>=1?fmtN(f)+' N':a>=1e-3?fmtN(f*1000)+' mN':fmtN(f)+' N';};
 var fmtS=v=>Math.abs(v)<5e-4?'0 J/(mol·K)':(v>0?'+':'−')+fmtN(Math.abs(v))+' J/(mol·K)';
 function drawArrow(ctx,x,y0,y1,col,w){
   const d=y1>y0?1:-1,hd=Math.min(11,Math.abs(y1-y0));
@@ -766,10 +773,11 @@ function drawTag(ctx,txt,x,y,col){
   ctx.font='600 12px JetBrains Mono,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
   const w=ctx.measureText(txt).width;ctx.fillStyle='rgba(5,7,14,.82)';ctx.fillRect(x-4,y-9,w+8,18);ctx.fillStyle=col;ctx.fillText(txt,x,y);
 }
-/* 1976 US Standard Atmosphere, pressure in Pa at height z in metres (layer definitions to 84.852 km, then the tabulated 100 km value; geopotential ≈ geometric height). */
+/* 1976 US Standard Atmosphere, pressure in Pa at height z in metres (layer definitions to 84.852 geopotential km = 86 km geometric, then the tabulated 100 km value). */
 function stdAtm(z){
   const b=[0,11000,20000,32000,47000,51000,71000,84852],L=[-0.0065,0,0.001,0.0028,0,-0.0028,-0.002,0],c=0.0341632;
-  if(z>84852)return 0.3734*Math.pow(0.03201/0.3734,(z-84852)/(100000-84852));   // tabulated 100 km value, log-interpolated
+  if(z>86000)return 0.3734*Math.pow(0.03201/0.3734,(z-86000)/(100000-86000));   // tabulated 100 km value, log-interpolated
+  z=6356766*z/(6356766+z);   // geometric height to geopotential height
   let T=288.15,P=101325;
   for(let i=0;i<8;i++){const top=i<7?Math.min(z,b[i+1]):z,dh=top-b[i];if(dh<=0)break;
     if(L[i]===0)P*=Math.exp(-c*dh/T);else{const T2=T+L[i]*dh;P*=Math.pow(T/T2,c/L[i]);T=T2;}
@@ -809,11 +817,11 @@ function reset(){
 }
 
 /* Sliders */
-const sizeFrom=t=>0.1*Math.pow(2e5,t/10000), sizeTo=h=>Math.round(10000*Math.log(h/0.1)/Math.log(2e5));
-const gFrom=t=>0.1*Math.pow(1e6,t/10000), gTo=g=>Math.round(10000*Math.log(g/0.1)/Math.log(1e6));
+const sizeFrom=t=>0.1*Math.pow(2e5,t/100000), sizeTo=h=>Math.round(100000*Math.log(h/0.1)/Math.log(2e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/100000), gTo=g=>Math.round(100000*Math.log(g/0.1)/Math.log(1e6));
 function readSliders(resetting){
   st.h=sizeFrom(+$('sSize').value);
-  let g=gFrom(+$('sG').value); if(Math.abs(Math.log10(g))<0.01)g=1; st.gMul=g;
+  let g=gFrom(+$('sG').value); if(Math.abs(Math.log10(g))<0.003)g=1; st.gMul=g;
   st.pBr=+$('sP').value*1e3; st.pAir=+$('sA').value*1e3; st.T=+$('sT').value; st.speedPow=+$('sSpd').value;
   $('vSize').textContent=fmtLen(st.h);
   $('vG').textContent=fmtN(st.gMul)+' g';
@@ -1097,20 +1105,20 @@ const NDOTS=2500, A_CYL=Math.PI*0.115*0.115;       // real cylinder cross-sectio
 const sim=new Sim(Tank);sim.valveOpen=true;sim.lcol=2;   // more dots than tab 1, so stretch the free path to match
 const NB=sim.NB,cnt=new Float64Array(NB),ema=new Float64Array(NB),theory=new Float64Array(NB);
 const st={h:1.2,gMul:1,pFill:20e6,T:293,gas:2,slab:0.35,speedPow:0,playing:true,emaInit:false};
-const sizeFrom=t=>0.5*Math.pow(2e5,t/10000), sizeTo=h=>Math.round(10000*Math.log(h/0.5)/Math.log(2e5));
-const gFrom=t=>0.1*Math.pow(1e6,t/10000);
+const sizeFrom=t=>0.5*Math.pow(2e5,t/100000), sizeTo=h=>Math.round(100000*Math.log(h/0.5)/Math.log(2e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/100000);
 const pFrom=t=>1e4*Math.pow(2000,t/1000);          // 10 kPa to 20 MPa
 const grav=()=>st.gMul*G0, H=()=>R_GAS*st.T/(SPECIES[st.gas].M*grav());
-const pMean=()=>st.pFill*st.T/T_REF;               // sealed gas: average pressure follows temperature
+const pMean=()=>st.pFill*st.T/293;                 // sealed gas: average pressure follows temperature (fill quoted at 293 K)
 const binP=(c,i)=>c/sim.binArea[i]/(NDOTS/sim.areaTotal)*pMean();
 function reset(){sim.clear();sim.S=st.h/Tank.zmax;sim.T=st.T;sim.grav=grav();sim.add(NDOTS,st.gas,'all');st.emaInit=false;}
 function read(resetting){
-  st.h=sizeFrom(+$('t2Size').value);let g=gFrom(+$('t2G').value);if(Math.abs(Math.log10(g))<0.01)g=1;st.gMul=g;
+  st.h=sizeFrom(+$('t2Size').value);let g=gFrom(+$('t2G').value);if(Math.abs(Math.log10(g))<0.003)g=1;st.gMul=g;
   st.pFill=pFrom(+$('t2P').value);st.T=+$('t2T').value;st.slab=+$('t2Slab').value/100;st.speedPow=+$('t2Spd').value;
   $('t2vSize').textContent=fmtLen(st.h);$('t2vG').textContent=fmtN(st.gMul)+' g';
   $('t2vP').textContent=fmtN(st.pFill/1e3)+' kPa · '+fmtN(st.pFill/ATM)+' atm';
   $('t2vT').textContent=st.T+' K · '+Math.round(st.T-273.15)+' °C';
-  $('t2vSlab').textContent=Math.round(st.slab*100)+'% to '+Math.round(st.slab*100+25)+'% of height';
+  $('t2vSlab').textContent=Math.round(st.slab*100)+'% up, a quarter of the tank thick';
   $('t2vSpd').textContent=(st.speedPow>=0?Math.pow(2,st.speedPow):'1/'+Math.pow(2,-st.speedPow))+'×';
   sim.S=st.h/Tank.zmax;sim.T=st.T;sim.grav=grav();
   if(resetting)reset();
@@ -1121,7 +1129,7 @@ $('t2Play').onclick=()=>{st.playing=!st.playing;$('t2Play').textContent=st.playi
 function legend(){$('t2Leg').textContent=SPECIES[st.gas].name.toLowerCase()+' ('+fmtN(SPECIES[st.gas].M*1000)+' g/mol)';$('t2Leg').style.color=SPECIES[st.gas].color;}
 document.querySelectorAll('#t2Gas [data-gas]').forEach(b=>b.onclick=()=>{st.gas=+b.dataset.gas;
   document.querySelectorAll('#t2Gas .btn').forEach(o=>o.classList.toggle('on',o===b));legend();reset();});
-document.querySelectorAll('[data-t2]').forEach(b=>b.onclick=()=>{$('t2Size').value=sizeTo(+b.dataset.t2);$('t2G').value=1667;read(true);});
+document.querySelectorAll('[data-t2]').forEach(b=>b.onclick=()=>{$('t2Size').value=sizeTo(+b.dataset.t2);$('t2G').value=16667;read(true);});
 
 let realPerScreenSec=0;
 function advance(){
@@ -1156,7 +1164,7 @@ function tag(txt,x,y,col){
 /* Slab force balance from the counted layers: pressure in the layers at its lower face, at its upper face, weight summed through it. */
 const FB={up:0,dn:0,wt:0,net:0,noise:0,b0:0,b1:0};
 function forces(){
-  const b0=Math.round(st.slab*NB),b1=b0+Math.round(0.25*NB),win=Math.max(1,Math.min(6,Math.round(0.5*H()/(sim.dzb*sim.S))));
+  const b0=Math.round(st.slab*NB),b1=b0+Math.floor(0.25*NB),win=Math.max(1,Math.min(6,Math.round(0.5*H()/(sim.dzb*sim.S))));
   const band=(a,b)=>{let n=0;for(let i=a;i<b;i++)n+=ema[i];return {p:binP(n/(b-a),a),n};};
   const lo=band(b0-win,b0+win),hi=band(b1-win,b1+win);let w=0;
   for(let i=b0;i<b1;i++)w+=binP(ema[i],i)*SPECIES[st.gas].M/(R_GAS*st.T)*grav()*sim.dzb*sim.S;
@@ -1224,7 +1232,7 @@ function readouts(){
   $('t2Verdict').innerHTML=x<0.01
     ?'At <b>'+fmtLen(st.h)+'</b> the gradient is real but tiny: the floor is '+fmtN(x*100,2)+'% denser than the lid. A bench-sized container hides gravity\'s effect on gas; it does not switch it off.'
     :x<1?'At <b>'+fmtLen(st.h)+'</b> the lid sees <b>'+fmtN(lidPct)+'%</b> of the floor pressure. Same sealed tank, same gas: gravity alone made the difference.'
-    :'At <b>'+fmtLen(st.h)+'</b> the lid sees only <b>'+fmtN(lidPct,2)+'%</b> of the floor pressure. Most of the gas never gets near it. The weight of the gas is doing most of the containing, and the lid '+(lidPct<1?'almost none.':'the rest.');
+    :'At <b>'+fmtLen(st.h)+'</b> the lid sees only <b>'+fmtN(lidPct,2)+'%</b> of the floor pressure. At any moment most of the gas is far below it. Of the force on the floor, <b>'+fmtN(100-lidPct,3)+'%</b> is the weight of the gas and only '+fmtN(lidPct,2)+'% is passed down from the lid.';
   $('t2hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
 }
 let frame=0;
@@ -1245,26 +1253,28 @@ if(typeof document!=='undefined'){(function(){
 const NREF=260;                                   // dots per unit² per atm at 20 °C
 const geo=Object.assign({},OpenBox,{wallX:0.7,wallZ:1.6,cell:0.1}),sim=new OpenSim(geo);sim.lcol=0.05;sim.dcol=0.1;   // frequent collisions: mixing is slow next to free flight
 const NB=sim.NB,WX=geo.wallX,WZ=geo.wallZ,RIM=Math.round(WZ/sim.dzb),ABIN=2*WX*sim.dzb;
-const cnt=[new Float64Array(NB),new Float64Array(NB)],ema=[new Float64Array(NB),new Float64Array(NB)];
+const cnt=[new Float64Array(NB),new Float64Array(NB)],ema=[new Float64Array(NB),new Float64Array(NB)],emaS=[new Float64Array(NB),new Float64Array(NB)];
 const D_REAL={5:1.6e-5,6:0.9e-5};                 // diffusion coefficient in air at 1 atm, m²/s (approximate)
 const st={d:0.3,gMul:1,pPool:101e3,pAir:101e3,T:293,gas:6,speedPow:0,playing:true,emaInit:false,n0:1,simTime:0,half:null};
-const sizeFrom=t=>0.1*Math.pow(1e5,t/10000),sizeTo=d=>Math.round(10000*Math.log(d/0.1)/Math.log(1e5));
-const gFrom=t=>0.1*Math.pow(1e6,t/10000),gTo=g=>Math.round(10000*Math.log(g/0.1)/Math.log(1e6));
+const sizeFrom=t=>0.1*Math.pow(1e5,t/100000),sizeTo=d=>Math.round(100000*Math.log(d/0.1)/Math.log(1e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/100000),gTo=g=>Math.round(100000*Math.log(g/0.1)/Math.log(1e6));
 const grav=()=>st.gMul*G0,Hs=s=>R_GAS*st.T/(SPECIES[s].M*grav());
 const toP=c=>c/ABIN/NREF*(st.T/T_REF)*ATM;
 function reset(){
   sim.clear();sim.S=st.d/WZ;sim.T=st.T;sim.grav=grav();sim.side='reservoir';sim.top='reservoir';sim.resS=1;
   const k=T_REF/st.T,nA=st.pAir/ATM*NREF*k;sim.resN0=nA;sim.acc=[0,0,0];
   sim.place(Math.round(st.pPool/ATM*NREF*k*2*WX*WZ),st.gas,-WX+0.01,WX-0.01,0,WZ);
-  sim.place(Math.round(nA*(geo.xmax-WX)*WZ),1,geo.xmin,-WX-0.01,0,WZ);
-  sim.place(Math.round(nA*(geo.xmax-WX)*WZ),1,WX+0.01,geo.xmax,0,WZ);
-  sim.place(Math.round(nA*(geo.xmax-geo.xmin)*(geo.zmax-WZ)),1,geo.xmin,geo.xmax,WZ,geo.zmax);
+  // air outside starts on the barometric profile it will be held at: n(z) = nA·e^(−kz), integrated over each region
+  const sa=sim.sigma(1),ka=sim.S*sim.grav/(sa*sa),integ=(z0,z1)=>ka<1e-9?z1-z0:(Math.exp(-ka*z0)-Math.exp(-ka*z1))/ka;
+  sim.place(Math.round(nA*(geo.xmax-WX)*integ(0,WZ)),1,geo.xmin,-WX-0.01,0,WZ);
+  sim.place(Math.round(nA*(geo.xmax-WX)*integ(0,WZ)),1,WX+0.01,geo.xmax,0,WZ);
+  sim.place(Math.round(nA*(geo.xmax-geo.xmin)*integ(WZ,geo.zmax)),1,geo.xmin,geo.xmax,WZ,geo.zmax);
   st.n0=Math.max(1,inside());st.emaInit=false;st.simTime=0;st.half=null;
 }
 function inside(){let c=0;for(let i=0;i<sim.n;i++)if(sim.sp[i]===st.gas&&sim.z[i]<WZ&&Math.abs(sim.x[i])<WX)c++;return c;}
 function read(resetting){
-  st.d=sizeFrom(+$('t3Size').value);let g=gFrom(+$('t3G').value);if(Math.abs(Math.log10(g))<0.01)g=1;st.gMul=g;
-  st.pPool=+$('t3P').value*1e3;st.pAir=+$('t3A').value*1e3;st.T=+$('t3T').value;st.speedPow=+$('t3Spd').value;
+  st.d=sizeFrom(+$('t3Size').value);let g=gFrom(+$('t3G').value);if(Math.abs(Math.log10(g))<0.003)g=1;st.gMul=g;
+  const kp=v=>v===101?101325:v*1e3;st.pPool=kp(+$('t3P').value);st.pAir=kp(+$('t3A').value);st.T=+$('t3T').value;st.speedPow=+$('t3Spd').value;
   $('t3vSize').textContent=fmtLen(st.d);$('t3vG').textContent=fmtN(st.gMul)+' g';
   $('t3vP').textContent=fmtN(st.pPool/1e3)+' kPa · '+fmtAtm(st.pPool);
   $('t3vA').textContent=st.pAir===0?'vacuum':fmtN(st.pAir/1e3)+' kPa · '+fmtAtm(st.pAir);
@@ -1294,13 +1304,15 @@ const cv=$('c3'),ctx=cv.getContext('2d');
 const W=820,Hc=600,K=118,CX=158,Y0=572,X=x=>CX+x*K,Y=z=>Y0-z*K;
 function fit(){const dpr=Math.min(window.devicePixelRatio||1,2);cv.width=W*dpr;cv.height=Hc*dpr;cv.style.aspectRatio=W+'/'+Hc;ctx.setTransform(dpr,0,0,dpr,0,0);}
 fit();window.addEventListener('resize',fit);
-const M={in:0,out:0,inH:0,inA:0,noise:0};
+const M={in:0,out:0,inH:0,inA:0,outH:0,outA:0,noise:0};
 function measure(){
-  let h=0,a=0,o=0;const w=6;
-  for(let i=RIM-w;i<RIM;i++){h+=ema[0][i];a+=ema[1][i];}
-  for(let i=RIM;i<RIM+w;i++)o+=ema[0][i]+ema[1][i];
-  M.inH=toP(h/w);M.inA=toP(a/w);M.in=M.inH+M.inA;M.out=toP(o/w);
-  M.noise=Math.sqrt(M.in*M.in/Math.max(h+a,1)+M.out*M.out/Math.max(o,1));
+  // Compare thin bands either side of the rim; thinner still when pressure changes quickly with height.
+  const Hmin=sim.grav>0?Math.min(Hs(st.gas),Hs(1))/sim.S:1e9,w=Math.max(1,Math.min(6,Math.round(0.2*Hmin/sim.dzb)));
+  let h=0,a=0,oh=0,oa=0;
+  for(let i=RIM-w;i<RIM;i++){h+=emaS[0][i];a+=emaS[1][i];}
+  for(let i=RIM;i<RIM+w;i++){oh+=emaS[0][i];oa+=emaS[1][i];}
+  M.inH=toP(h/w);M.inA=toP(a/w);M.in=M.inH+M.inA;M.outH=toP(oh/w);M.outA=toP(oa/w);M.out=M.outH+M.outA;
+  M.noise=Math.sqrt(M.in*M.in/Math.max(h+a,1)+M.out*M.out/Math.max(oh+oa,1))/2;   // halved: the slow average covers several independent looks
 }
 function draw(){
   const col=SPECIES[st.gas].color,yt=Y(geo.zmax),yb=Y(0),xl=X(geo.xmin),xr=X(geo.xmax);
@@ -1342,15 +1354,15 @@ function readouts(){
   $('t3Pin').textContent=fmtP(M.in);$('t3PinEq').innerHTML='heavy gas <b>'+fmtP(M.inH)+'</b> + air <b>'+fmtP(M.inA)+'</b>';
   $('t3Pout').textContent=fmtP(M.out);
   const net=M.in-M.out;
-  $('t3PoutEq').innerHTML='net push at the rim: <b>'+fmtP(Math.abs(net))+(net>0?' outward':' inward')+'</b>'+(Math.abs(net)<3*M.noise?' (within dot-counting noise of ±'+fmtP(M.noise)+', i.e. balanced)':'');
+  $('t3PoutEq').innerHTML='air <b>'+fmtP(M.outA)+'</b> + heavy gas that has crossed <b>'+fmtP(M.outH)+'</b><br>net push at the rim: <b>'+fmtP(Math.abs(net))+(net>0?' outward':' inward')+'</b> ± '+fmtP(M.noise)+' of dot-counting scatter'+(st.pAir>0&&Math.abs(net)<2*M.noise?': balanced':'');
   const left=inside()/st.n0;if(st.half===null&&left<=0.5)st.half=st.simTime;
   $('t3Left').textContent=fmtN(Math.min(100,left*100))+'%';
   const tReal=st.d*st.d/D_REAL[g]*(st.pAir>0?st.pAir/ATM:0);
   $('t3LeftEq').innerHTML='model time since start: <b>'+fmtTime(st.simTime)+'</b>'+(st.half!==null?' · half gone after <b>'+fmtTime(st.half)+'</b>':'')+
-    (st.pAir>0&&st.d<=10?'<br>real still-air estimate, d² / D = <b>'+fmtTime(tReal)+'</b> (D ≈ '+fmtN(D_REAL[g]*1e4,2)+' cm²/s at 1 atm)':'');
+    (st.pAir>0&&st.d<=10&&st.gMul===1?'<br>real tank, still air, time to mostly empty by diffusion alone, d² / D ≈ <b>'+fmtTime(tReal)+'</b> (D ≈ '+fmtN(D_REAL[g]*1e4,2)+' cm²/s at 1 atm; half empty in about a fifth of that)':'');
   const rh=st.pPool*Mh/(R_GAS*st.T),ra=st.pAir*Ma/(R_GAS*st.T);
   $('t3Rho').textContent=fmtN(rh)+' kg/m³';
-  $('t3RhoEq').innerHTML='at its starting pressure · air outside: <b>'+fmtN(ra)+' kg/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+'<br>extra weight per m² of pool, (ρ − ρ<sub>air</sub>)·g·d = <b>'+fmtP((rh-ra)*gr*st.d)+'</b>';
+  $('t3RhoEq').innerHTML='at its average starting pressure · air at the ground outside: <b>'+fmtN(ra)+' kg/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+'<br>weight per m² of the pool, less the weight of the air it displaces: <b>'+fmtP(st.pPool*x-st.pAir*(1-Math.exp(-st.d/Ha)))+'</b>'+(x<0.05?' = (ρ − ρ<sub>air</sub>)·g·d':'');
   $('t3H').textContent=fmtLen(Hh);
   $('t3HEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>'+fmtN(Mh,4)+' kg/mol</b> × <b>'+fmtN(gr)+' m/s²</b>) · air: <b>'+fmtLen(Ha)+'</b>';
   $('t3R').textContent=fmtN(x);
@@ -1358,8 +1370,9 @@ function readouts(){
   $('t3REq').innerHTML='balanced against gravity, the heavy gas at the rim is <b>'+fmtN(Math.exp(-x)*100,x<0.01?5:3)+'%</b> as dense as at the floor (air: '+fmtN(Math.exp(-st.d/Ha)*100,x<0.01?5:3)+'%)';
   let v;
   if(st.pAir===0)v='<b>No atmosphere.</b> Nothing pushes back at the rim, so the full '+fmtP(st.pPool)+' is unbalanced and the gas leaves at once. Sides alone contain nothing.';
+  else if(st.pPool<st.pAir*0.85&&x<0.05)v='The air outside is at higher pressure than the pool, so it pushes into the tank and squeezes the heavy gas down until the two match. After that only slow mixing remains.';
   else if(st.pPool>st.pAir*1.15)v='The pool starts at higher pressure than the air, so the excess pushes out until the two match. After that only slow mixing remains.';
-  else if(x<0.05)v='<b>Pressure balanced at the rim.</b> The atmosphere is doing the job a lid would do. What remains is molecule-by-molecule mixing, which gravity is too weak to prevent at this size (d / H = '+fmtN(x,2)+'): the pool is long-lived but temporary.';
+  else if(x<0.05)v='<b>Pressure balanced at the rim.</b> The atmosphere supplies the push a lid would supply. Unlike a lid it does not stop molecules trading places, so what remains is molecule-by-molecule mixing, which gravity is too weak to prevent at this size (d / H = '+fmtN(x,2)+'): the pool is long-lived but temporary.';
   else if(x<1)v='Pressure balanced at the rim, and gravity is now helping: the heavy gas thins by '+fmtN((1-Math.exp(-x))*100,2)+'% between floor and rim. The pool leaks more slowly the deeper the container.';
   else v='<b>Gravity keeps the heavy gas low.</b> At this depth it is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so very little of it reaches the rim to mix away, and the pool outlasts the bench version many times over. That is sorting by weight under an open top. It is still not permanent: what does cross the rim sinks to the ground outside.';
   $('t3Verdict').innerHTML=v;
@@ -1371,7 +1384,7 @@ function tick(){
   if(st.playing)advance();
   cnt[0].fill(0);cnt[1].fill(0);
   for(let i=0;i<sim.n;i++)if(Math.abs(sim.x[i])<WX){let b=(sim.z[i]/sim.dzb)|0;if(b>=NB)b=NB-1;if(b<0)b=0;cnt[sim.sp[i]===1?1:0][b]++;}
-  const a=st.emaInit?0.08:1;for(let s=0;s<2;s++)for(let i=0;i<NB;i++)ema[s][i]+=a*(cnt[s][i]-ema[s][i]);st.emaInit=true;
+  const a=st.emaInit?0.08:1;const a2=st.emaInit?0.025:1;for(let s=0;s<2;s++)for(let i=0;i<NB;i++){ema[s][i]+=a*(cnt[s][i]-ema[s][i]);emaS[s][i]+=a2*(cnt[s][i]-emaS[s][i]);}st.emaInit=true;
   measure();draw();
   if(frame++%6===0)readouts();
   requestAnimationFrame(tick);
@@ -1385,12 +1398,13 @@ const NT=2600,geo=Object.assign({},OpenBox,{wallX:0.5,wallZ:4.5}),sim=new OpenSi
 const NB=sim.NB,WX=0.5,AIN=2*WX*sim.dzb,AOUT=(geo.xmax-geo.xmin-2*WX)*sim.dzb;
 const cIn=new Float64Array(NB),cOut=new Float64Array(NB),eIn=new Float64Array(NB),eOut=new Float64Array(NB);
 const st={h:1,gMul:1,pG:101325,T:288,speedPow:0,playing:true,emaInit:false,n0:1,outE:0,inE:0,lastOut:0,lastIn:0};
-const sizeFrom=t=>0.5*Math.pow(4e5,t/10000),sizeTo=h=>Math.round(10000*Math.log(h/0.5)/Math.log(4e5));
-const gFrom=t=>0.1*Math.pow(1e6,t/10000);
+const sizeFrom=t=>0.5*Math.pow(4e5,t/100000),sizeTo=h=>Math.round(100000*Math.log(h/0.5)/Math.log(4e5));
+const gFrom=t=>0.1*Math.pow(1e6,t/100000);
 const noG=()=>$('t4NoG').checked,dome=()=>$('t4Dome').checked;
 const grav=()=>noG()?0:st.gMul*G0,H=()=>R_GAS*st.T/(SPECIES[1].M*(st.gMul*G0));
 const toP=(c,area)=>c/area/st.n0*st.pG;
 const law=z=>noG()?st.pG:st.pG*Math.exp(-z/H());
+const lawOn=()=>!(noG()&&!dome());              // with no gravity and no dome there is no steady state to draw
 function modes(){
   sim.grav=grav();geo.wallZ=$('t4Walls').checked?geo.zmax:0;
   sim.top=dome()?'wall':noG()?'vacuum':'reservoir';
@@ -1404,7 +1418,7 @@ function reset(){
   st.emaInit=false;st.outE=st.inE=0;st.lastOut=sim.outTop;st.lastIn=sim.inTop;
 }
 function read(resetting){
-  st.h=sizeFrom(+$('t4Size').value);let g=gFrom(+$('t4G').value);if(Math.abs(Math.log10(g))<0.01)g=1;st.gMul=g;
+  st.h=sizeFrom(+$('t4Size').value);let g=gFrom(+$('t4G').value);if(Math.abs(Math.log10(g))<0.003)g=1;st.gMul=g;
   st.pG=+$('t4P').value===101?101325:+$('t4P').value*1e3;st.T=+$('t4T').value;st.speedPow=+$('t4Spd').value;
   $('t4vSize').textContent=fmtLen(st.h);$('t4vG').textContent=fmtN(st.gMul)+' g';
   $('t4vP').textContent=fmtN(st.pG/1e3)+' kPa · '+fmtAtm(st.pG);
@@ -1419,7 +1433,7 @@ $('t4Dome').addEventListener('change',()=>{if(noG())reset();else modes();});   /
 $('t4NoG').addEventListener('change',reset);
 $('t4Reset').onclick=reset;
 $('t4Play').onclick=()=>{st.playing=!st.playing;$('t4Play').textContent=st.playing?'Pause':'Play';};
-document.querySelectorAll('[data-t4]').forEach(b=>b.onclick=()=>{$('t4Size').value=sizeTo(+b.dataset.t4);$('t4G').value=1667;read(true);});
+document.querySelectorAll('[data-t4]').forEach(b=>b.onclick=()=>{$('t4Size').value=sizeTo(+b.dataset.t4);$('t4G').value=16667;read(true);});
 
 let realPerScreenSec=0;
 function advance(){
@@ -1477,11 +1491,11 @@ function draw(){
   ctx.strokeStyle='#f0b35b';ctx.lineWidth=2;ctx.beginPath();
   for(let i=0;i<NB;i++){const p=px(toP(eOut[i],AOUT));if(i===0)ctx.moveTo(p,Y(0));else ctx.lineTo(p,Y(i*sim.dzb));ctx.lineTo(p,Y((i+1)*sim.dzb));}
   ctx.stroke();
-  ctx.setLineDash([6,5]);ctx.lineWidth=1.5;ctx.strokeStyle='#ffffff';ctx.beginPath();
-  for(let i=0;i<=NB;i++){const xx=px(law(i*sim.dzb*sim.S)),yy=Y(i*sim.dzb);if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}
-  ctx.stroke();
+  if(lawOn()){ctx.setLineDash([6,5]);ctx.lineWidth=1.5;ctx.strokeStyle='#ffffff';ctx.beginPath();
+    for(let i=0;i<=NB;i++){const xx=px(law(i*sim.dzb*sim.S)),yy=Y(i*sim.dzb);if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}
+    ctx.stroke();}
   ctx.setLineDash([2,4]);ctx.lineWidth=2.5;ctx.strokeStyle='#7fd3a4';ctx.beginPath();let pen=false;
-  for(let i=0;i<=NB;i++){const zm=i*sim.dzb*sim.S;if(zm>85000)break;const xx=px(stdAtm(zm)),yy=Y(i*sim.dzb);if(!pen){ctx.moveTo(xx,yy);pen=true;}else ctx.lineTo(xx,yy);}
+  for(let i=0;i<=NB;i++){const zm=i*sim.dzb*sim.S;if(zm>86000)break;const xx=px(stdAtm(zm)),yy=Y(i*sim.dzb);if(!pen){ctx.moveTo(xx,yy);pen=true;}else ctx.lineTo(xx,yy);}
   ctx.stroke();ctx.setLineDash([]);
 }
 const ALT=[['Denver',1609],['Everest summit',8849],['Airliner cruise',11000],['Weather balloon',30000],['Edge of space',100000]];
@@ -1489,8 +1503,9 @@ function readouts(){
   const Hh=H(),sum=(e,a,b)=>{let n=0;for(let i=a;i<b;i++)n+=e[i];return n/(b-a);};
   const gi=toP(sum(eIn,0,9),AIN),go=toP(sum(eOut,0,9),AOUT),ti=toP(sum(eIn,NB-9,NB),AIN),to=toP(sum(eOut,NB-9,NB),AOUT);
   const lawAvg=(a,b)=>{let p=0;for(let i=a;i<b;i++)p+=law((i+.5)*sim.dzb*sim.S);return p/(b-a);};
-  $('t4Pg').textContent=fmtP(gi)+' · '+fmtP(go);$('t4PgEq').innerHTML='bottom 10% of the view, counted from the dots · law: <b>'+fmtP(lawAvg(0,9))+'</b>';
-  $('t4Pt').textContent=fmtP(ti)+' · '+fmtP(to);$('t4PtEq').innerHTML='top 10% of the view, counted from the dots · law: <b>'+fmtP(lawAvg(NB-9,NB))+'</b>';
+  const sc=(e,a,b)=>{let n=0;for(let i=a;i<b;i++)n+=e[i];return fmtN(100/Math.sqrt(Math.max(n,1)),2);};
+  $('t4Pg').textContent=fmtP(gi)+' · '+fmtP(go);$('t4PgEq').innerHTML='bottom 10% of the view, counted from the dots (scatter about ±'+sc(eIn,0,9)+'% inside, ±'+sc(eOut,0,9)+'% outside) · law: <b>'+(lawOn()?fmtP(lawAvg(0,9)):'none: the air is leaving')+'</b>';
+  $('t4Pt').textContent=fmtP(ti)+' · '+fmtP(to);$('t4PtEq').innerHTML='top 10% of the view, counted from the dots (±'+sc(eIn,NB-9,NB)+'%, ±'+sc(eOut,NB-9,NB)+'%) · law: <b>'+(lawOn()?fmtP(lawAvg(NB-9,NB)):'none')+'</b>';
   $('t4H').textContent=noG()?'∞ (gravity off)':fmtLen(Hh);
   $('t4HEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>0.02896 kg/mol</b> × <b>'+fmtN(grav())+' m/s²</b>) · column height ÷ H = <b>'+(noG()?'0':fmtN(st.h/Hh))+'</b>';
   const dO=sim.outTop-st.lastOut,dI=sim.inTop-st.lastIn;st.lastOut=sim.outTop;st.lastIn=sim.inTop;
@@ -1499,16 +1514,17 @@ function readouts(){
   if(dome()){$('t4TopLab').textContent='Load on the dome';$('t4Top').textContent=fmtP(pTop);
     $('t4TopEq').innerHTML='pressure the dome must hold at <b>'+fmtLen(st.h)+'</b>: <b>'+fmtN(pTop/st.pG*100,3)+'%</b> of the ground pressure, or <b>'+fmtF(pTop)+'</b> on every m²';}
   else{$('t4TopLab').textContent='Traffic across the open top edge';$('t4Top').textContent=fmtN(st.outE,2)+' out · '+fmtN(st.inE,2)+' in';
-    $('t4TopEq').innerHTML='dots per second of screen time · air pressure at that height: <b>'+fmtP(sim.top==='vacuum'?0:pTop)+'</b>';}
+    $('t4TopEq').innerHTML='dots per 60 frames · air pressure at that height: <b>'+fmtP(sim.top==='vacuum'?0:pTop)+'</b>';}
   $('t4Up').textContent=fmtF(FB.up);$('t4Dn').textContent=fmtF(FB.dn);$('t4Wt').textContent=fmtF(FB.wt);
   $('t4Net').textContent=fmtF(Math.abs(FB.net))+(FB.net>0?' up':FB.net<0?' down':'');
-  $('t4Note').innerHTML=Math.abs(FB.net)<3*FB.noise+1e-9
+  $('t4Note').innerHTML=noG()?'Gravity is off, so the slab has no weight: the pressure below and above it must be equal, at any height.'
+    :Math.abs(FB.net)<3*FB.noise+1e-9
     ?(FB.wt>FB.noise?'Balanced to within the dot-counting noise (about ±'+fmtF(FB.noise)+'): each layer of air is held up by the layer below and held down by the layer above plus its own weight. No wall or lid appears in that sum.'
       :'Pressure below and above agree to within the dot-counting noise (about ±'+fmtF(FB.noise)+'). The slab\'s weight is real but too small for the dots to resolve at this height.')
     :'Not balanced: the air is still moving.';
   $('t4Cmp').innerHTML=ALT.map(([n,z])=>{const m=stdAtm(z),gp=st.pG*Math.exp(-z/Hh);
-    return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+(z<=st.h?fmtP(gp):z===100000&&st.h<z?'above the dome':'above the dome')+'</td></tr>';}).join('');
-  $('t4CmpEq').innerHTML='Measured: 1976 US Standard Atmosphere. "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
+    return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+fmtP(gp)+'</td></tr>';}).join('');
+  $('t4CmpEq').innerHTML='Standard atmosphere: the 1976 US Standard, a mid-latitude yearly average built from balloon and rocket soundings; a given day and place differs by a few percent (measured on Everest\'s summit: 33.7 kPa). "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
   let v;
   if(noG()&&dome())v='<b>Dome, no gravity.</b> A sealed box: the gas spreads evenly and reads '+fmtP(st.pG)+' at every height. Barometers on mountains, aircraft and balloons do not read that.';
   else if(noG())v='<b>No gravity, no dome.</b> Nothing holds the air and it leaves. Gas does need something to keep it. The question is which thing, and the measured fall of pressure with height answers it.';

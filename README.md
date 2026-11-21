@@ -10,5 +10,6 @@ Four tabs, one particle engine, real units throughout:
 3. **Heavy gas, open top** – why SF₆ or CO₂ sits in an open tank: the atmosphere pushes back at the rim.
 4. **A column of air, and a dome** – walls are irrelevant, the top is open, and what a dome with or without gravity would predict against the measured atmosphere.
 
-Everything is in `index.html`: no build step and no dependencies beyond web fonts. The physics engine at the top of the
-script is DOM-free and can be run under Node for testing.
+The page is `docs/index.html` (served by GitHub Pages from `/docs`): no build step and no dependencies beyond web fonts.
+The physics engine at the top of its script is DOM-free. `tests/run.sh` extracts it and checks its equilibria against the
+barometric law under Node (takes a minute or two).
