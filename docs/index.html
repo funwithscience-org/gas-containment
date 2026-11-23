@@ -209,7 +209,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="k">What the model is, and isn't</span>
         <p>Every dot is a real ballistic particle: it flies in a straight line, falls under the gravity you set, collides with other dots (conserving momentum and energy), and leaves the glass with a speed drawn from the wall temperature. The pressure profile on the right is counted from the dots, never painted on. The dashed line is the textbook prediction, P(z) = P₀·e<sup>−z/H</sup>.</p>
         <p>The simplifications, stated plainly:</p>
-        <p><b>Mixing speed is not to scale.</b> Each dot stands for an enormous number of molecules. The dots travel about a third of a bulb radius between collisions, where real molecules manage about a ten-millionth of a metre. So this model cannot show how slow real diffusion into air is: here it takes roughly twice as long as into a vacuum, while in a real tube it takes tens of minutes. Use the air case for where the gas ends up, not how fast.</p>
+        <p><b>Time into air is converted to real time.</b> Each dot stands for an enormous number of molecules. With air in the apparatus the dots travel about one percent of a bulb radius between collisions, where real molecules manage about a ten-millionth of a metre, so the dots mix tens of thousands of times too fast. Mixing is diffusion in both, so once the two bulbs are at the same pressure the clock is multiplied by the ratio of the two diffusion rates: the model's, measured from its own dots, and the published 0.091 cm²/s for bromine in air at one atmosphere. That gives tens of minutes for the bromine to work its way through, as in the real demonstration linked below. The first moments after the valve opens, while the pressures even out, are flow and run on the plain clock; into a vacuum there is nothing to diffuse through and no conversion is applied.</p>
         <p><b>One temperature throughout.</b> Any individual dot slows as it climbs and speeds up as it falls, but the mix of speeds you find at every height is the same. Only the number thins out. The real lower atmosphere is not isothermal; it cools with height, which changes the numbers but not the argument.</p>
         <p><b>Ideal gas, uniform gravity, 2D.</b> Real bromine would condense above about 23 kPa at 20 °C, or at any pressure shown once it is cold enough; the sliders go beyond that to show the trend. Gravity is held constant with height (real g falls about 0.6% over 20 km). The entropy figures are for this flat flask; a 3D pair of spheres gives slightly different values (about +0.93 and −3.73 at 6 km instead of +0.97 and −3.77) with the same signs. At the most extreme corners, a 20 km flask under thousands of g, the gas is a film thinner than one chart bar and the numbers are approximate.</p>
       </div>
@@ -398,7 +398,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
         <p>The outer edges of the picture are open air, not walls: a dot that crosses an edge is gone, and the surrounding air sends dots in at the rate its pressure dictates. Heavy-gas dots that leave do not come back, as if the room were large.</p>
-        <p>The clock on this tab is converted to real time. Dots in the model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre, so the dots mix roughly twenty thousand times too fast. Mixing is diffusion in both cases, so the model's time is multiplied by the ratio of the two diffusion rates, the model's measured from its own dots and the real one taken from published values (about 0.09 cm²/s for SF₆ in air, 0.16 for CO₂). The result is the time for a perfectly still tank, of the order of half an hour to lose half the gas from a 30 cm tank. Real demonstrations lose it faster, in minutes, because pouring, draughts and moving objects stir it. With the air removed nothing is diffusing and no conversion is applied.</p>
+        <p>The clock on this tab is converted to real time. Dots in the model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre, so the dots mix roughly thirty thousand times too fast. Mixing is diffusion in both cases, so the model's time is multiplied by the ratio of the two diffusion rates, the model's measured from its own dots and the real one taken from published values (about 0.09 cm²/s for SF₆ in air, 0.16 for CO₂). The result is the time for a perfectly still tank, of the order of an hour to lose half the gas from a 30 cm tank. Real demonstrations lose it faster, in minutes, because pouring, draughts and moving objects stir it. With the air removed nothing is diffusing and no conversion is applied.</p>
         <p>Two limits. The first instant after a change, when pressures even out at the speed of sound, is stretched by the same conversion and is really far quicker than the clock suggests. And the model has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, the rate of still-air mixing, and where the gas ends up.</p>
       </div>
     </div>
@@ -672,13 +672,16 @@ class Sim{
   step(dt){
     const g=this.g,n=this.n,x=this.x,z=this.z,vx=this.vx,vz=this.vz,sp=this.sp,S=this.S,gr=this.grav,zv=g.zv,open=this.valveOpen;
     const sig=this._sig||(this._sig=new Float64Array(SPECIES.length));for(let k=0;k<SPECIES.length;k++)sig[k]=this.sigma(k);
+    // A dot re-emitted by a wall flies a random part of the step straight away (see OpenSim.step for why).
+    const fly=i=>{const r=Math.random()*dt,xb=x[i],zb=z[i];x[i]+=vx[i]*r/S;z[i]+=(vz[i]*r-0.5*gr*r*r)/S;vz[i]-=gr*r;
+      if(g.sdf(x[i],z[i])>0||(!open&&(zb-zv)*(z[i]-zv)<=0)){x[i]=xb;z[i]=zb;}};
     for(let i=0;i<n;i++){
       const pz=z[i],px=x[i];
       x[i]+=vx[i]*dt/S; z[i]+=(vz[i]*dt-0.5*gr*dt*dt)/S; vz[i]-=gr*dt;
       const sg=sig[sp[i]],eps=Math.min(1e-4,0.01*sg*sg/(gr*S));
       if(!open&&(pz-zv)*(z[i]-zv)<=0&&pz!==zv){          // closed valve: thermal wall across the neck
         const nzv=pz>zv?1:-1; z[i]=zv+nzv*10*eps;
-        vz[i]=nzv*sg*Math.sqrt(-2*Math.log(1-Math.random())); vx[i]=sg*gauss();
+        vz[i]=nzv*sg*Math.sqrt(-2*Math.log(1-Math.random())); vx[i]=sg*gauss();fly(i);
       }
       let d=g.sdf(x[i],z[i]),it=0;
       if(d>0){
@@ -687,7 +690,7 @@ class Sim{
         if(d>0){x[i]=px;z[i]=pz;}
         // Thermal wall: leave with a speed drawn from the wall temperature (flux-weighted normal component).
         const vn=sg*Math.sqrt(-2*Math.log(1-Math.random())),vt=sg*gauss();
-        vx[i]=-nx*vn-nz*vt; vz[i]=-nz*vn+nx*vt;
+        vx[i]=-nx*vn-nz*vt; vz[i]=-nz*vn+nx*vt;fly(i);
       }
     }
     this.collide(dt);
@@ -847,7 +850,20 @@ const NB=sim.NB;
 const cnt=[new Float64Array(NB),new Float64Array(NB)];
 const ema=[new Float64Array(NB),new Float64Array(NB)];
 const st={h:0.3,gMul:1,pBr:23e3,pAir:0,T:293,speedPow:0,playing:true,emaInit:false,
-  botE:[0,0],topE:[0,0],simTime:0,openedAt:null};
+  botE:[0,0],topE:[0,0],simTime:0,realTime:0,openedAt:null};
+/* With air in the apparatus, bromine has to diffuse through it. The dots are then given frequent collisions (a free
+   path of about 1% of a bulb radius) and the clock is converted to real time by the ratio of diffusion rates, as on the
+   open-tank tab: real time = model time × D_model / D_real. D_model = C_BR × thermal speed × metres per unit ÷ (dots per
+   unit²), with C_BR measured from tracer dots (tests/diffusion-check.js). While the two bulbs are still at different
+   pressures the gas is flowing, not diffusing, and no conversion is applied. */
+const LCOL_VAC=0.6,LCOL_AIR=0.085,C_BR=23.4,D_BR=0.091e-4;   // D of bromine in air at 1 atm, 293 K, m²/s
+function clockFactor(){
+  if(!sim.valveOpen||st.pAir<=0||sim.n===0)return 1;
+  const b=st.botE[0]+st.botE[1],t=st.topE[0]+st.topE[1];
+  if(Math.abs(b-t)>0.15*Math.max(b,t))return 1;
+  const nTot=sim.n/(2*sim.areaHalf),pTot=nTot/nRef()*(st.T/T_REF)*ATM,sg=sim.sigma(0);
+  return Math.max(1,C_BR/nTot*sg*sim.S/(D_BR*(ATM/pTot)*Math.pow(st.T/293,1.75)));
+}
 
 
 const scaleS=()=>st.h/TwoBulb.zmax;
@@ -857,10 +873,10 @@ const nRef=()=>BALLS_PER_ATM/sim.areaHalf;          // dots per u² per atm at T
 const binP=(c,i)=>c/sim.binArea[i]/nRef()*(st.T/T_REF)*ATM;   // Pa
 
 function reset(){
-  sim.clear();sim.S=scaleS();sim.T=st.T;sim.grav=grav();sim.valveOpen=false;
+  sim.clear();sim.S=scaleS();sim.T=st.T;sim.grav=grav();sim.valveOpen=false;sim.lcol=st.pAir>0?LCOL_AIR:LCOL_VAC;
   sim.add(Math.round(st.pBr/ATM*BALLS_PER_ATM*T_REF/st.T),0,false);
   sim.add(Math.round(st.pAir/ATM*BALLS_PER_ATM*T_REF/st.T),1,true);
-  st.emaInit=false;st.simTime=0;st.openedAt=null;
+  st.emaInit=false;st.simTime=0;st.realTime=0;st.openedAt=null;
   $('bValve').textContent='Open valve';$('bValve').classList.add('primary');
 }
 
@@ -882,7 +898,7 @@ function readSliders(resetting){
 }
 ['sSize','sP','sA'].forEach(id=>$(id).addEventListener('input',()=>readSliders(true)));
 ['sG','sT','sSpd'].forEach(id=>$(id).addEventListener('input',()=>readSliders(false)));
-$('bValve').onclick=()=>{sim.valveOpen=!sim.valveOpen;if(sim.valveOpen&&st.openedAt===null)st.openedAt=st.simTime;
+$('bValve').onclick=()=>{sim.valveOpen=!sim.valveOpen;if(sim.valveOpen&&st.openedAt===null)st.openedAt=st.realTime;
   $('bValve').textContent=sim.valveOpen?'Close valve':'Open valve';$('bValve').classList.toggle('primary',!sim.valveOpen);};
 $('bReset').onclick=reset;
 $('bPlay').onclick=()=>{st.playing=!st.playing;$('bPlay').textContent=st.playing?'Pause':'Play';};
@@ -902,11 +918,12 @@ function qExact(s){
 let realPerScreenSec=0;
 function advance(){
   const sBr=sim.sigma(0),mult=Math.pow(2,st.speedPow);
-  let nSub=Math.max(2,Math.ceil(6*mult));
+  let nSub=Math.max(2,Math.ceil((st.pAir>0?8:6)*mult));
   let dt=mult*0.03*sim.S/sBr/nSub;
   dt=Math.min(dt,0.05*sBr/sim.grav);             // keep the fall per step far below thermal speed
+  if(st.pAir>0)dt=Math.min(dt,0.2*sim.lcol*sim.S/sim.sigma(1));   // and the collision chance per step small
   for(let k=0;k<nSub;k++)sim.step(dt);
-  st.simTime+=dt*nSub;realPerScreenSec=dt*nSub*60;
+  const F=clockFactor();st.simTime+=dt*nSub;st.realTime+=dt*nSub*F;realPerScreenSec=dt*nSub*60*F;st.F=F;
 }
 
 /* Theory: isothermal equilibrium P(z)=C·e^(−z/H) over the region a species can reach, normalised to its dot count. */
@@ -1083,7 +1100,7 @@ function readouts(){
     :!sim.valveOpen?'The closed valve is carrying this net force. It is the only thing here doing any containing.'
     :'Unbalanced, so the gas is accelerating '+(FB.net>0?'upward':'downward')+' until the three forces cancel.';
   $('bVerdict').innerHTML=v;
-  $('hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time'+(st.openedAt!==null?' · valve opened '+fmtTime(st.simTime-st.openedAt)+' ago':'');
+  $('hSpd').textContent=(st.F>1?'1 s on screen ≈ '+fmtTime(realPerScreenSec)+' in a real, still apparatus (mixing by diffusion)':'1 s on screen = '+fmtTime(realPerScreenSec)+' of real time')+(st.openedAt!==null?' · valve opened '+fmtTime(st.realTime-st.openedAt)+' ago':'');
 }
 
 /* Second law ledger. Molar quantities for bromine: s = −R Σ f ln(f/a) over height layers, u = M g Σ f z.
@@ -1307,7 +1324,7 @@ const D_REAL={5:1.6e-5,6:0.9e-5};                 // diffusion coefficient in ai
    and a real molecule about a ten-millionth of a metre. Mixing is diffusion in both, so the clock can be converted:
    real time = model time × D_model / D_real. D_model was measured for this collision setup from the spread of tracer
    dots in air (tests/diffusion-check.js): D_model = C_MODEL × thermal speed × metres per unit ÷ (dots per unit²). */
-const C_MODEL={5:1.63,6:2.05};
+const C_MODEL={5:2.18,6:3.08};
 function clockFactor(){
   if(st.pAir<=0)return 1;                          // into a vacuum nothing is diffusing: the flight times are real
   const nTot=st.pAir/ATM*NREF*T_REF/st.T,sg=sim.sigma(st.gas);
