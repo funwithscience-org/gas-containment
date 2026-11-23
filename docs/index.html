@@ -441,8 +441,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       <div class="legend">
         <span class="a">air inside the column</span>
         <span class="t" style="color:#f0b35b">air outside the column</span>
-        <span class="t">this model's law, P₀·e^(−z/H)</span>
-        <span class="t" style="color:#7fd3a4">standard atmosphere (1976, average of soundings)</span>
+        <span class="t">gravity at the one temperature set, P₀·e^(−z/H)</span>
+        <span class="t" style="color:#7fd3a4">gravity with the real temperature at each height (1976 Standard Atmosphere)</span>
       </div>
       <div class="balance">
         <div class="cell push">
@@ -476,9 +476,9 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <div class="eq" id="t4Note"></div>
         </div>
         <div class="cell head forces">
-          <div class="lab">Three ideas against the standard atmosphere · air pressure at real altitudes</div>
+          <div class="lab">Gravity against a dome · air pressure at real altitudes</div>
           <table class="cmp">
-            <thead><tr><th>Altitude</th><th>Standard atmosphere<br><span>average of measurements</span></th><th>Gravity, no dome<br><span>this model at the temperature set</span></th><th>Dome, no gravity<br><span>gas simply fills the container</span></th><th>Dome and gravity<br><span>anywhere below the dome</span></th></tr></thead>
+            <thead><tr><th>Altitude</th><th>Gravity, real temperatures<br><span>the 1976 Standard Atmosphere</span></th><th>Gravity, one temperature<br><span>this simulation, at the temperature set</span></th><th>Dome, no gravity<br><span>gas simply fills the container</span></th><th>Dome and gravity<br><span>anywhere below the dome</span></th></tr></thead>
             <tbody id="t4Cmp"></tbody>
           </table>
           <div class="eq" id="t4CmpEq"></div>
@@ -543,11 +543,11 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="k">Their side of it</span>
         <p>"The gradient is caused by density and buoyancy, not gravity." Density sorting needs a direction to sort along and a force to do the sorting. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 6 to 8.5 km depending on the temperature of the layer, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
         <p>"The dome could be very high, where the pressure is tiny, so you would never notice it." Then it is doing no containing, which was the original claim. The argument started as "gas pressure requires a container" and has become "there may be a container where there is no pressure left to contain".</p>
-        <p>"Your model's line misses the standard curve." It does, by the amount you would expect: this model holds the air at one temperature, and the real atmosphere is colder aloft than at the ground. Set the temperature to about 230 K, the average over the lowest 30 km, and the line meets the standard curve at the ground and at 30 km and stays within about 14% in between. A single temperature cannot do better, because the real air is warm at the bottom and cold above.</p>
+        <p>"Your simulation's line misses the real curve." At one temperature it does, by the amount you would expect: the dots are held at a single temperature, and the real atmosphere is colder aloft than at the ground. The table's first column and the green curve do the same weight-of-the-air calculation with the measured temperature at each height, and there is nothing left to adjust. If you want the dots themselves closer, about 230 K is the average over the lowest 30 km.</p>
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
-        <p>The profile is not put in by hand where it matters: on tabs 1 and 2 the gas is inside solid walls, gravity acts live, and the dots settle into the gradient themselves from an even start. Here, open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The green curve is the 1976 US Standard Atmosphere, an agreed mid-latitude average built from balloon and rocket soundings, shown up to 86 km. Real days and latitudes differ from it by a few percent. Gravity is held constant with height and the air is ideal and at one temperature. The second-law ledger uses that one temperature too; the real atmosphere averages about 250 K by mass, which makes the entropy penalty for an even fill larger than shown, so the figures are on the cautious side.</p>
+        <p>The profile is not put in by hand where it matters: on tabs 1 and 2 the gas is inside solid walls, gravity acts live, and the dots settle into the gradient themselves from an even start. Here, open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The green curve is hydrostatic balance with the temperature profile of the 1976 US Standard Atmosphere, an agreed mid-latitude average built from balloon and rocket soundings, shown up to 86 km. It follows the gravity and ground-pressure sliders, not the temperature slider. Real days and latitudes differ from it by several percent. Gravity is held constant with height and the air is ideal and at one temperature. The second-law ledger uses that one temperature too; the real atmosphere averages about 250 K by mass, which makes the entropy penalty for an even fill larger than shown, so the figures are on the cautious side.</p>
       </div>
     </div>
     <aside class="controls">
@@ -827,12 +827,15 @@ function drawTag(ctx,txt,x,y,col){
   ctx.font='600 12px JetBrains Mono,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
   const w=ctx.measureText(txt).width;ctx.fillStyle='rgba(5,7,14,.82)';ctx.fillRect(x-4,y-9,w+8,18);ctx.fillStyle=col;ctx.fillText(txt,x,y);
 }
-/* 1976 US Standard Atmosphere, pressure in Pa at height z in metres (layer definitions to 84.852 geopotential km = 86 km geometric, then the tabulated 100 km value). */
-function stdAtm(z){
-  const b=[0,11000,20000,32000,47000,51000,71000,84852],L=[-0.0065,0,0.001,0.0028,0,-0.0028,-0.002,0],c=0.0341632;
-  if(z>86000)return 0.3734*Math.pow(0.03201/0.3734,(z-86000)/(100000-86000));   // tabulated 100 km value, log-interpolated
+/* Hydrostatic balance with the temperature profile of the 1976 US Standard Atmosphere: pressure in Pa at height z in metres.
+   At Earth gravity and 101.325 kPa this is the Standard Atmosphere itself. gm scales gravity, p0 sets the ground pressure. */
+function stdAtm(z,gm,p0){
+  gm=gm||1;p0=p0||101325;
+  const b=[0,11000,20000,32000,47000,51000,71000,84852],L=[-0.0065,0,0.001,0.0028,0,-0.0028,-0.002,0],c=0.0341632*gm;
+  // above 86 km: continue at the effective temperature (194.7 K) that reproduces the tabulated 100 km value at Earth gravity
+  if(z>86000)return stdAtm(86000,gm,p0)*Math.exp(-c*(z-86000)/194.7);
   z=6356766*z/(6356766+z);   // geometric height to geopotential height
-  let T=288.15,P=101325;
+  let T=288.15,P=p0;
   for(let i=0;i<8;i++){const top=i<7?Math.min(z,b[i+1]):z,dh=top-b[i];if(dh<=0)break;
     if(L[i]===0)P*=Math.exp(-c*dh/T);else{const T2=T+L[i]*dh;P*=Math.pow(T/T2,c/L[i]);T=T2;}
     if(z<=(i<7?b[i+1]:Infinity))break;}
@@ -1590,7 +1593,7 @@ function draw(){
     for(let i=0;i<=NB;i++){const xx=px(law(i*sim.dzb*sim.S)),yy=Y(i*sim.dzb);if(i===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy);}
     ctx.stroke();}
   ctx.setLineDash([2,4]);ctx.lineWidth=2.5;ctx.strokeStyle='#7fd3a4';ctx.beginPath();let pen=false;
-  for(let i=0;i<=NB;i++){const zm=i*sim.dzb*sim.S;if(zm>86000)break;const xx=px(stdAtm(zm)),yy=Y(i*sim.dzb);if(!pen){ctx.moveTo(xx,yy);pen=true;}else ctx.lineTo(xx,yy);}
+  for(let i=0;i<=NB;i++){const zm=i*sim.dzb*sim.S;if(zm>86000)break;const xx=px(stdAtm(zm,st.gMul,st.pG)),yy=Y(i*sim.dzb);if(!pen){ctx.moveTo(xx,yy);pen=true;}else ctx.lineTo(xx,yy);}
   ctx.stroke();ctx.setLineDash([]);
 }
 const ALT=[['Denver',1609],['Everest summit',8849],['Airliner cruise',11000],['Weather balloon',30000],['Edge of space',100000]];
@@ -1617,9 +1620,9 @@ function readouts(){
     ?(FB.wt>FB.noise?'Balanced to within the dot-counting noise (about ±'+fmtF(FB.noise)+'): each layer of air is held up by the layer below and held down by the layer above plus its own weight. No wall or lid appears in that sum.'
       :'Pressure below and above agree to within the dot-counting noise (about ±'+fmtF(FB.noise)+'). The slab\'s weight is real but too small for the dots to resolve at this height.')
     :'Not balanced: the air is still moving.';
-  $('t4Cmp').innerHTML=ALT.map(([n,z])=>{const m=stdAtm(z),gp=st.pG*Math.exp(-z/Hh);
-    return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+fmtP(gp)+'</td></tr>';}).join('');
-  $('t4CmpEq').innerHTML='Standard atmosphere: the 1976 US Standard, a mid-latitude yearly average built from balloon and rocket soundings; a given day and place differs by several percent (a barometer on Everest\'s surveyed summit read 33.7 kPa, about 7% above the standard; West, 1999). The chart below shows a radiosonde sounding lying on the same curve. "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
+  $('t4Cmp').innerHTML=ALT.map(([n,z])=>{const m=stdAtm(z,st.gMul,st.pG),gp=st.pG*Math.exp(-z/Hh);
+    return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+fmtP(m)+'</td></tr>';}).join('');
+  $('t4CmpEq').innerHTML='The first column is the weight of the air worked out with the temperature measured at each height, and nothing else to adjust. At Earth gravity and sea-level pressure that calculation <em>is</em> the 1976 US Standard Atmosphere, the reference that balloon and rocket soundings are checked against. The independent test is a pressure reading at a surveyed height: a barometer on Everest\'s summit read 33.7 kPa (West, 1999), about 7% above the mid-latitude yearly average shown, which is the size of ordinary variation with place and season. The second column is the same calculation at the single temperature this simulation runs at, which is why it reads high where the real air is colder. "Dome and gravity" matches gravity alone at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+' in this simulation.';
   let v;
   if(noG()&&dome())v='<b>Dome, no gravity.</b> A sealed box: the gas spreads evenly and reads '+fmtP(st.pG)+' at every height. Barometers on mountains, aircraft and balloons do not read that.';
   else if(noG())v='<b>No gravity, no dome.</b> Nothing holds the air and it leaves. Gas does need something to keep it. The question is which thing, and the measured fall of pressure with height answers it.';
