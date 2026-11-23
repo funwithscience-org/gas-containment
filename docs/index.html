@@ -66,6 +66,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:0}
 .balance .eq b{color:var(--fg);font-weight:600}
 .balance .push .big{color:var(--br)} .balance .hold .big{color:var(--air)}
 .balance .head{grid-column:1 / -1}
+.balance .lab .f{text-transform:none;letter-spacing:0;font-size:12.5px}
 .balance .forces{border-top:1px solid var(--line);padding-top:10px}
 .frow{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:13.5px;margin:4px 0}
 .frow i{font-style:normal;margin-right:4px} .frow .up{color:var(--ok)} .frow .dn{color:var(--steel)} .frow .wt{color:#fff}
@@ -482,6 +483,42 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <div class="verdict" id="t4Verdict"></div>
       </div>
 
+      <div class="balance ledger">
+        <div class="cell head">
+          <div class="lab">Second law ledger for real air · spreading the atmosphere evenly under a dome at the height set, compared with the profile gravity gives it, same air, same temperature</div>
+          <div class="eq">ΔS<sub>total</sub> = ΔS<sub>gas</sub> − M·g·Δz̄ / T = R·[ ln( x / (1 − e<sup>−x</sup>) ) − x / 2 ], &nbsp;x = h / H &nbsp;· never positive, for any height</div>
+        </div>
+        <div class="cell push">
+          <div class="lab">ΔS gas: gained by spreading evenly</div>
+          <div class="big" id="t4sGas">—</div>
+          <div class="eq" id="t4sGasEq"></div>
+        </div>
+        <div class="cell hold">
+          <div class="lab">ΔS surroundings: heat drawn in to lift the air</div>
+          <div class="big" id="t4sSur">—</div>
+          <div class="eq" id="t4sSurEq"></div>
+        </div>
+        <div class="cell tot">
+          <div class="lab">ΔS total, per mole of air</div>
+          <div class="big" id="t4sTot">—</div>
+          <div class="eq" id="t4sTotEq"></div>
+        </div>
+        <div class="cell">
+          <div class="lab">Energy needed to lift the air into an even fill</div>
+          <div class="big" id="t4sE">—</div>
+          <div class="eq" id="t4sEEq"></div>
+        </div>
+        <div class="cell head forces">
+          <div class="lab">And out of the open top? Escape from Earth, molecule by molecule · <span class="f">λ = M·v<sub>esc</sub>² / 2RT</span> at the top of the atmosphere (about 1,000 K)</div>
+          <table class="cmp">
+            <thead><tr><th>Gas</th><th>Typical thermal speed</th><th>Escape speed</th><th>λ<br><span>energy to escape ÷ thermal energy</span></th><th>Share fast enough, about e<sup>−λ</sup></th></tr></thead>
+            <tbody id="t4Esc"></tbody>
+          </table>
+          <div class="eq">Gravity that weakens with distance does let the fastest molecules leave for good, so the second law permits a slow leak from the top. Its rate is governed by e<sup>−λ</sup>: effectively zero for nitrogen and oxygen, real for hydrogen, and slow for helium by this route.</div>
+        </div>
+        <div class="verdict" id="t4sVerdict"></div>
+      </div>
+
       <div class="note">
         <span class="k">What to notice</span>
         <p>Start with a metre-tall open column of ordinary air. Inside and outside are the same pressure at every height, so the walls have nothing to hold: untick <b>Column walls</b> and nothing changes. Then make the column taller. The pressure inside falls with height, and the pressure outside falls with it, at the same rate, set by gravity and temperature alone. Remove the walls at any height and the two profiles stay on top of each other.</p>
@@ -496,6 +533,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="k">What a dome would look like</span>
         <p>Tick <b>Add a dome</b> and <b>Gravity off</b> to see the alternative. A dome with no gravity is a sealed container: the gas spreads evenly and the pressure is the same at every height, as tab 1 showed for any bench-sized vessel. That predicts sea-level pressure on the summit of Everest and at the top of a weather balloon's flight. The observed values are about a third and about one percent.</p>
         <p>Tick the dome with gravity left on and the profile is the one you had without it. The gradient comes from the weight of the air, dome or no dome, and the dome is left carrying whatever pressure remains at its height. Put it at 100 km and the pressure left is a few millionths of sea level in this constant-temperature model (0.7 Pa), and about a third of a millionth in the real, colder atmosphere (0.03 Pa), on a structure nobody has detected. With gravity present the dome explains nothing that gravity has not already explained; without gravity the dome predicts a uniform atmosphere that no barometer agrees with.</p>
+        <p>The second law says the same thing in energy terms, and the ledger above puts numbers on it for real air. Entropy is not a rule that gas spreads as far as it can. Spreading upward costs energy, that energy is heat taken from the surroundings, and the total only rises until the air reaches the gravity profile. Stretching it further would lower the total.</p>
         <p>Turn gravity off without a dome and the air leaves. That much of the flat-earth argument is right: gas does need something to hold it. The candidates are a container or gravity, and the measured fall of pressure with height is what tells them apart.</p>
       </div>
       <div class="note steel">
@@ -1542,6 +1580,39 @@ function readouts(){
   else v='<b>Open column, '+fmtLen(st.h)+' tall.</b> Inside and outside fall off together, to '+fmtN(Math.exp(-st.h/Hh)*100,3)+'% of ground pressure at the top. The walls never mattered; gravity sets the profile'+(st.h/Hh>8?', and at this height there is almost nothing left for a lid to hold.':'.');
   $('t4Verdict').innerHTML=v;
   $('t4hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
+  ledger();
+}
+/* Second law, real units. Same amount of air, same temperature, under a ceiling at height h:
+   state A is the gravity (barometric) profile, state B is an even fill. Per mole, with x = h/H:
+     entropy of position  s = −R∫p ln p dz   →  s_B − s_A = R[ln(x/(1−e^−x)) − z̄_A/H]
+     gravitational energy u = M g z̄           →  z̄_A = H − h/(e^x − 1),  z̄_B = h/2
+   Lifting the air takes heat from the surroundings, so ΔS_total = (s_B − s_A) − M g (z̄_B − z̄_A)/T. */
+const fmtE=j=>{const a=Math.abs(j);return a>=1e21?fmtN(j):a>=1e18?fmtN(j/1e18)+' EJ':a>=1e15?fmtN(j/1e15)+' PJ':a>=1e12?fmtN(j/1e12)+' TJ':a>=1e9?fmtN(j/1e9)+' GJ':a>=1e6?fmtN(j/1e6)+' MJ':a>=1e3?fmtN(j/1e3)+' kJ':fmtN(j)+' J';};
+const A_EARTH=5.101e14,V_ESC=11186,T_EXO=1000;
+const ESC=[['Nitrogen, N₂',0.0280134],['Oxygen, O₂',0.0319988],['Helium, He',0.0040026],['Hydrogen atoms, H',0.00100794]];
+let escDone=false;
+function ledger(){
+  if(!escDone){escDone=true;$('t4Esc').innerHTML=ESC.map(([n,M])=>{const lam=M*V_ESC*V_ESC/(2*R_GAS*T_EXO),e=Math.exp(-lam);
+    return '<tr><td>'+n+'</td><td>'+fmtN(Math.sqrt(2*R_GAS*T_EXO/M)/1000,2)+' km/s</td><td>11.2 km/s</td><td class="m">'+fmtN(lam)+'</td><td>'+(e<1e-12?'1 in 10'+sup(Math.round(lam/Math.LN10)):e<0.001?'1 in '+fmtN(1/e,2):fmtN(e*100,2)+'%')+'</td></tr>';}).join('');}
+  if(noG()){['t4sGas','t4sSur','t4sTot','t4sE'].forEach(id=>$(id).textContent='0');['t4sGasEq','t4sSurEq','t4sTotEq','t4sEEq'].forEach(id=>$(id).textContent='');
+    $('t4sVerdict').innerHTML='With gravity off, lifting air costs nothing, so an even fill is the maximum-entropy state: the gas spreads into whatever it is given. That is the bench demo of tab 1, and it is why a world without gravity would need a container.';return;}
+  const Hh=H(),x=st.h/Hh,M=SPECIES[1].M,g=grav(),T=st.T;
+  const em=-Math.expm1(-x),zA=x<1e-4?st.h/2*(1-x/6):Hh-st.h/Math.expm1(x),dz=st.h/2-zA;
+  const dSg=x<1e-3?R_GAS*x*x/12:R_GAS*(Math.log(x/em)-zA/Hh),dSs=-M*g*dz/T,dSt=x<1e-3?-R_GAS*x*x/24:R_GAS*(Math.log(x/em)-x/2);
+  const nM2=st.pG*em/(g*M);                       // moles of air above each m² of ground, below the dome
+  const sm=v=>Math.abs(v)<5e-7?(v<0?'−':'+')+fmtN(Math.abs(v),2)+' J/(mol·K)':fmtS(v);
+  $('t4sGas').textContent=sm(dSg);
+  $('t4sGasEq').innerHTML='R·[ ln( x / (1 − e<sup>−x</sup>) ) − z̄ / H ], with x = <b>'+fmtLen(st.h)+'</b> ÷ <b>'+fmtLen(Hh)+'</b> = <b>'+fmtN(x)+'</b>';
+  $('t4sSur').textContent=sm(dSs);
+  $('t4sSurEq').innerHTML='−<b>0.02896 kg/mol</b> × <b>'+fmtN(g)+' m/s²</b> × <b>'+fmtLen(dz)+'</b> ÷ <b>'+T+' K</b>'+(x<0.05?' · the centre of mass barely moves':' · the air\'s centre of mass rises from '+fmtLen(zA)+' to '+fmtLen(st.h/2));
+  $('t4sTot').textContent=sm(dSt);
+  $('t4sTotEq').innerHTML='over each m² of ground (<b>'+fmtN(nM2)+' mol</b> of air): <b>'+(dSt*nM2<0?'−':'')+fmtE(Math.abs(dSt*nM2)).replace(/J$/,'J/K')+'</b> · over Earth\'s whole surface: <b>'+(dSt<0?'−':'')+fmtN(Math.abs(dSt*nM2*A_EARTH),2)+' J/K</b>';
+  const e1=M*g*dz;
+  $('t4sE').textContent=fmtE(e1*nM2)+' per m²';
+  $('t4sEEq').innerHTML='M·g·Δz̄ = <b>'+fmtE(e1)+'</b> per mole · over Earth\'s whole surface: <b>'+fmtN(e1*nM2*A_EARTH,2)+' J</b>';
+  $('t4sVerdict').innerHTML=x<0.05
+    ?'At <b>'+fmtLen(st.h)+'</b> the two states are the same to within '+fmtN(Math.abs(dSt),2)+' J/(mol·K): an even fill <b>is</b> the gravity profile at this height. This is the regime of every bench demonstration.'
+    :'Under a dome at <b>'+fmtLen(st.h)+'</b>, an even fill would have <b>'+fmtN(Math.abs(dSt))+' J/(mol·K) less</b> total entropy than the profile gravity gives. The air gains entropy by spreading, but lifting it takes more from the surroundings than it gains. At this temperature the second law holds the air in the gravity profile; it would take '+fmtE(e1*nM2)+' of work on every square metre to pull it into an even fill, and it would fall back when the work stopped.';
 }
 let frame=0;
 function tick(){
