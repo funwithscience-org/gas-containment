@@ -160,7 +160,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       <div class="balance ledger">
         <div class="cell head">
           <div class="lab">Second law ledger · per mole of bromine, measured from the dots, relative to the sealed start, at fixed temperature</div>
-          <div class="eq">ΔS<sub>total</sub> = ΔS<sub>gas</sub> + ΔS<sub>surroundings</sub> = ΔS<sub>gas</sub> − M·g·Δz̄ / T &nbsp;≥ 0</div>
+          <div class="eq" id="sHeadEq">ΔS<sub>total</sub> = ΔS<sub>gas</sub> + ΔS<sub>surroundings</sub> = ΔS<sub>gas</sub> − M·g·Δz̄ / T &nbsp;≥ 0</div>
         </div>
         <div class="cell push">
           <div class="lab">ΔS gas: entropy gained by spreading out</div>
@@ -173,7 +173,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <div class="eq" id="sSurEq"></div>
         </div>
         <div class="cell tot">
-          <div class="lab">ΔS total, now</div>
+          <div class="lab" id="sTotLab">ΔS total, now</div>
           <div class="big" id="sTot">—</div>
           <div class="meter"><i id="sBar"></i></div>
           <div class="eq" id="sTotEq"></div>
@@ -197,7 +197,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
 
       <div class="note">
         <span class="k">What to notice</span>
-        <p>Open the valve at the default settings and the bromine fills the top bulb in a few hundredths of a second of real time in this model. Gravity is switched on the whole time, at full Earth strength. It loses because the bulb centres sit <b>17 cm</b> apart and bromine's scale height is <b>1.6 km</b>: the weight of that little gas can only support a pressure difference of about one pascal, against a push of tens of thousands.</p>
+        <p>Open the valve at the default settings and the bromine fills the top bulb in a few hundredths of a second of real time in this model. A real stopcock is much narrower than the neck drawn here, so a real apparatus takes nearer a second. Gravity is switched on the whole time, at full Earth strength. It loses because the bulb centres sit <b>17 cm</b> apart and bromine's scale height is <b>1.6 km</b>: the weight of that little gas can only support a pressure difference of about one pascal, against a push of tens of thousands.</p>
         <p>Now change the odds. Make the same apparatus kilometres tall, or turn gravity up by a factor of ten thousand, and open the valve again. The top bulb stays visibly thinner even though the valve is wide open and nothing stops the gas rising into it. There is still a glass roof, and it still carries some load: at 6 km the glass at the very top feels about 2% of the pressure at the bottom, and at 20 km about 0.0003%. The taller the column, the less the lid has to do, which is the limit the later tabs take. Nothing about the gas changed. Only Δz / H did.</p>
       </div>
       <div class="note steel">
@@ -207,9 +207,10 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
-        <p>Every dot is a real ballistic particle: it flies in a straight line, falls under the gravity you set, collides with other dots (conserving momentum and energy), and leaves the glass with a speed drawn from the wall temperature. The pressure profile on the right is counted from the dots, never painted on. The dashed line is the textbook prediction, P(z) = P₀·e<sup>−z/H</sup>.</p>
+        <p>Every dot is a simulated ballistic particle: it flies in a straight line, falls under the gravity you set, collides with other dots (conserving momentum and energy), and leaves the glass with a speed drawn from the wall temperature. The pressure profile on the right is counted from the dots, never painted on. The dashed line is the textbook prediction, P(z) = P₀·e<sup>−z/H</sup>.</p>
         <p>The simplifications, stated plainly:</p>
-        <p><b>Time into air is converted to real time.</b> Each dot stands for an enormous number of molecules. With air in the apparatus the dots travel about one percent of a bulb radius between collisions, where real molecules manage about a ten-millionth of a metre, so the dots mix tens of thousands of times too fast. Mixing is diffusion in both, so once the two bulbs are at the same pressure the clock is multiplied by the ratio of the two diffusion rates: the model's, measured from its own dots, and the published 0.091 cm²/s for bromine in air at one atmosphere. That gives tens of minutes for the bromine to work its way through, as in the real demonstration linked below. The first moments after the valve opens, while the pressures even out, are flow and run on the plain clock; into a vacuum there is nothing to diffuse through and no conversion is applied.</p>
+        <p><b>Time into air is converted to real time.</b> Each dot stands for an enormous number of molecules. With air in the apparatus the dots travel about five percent of a bulb radius between collisions, where real molecules manage about a ten-millionth of a metre, so the dots mix tens of thousands of times too fast. Mixing is diffusion in both, so once the two bulbs are at the same pressure the clock is multiplied by the ratio of the two diffusion rates: the model's, measured from its own dots, and the published 0.091 cm²/s for bromine in air at one atmosphere. That gives tens of minutes for this flat flask, the same order as the plain-tube school demonstration linked below. A real pair of round bulbs joined by a neck would be several times slower, and far slower through a narrow stopcock, because a neck throttles diffusion much more in three dimensions. The first moments after the valve opens, while the pressures even out, are flow and run on the plain clock; into a vacuum there is nothing to diffuse through and no conversion is applied.</p>
+        <p><b>The air preset is not the classroom setup.</b> It starts with air at about four times the bromine's pressure, so the air first pushes down into the bromine bulb, in milliseconds, and both settle near 62 kPa. The bromine then diffuses up through air at about 0.6 of an atmosphere, roughly 1.6 times faster than in a classroom tube, where everything is at one atmosphere.</p>
         <p><b>One temperature throughout.</b> Any individual dot slows as it climbs and speeds up as it falls, but the mix of speeds you find at every height is the same. Only the number thins out. The real lower atmosphere is not isothermal; it cools with height, which changes the numbers but not the argument.</p>
         <p><b>Ideal gas, uniform gravity, 2D.</b> Real bromine would condense above about 23 kPa at 20 °C, or at any pressure shown once it is cold enough; the sliders go beyond that to show the trend. Gravity is held constant with height (real g falls about 0.6% over 20 km). The entropy figures are for this flat flask; a 3D pair of spheres gives slightly different values (about +0.93 and −3.73 at 6 km instead of +0.97 and −3.77) with the same signs. At the most extreme corners, a 20 km flask under thousands of g, the gas is a film thinner than one chart bar and the numbers are approximate.</p>
       </div>
@@ -296,7 +297,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
 
       <div class="note">
         <span class="k">What to notice</span>
-        <p>Gravity does not stop at the wall of a container. In a sealed tank the gas at the floor is always a little denser than the gas under the lid, because each layer has to hold up the weight of everything above it. In a real 1.2 m cylinder of nitrogen the difference is about 0.014%, far too small to see in the dots, but it is there: the floor of the tank carries more force than the lid, and the difference is exactly the weight of the gas. That is why a full cylinder weighs more on a scale than an empty one.</p>
+        <p>Gravity does not stop at the wall of a container. In a sealed tank the gas at the floor is always a little denser than the gas under the lid, because each layer has to hold up the weight of everything above it. In a real 1.2 m cylinder of nitrogen the difference is about 0.014%, far too small to see in the dots, but it is there: the floor of the tank carries more force than the lid, and the difference is exactly the weight of the gas. That difference in force is how the weight of the gas reaches the scale when a full cylinder is weighed.</p>
         <p>Now drag <b>Tank height</b> up. Same gas, same walls, same lid. By a few kilometres the gradient is obvious; by a few tens of kilometres most of the gas is in the bottom of the tank and the lid is holding back very little. The walls and lid never changed what the gas does vertically. Gravity set the profile the whole time.</p>
       </div>
       <div class="note steel">
@@ -387,7 +388,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       <div class="note">
         <span class="k">What to notice</span>
         <p>Carbon dioxide and sulfur hexafluoride will sit in an open fish tank for many minutes with no lid, long enough to float a foil boat on in a classroom. Watch a real one: <a href="https://www.youtube.com/watch?v=N9vvJQniYsc" target="_blank" rel="noopener">Ship floating in air!</a>, a foil boat on a tank of SF₆, from Cal Poly Pomona's physics demonstrations. The reason is on the two top readouts: the gas in the tank and the air above it are at the same pressure. There is no unbalanced push at the rim, so nothing rushes out. Compare tab 1, where the gas faced a vacuum and the full pressure was unbalanced.</p>
-        <p>Press <b>Remove the air</b> and the heavy gas is gone in about a hundredth of a second, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it spreading upward is the atmosphere pressing down on it.</p>
+        <p>Press <b>Remove the air</b> and the heavy gas is gone in about a hundredth of a second, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it bursting upward is the atmosphere pressing down on it.</p>
+        <p>Two things are at work in a real tank. Equal pressure at the rim removes the blow-out. Gravity acting on the difference in density then stops the heavy gas rising out by convection: a light gas such as helium would be just as balanced at the rim and would float away in seconds. This model shows the first and not the second.</p>
         <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. In a real tank, being denser than air also keeps the gas low and stops it being stirred out (the model does not show that part), but at fish-tank size gravity cannot hold it there for ever. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
       </div>
       <div class="note steel">
@@ -398,8 +400,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
         <p>The outer edges of the picture are open air, not walls: a dot that crosses an edge is gone, and the surrounding air sends dots in at the rate its pressure dictates. Heavy-gas dots that leave do not come back, as if the room were large.</p>
-        <p>The clock on this tab is converted to real time. Dots in the model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre, so the dots mix roughly thirty thousand times too fast. Mixing is diffusion in both cases, so the model's time is multiplied by the ratio of the two diffusion rates, the model's measured from its own dots and the real one taken from published values (about 0.09 cm²/s for SF₆ in air, 0.16 for CO₂). The result is the time for a perfectly still tank, of the order of an hour to lose half the gas from a 30 cm tank. Real demonstrations lose it faster, in minutes, because pouring, draughts and moving objects stir it. With the air removed nothing is diffusing and no conversion is applied.</p>
-        <p>Two limits. The first instant after a change, when pressures even out at the speed of sound, is stretched by the same conversion and is really far quicker than the clock suggests. And the model has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, the rate of still-air mixing, and where the gas ends up.</p>
+        <p>The clock on this tab is converted to real time. Dots in the model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre, so the dots mix tens of thousands of times too fast. Mixing is diffusion in both cases, so the model's time is multiplied by the ratio of the two diffusion rates, the model's measured from its own dots and the real one taken from published values (about 0.09 cm²/s for SF₆ in air, 0.16 for CO₂). The result is the time for a perfectly still tank, of the order of an hour to lose half the gas from a 30 cm tank (calculated, not measured). Real demonstrations lose it faster, in minutes, because pouring, draughts and moving objects stir it. With the air removed nothing is diffusing and no conversion is applied.</p>
+        <p>Two limits. While the pressure in the tank still differs from the air outside the gas is flowing, and that phase runs on the plain clock; the switch between the two clocks is a simple threshold (within 12%). And the model has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, the rate of still-air mixing, and where the gas ends up.</p>
       </div>
     </div>
     <aside class="controls">
@@ -444,12 +446,12 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       </div>
       <div class="balance">
         <div class="cell push">
-          <div class="lab">Pressure at the ground · inside vs outside the column</div>
+          <div class="lab">Lowest 10% of the view · inside vs outside the column</div>
           <div class="big" id="t4Pg">—</div>
           <div class="eq" id="t4PgEq"></div>
         </div>
         <div class="cell hold">
-          <div class="lab">Pressure at the top of the view · inside vs outside</div>
+          <div class="lab">Highest 10% of the view · inside vs outside</div>
           <div class="big" id="t4Pt">—</div>
           <div class="eq" id="t4PtEq"></div>
         </div>
@@ -474,7 +476,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <div class="eq" id="t4Note"></div>
         </div>
         <div class="cell head forces">
-          <div class="lab">Three ideas against the measured atmosphere · air pressure at real altitudes</div>
+          <div class="lab">Three ideas against the standard atmosphere · air pressure at real altitudes</div>
           <table class="cmp">
             <thead><tr><th>Altitude</th><th>Standard atmosphere<br><span>average of measurements</span></th><th>Gravity, no dome<br><span>this model at the temperature set</span></th><th>Dome, no gravity<br><span>gas simply fills the container</span></th><th>Dome and gravity<br><span>anywhere below the dome</span></th></tr></thead>
             <tbody id="t4Cmp"></tbody>
@@ -512,10 +514,10 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <div class="cell head forces">
           <div class="lab">And out of the open top? Escape from Earth, molecule by molecule · <span class="f">λ = M·v<sub>esc</sub>² / 2RT</span> at the top of the atmosphere (about 1,000 K)</div>
           <table class="cmp">
-            <thead><tr><th>Gas</th><th>Typical thermal speed</th><th>Escape speed</th><th>λ<br><span>energy to escape ÷ thermal energy</span></th><th>Share fast enough, about e<sup>−λ</sup></th></tr></thead>
+            <thead><tr><th>Gas</th><th>Typical thermal speed</th><th>Escape speed</th><th>λ<br><span>energy to escape ÷ thermal energy</span></th><th>Share above escape speed</th></tr></thead>
             <tbody id="t4Esc"></tbody>
           </table>
-          <div class="eq">Gravity that weakens with distance does let the fastest molecules leave for good, so the second law permits a slow leak from the top. Its rate is governed by e<sup>−λ</sup>: effectively zero for nitrogen and oxygen, real for hydrogen, and slow for helium by this route.</div>
+          <div class="eq">Gravity that weakens with distance does let the fastest molecules leave for good, so the second law permits a slow leak from the top. The thermal part of that leak scales roughly as e<sup>−λ</sup>: effectively zero for nitrogen and oxygen, real for hydrogen (whose loss is in practice limited by how fast it reaches the top), and negligible for helium, which leaves mainly by other routes.</div>
         </div>
         <div class="verdict" id="t4sVerdict"></div>
       </div>
@@ -541,11 +543,11 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="k">Their side of it</span>
         <p>"The gradient is caused by density and buoyancy, not gravity." Density sorting needs a direction to sort along and a force to do the sorting. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 6 to 8.5 km depending on the temperature of the layer, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
         <p>"The dome could be very high, where the pressure is tiny, so you would never notice it." Then it is doing no containing, which was the original claim. The argument started as "gas pressure requires a container" and has become "there may be a container where there is no pressure left to contain".</p>
-        <p>"Your model's line misses the standard curve." It does, by the amount you would expect: this model holds the air at one temperature, and the real atmosphere is colder aloft than at the ground. Set the temperature to about 230 K, the average over the lowest 30 km, and the line meets the standard curve at the ground and at 30 km and stays within about 13% in between. A single temperature cannot do better, because the real air is warm at the bottom and cold above.</p>
+        <p>"Your model's line misses the standard curve." It does, by the amount you would expect: this model holds the air at one temperature, and the real atmosphere is colder aloft than at the ground. Set the temperature to about 230 K, the average over the lowest 30 km, and the line meets the standard curve at the ground and at 30 km and stays within about 14% in between. A single temperature cannot do better, because the real air is warm at the bottom and cold above.</p>
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
-        <p>Open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The green curve is the 1976 US Standard Atmosphere, an agreed mid-latitude average built from balloon and rocket soundings, shown up to 86 km. Real days and latitudes differ from it by a few percent. Gravity is held constant with height and the air is ideal and at one temperature.</p>
+        <p>The profile is not put in by hand where it matters: on tabs 1 and 2 the gas is inside solid walls, gravity acts live, and the dots settle into the gradient themselves from an even start. Here, open edges work as in tab 3: dots that cross are removed, and the air beyond sends dots in at the rate the barometric law gives for that height. With gravity off there is no reason for air to exist beyond the edges, so open edges become a vacuum and a dome becomes a sealed box. The number of dots on screen is kept roughly constant, so each dot stands for more air as the column grows. The green curve is the 1976 US Standard Atmosphere, an agreed mid-latitude average built from balloon and rocket soundings, shown up to 86 km. Real days and latitudes differ from it by a few percent. Gravity is held constant with height and the air is ideal and at one temperature. The second-law ledger uses that one temperature too; the real atmosphere averages about 250 K by mass, which makes the entropy penalty for an even fill larger than shown, so the figures are on the cautious side.</p>
       </div>
     </div>
     <aside class="controls">
@@ -562,7 +564,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <div class="story">
           <button class="btn small" data-t4="1">1 m column</button>
           <button class="btn small" data-t4="8849">Everest, 8.8 km</button>
-          <button class="btn small" data-t4="35000">Balloon, 35 km</button>
+          <button class="btn small" data-t4="30000">Balloon, 30 km</button>
           <button class="btn small" data-t4="100000">100 km</button>
         </div>
       </div>
@@ -576,7 +578,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
   </section>
 
   <footer>
-    The demonstration is the standard school "diffusion of bromine" experiment, e.g. the Institute of Physics' <a href="https://spark.iop.org/sites/default/files/media/documents/episode-601-2-diffusion-of-bromine.doc">TAP 601-2</a>: sluggish into air, near-instant into a vacuum. The school version uses a single tube; the two-bulb layout drawn here is the form usually shown in flat-earth videos. Watch a real one: <a href="https://www.youtube.com/watch?v=ZAGloLXO9L0" target="_blank" rel="noopener">Bromine diffusion in air and in a vacuum</a> (BryPhys, 5½ minutes). With air in the tube the bromine is about halfway up after 5 minutes and fills it in about half an hour; with most of the air pumped out it fills the tube in a few seconds. That demonstration starts from liquid bromine, which has to evaporate before it can spread, so its vacuum case takes seconds where this model, which starts with the vapour already behind the valve, takes hundredths of a second. The contrast is the same: slow into air, quick into a vacuum. Constants: R = 8.314 J/(mol·K), g = 9.807 m/s², 1 atm = 101.325 kPa. Bromine vapour is treated as an ideal gas.
+    The demonstration is the standard school "diffusion of bromine" experiment, e.g. the Institute of Physics' <a href="https://spark.iop.org/sites/default/files/media/documents/episode-601-2-diffusion-of-bromine.doc">TAP 601-2</a>: sluggish into air, near-instant into a vacuum. The school version uses a single tube; the two-bulb layout drawn here is the form usually shown in flat-earth videos. Watch a real one: <a href="https://www.youtube.com/watch?v=ZAGloLXO9L0" target="_blank" rel="noopener">Bromine diffusion</a> (BryPhys), which shows it in air and then in a vacuum. The presenter reports that with air in the tube the bromine is about halfway up after 5 minutes and fills it in about half an hour; with most of the air pumped out it fills the tube in a few seconds. That demonstration starts from liquid bromine, which has to evaporate before it can spread, so its vacuum case takes seconds where this model, which starts with the vapour already behind the valve, takes hundredths of a second. The contrast is the same: slow into air, quick into a vacuum. Constants: R = 8.314 J/(mol·K), g = 9.807 m/s², 1 atm = 101.325 kPa. Bromine vapour is treated as an ideal gas.
   </footer>
 </div>
 
@@ -642,7 +644,7 @@ class Sim{
     this.vx=new Float64Array(cap); this.vz=new Float64Array(cap);
     this.sp=new Uint8Array(cap);
     this.S=0.0667; this.T=T_REF; this.grav=G0; this.valveOpen=false;
-    this.dcol=0.05; this.lcol=0.6;        // collision range and free-path tuning length, units
+    this.dcol=0.05; this.lcol=0.6;        // collision range and free-path parameter, units
     this.cell=geom.cell||0.06; this.cols=Math.ceil((geom.xmax-geom.xmin)/this.cell)+1; this.rows=Math.ceil(geom.zmax/this.cell)+1;
     this.head=new Int32Array(this.cols*this.rows); this.next=new Int32Array(cap);
     this.NB=90; this.dzb=geom.zmax/this.NB;
@@ -673,8 +675,8 @@ class Sim{
     const g=this.g,n=this.n,x=this.x,z=this.z,vx=this.vx,vz=this.vz,sp=this.sp,S=this.S,gr=this.grav,zv=g.zv,open=this.valveOpen;
     const sig=this._sig||(this._sig=new Float64Array(SPECIES.length));for(let k=0;k<SPECIES.length;k++)sig[k]=this.sigma(k);
     // A dot re-emitted by a wall flies a random part of the step straight away (see OpenSim.step for why).
-    const fly=i=>{const r=Math.random()*dt,xb=x[i],zb=z[i];x[i]+=vx[i]*r/S;z[i]+=(vz[i]*r-0.5*gr*r*r)/S;vz[i]-=gr*r;
-      if(g.sdf(x[i],z[i])>0||(!open&&(zb-zv)*(z[i]-zv)<=0)){x[i]=xb;z[i]=zb;}};
+    const fly=i=>{const r=Math.random()*dt,xb=x[i],zb=z[i],vb=vz[i];x[i]+=vx[i]*r/S;z[i]+=(vz[i]*r-0.5*gr*r*r)/S;vz[i]-=gr*r;
+      if(g.sdf(x[i],z[i])>0||(!open&&(zb-zv)*(z[i]-zv)<=0)){x[i]=xb;z[i]=zb;vz[i]=vb;}};
     for(let i=0;i<n;i++){
       const pz=z[i],px=x[i];
       x[i]+=vx[i]*dt/S; z[i]+=(vz[i]*dt-0.5*gr*dt*dt)/S; vz[i]-=gr*dt;
@@ -723,12 +725,13 @@ class Sim{
     for(let cz=0;cz<rows;cz++)for(let cx=0;cx<cols;cx++){
       const c=cz*cols+cx;
       for(let i=head[c];i>=0;i=next[i]){
-        for(let j=next[i];j>=0;j=next[j])pair(i,j);
-        if(cx+1<cols)for(let j=head[c+1];j>=0;j=next[j])pair(i,j);
+        let lim=120;                                  // a collapsed film can put thousands of dots in one cell
+        for(let j=next[i];j>=0&&lim-->0;j=next[j])pair(i,j);
+        if(cx+1<cols)for(let j=head[c+1];j>=0&&lim-->0;j=next[j])pair(i,j);
         if(cz+1<rows){
-          for(let j=head[c+cols];j>=0;j=next[j])pair(i,j);
-          if(cx>0)for(let j=head[c+cols-1];j>=0;j=next[j])pair(i,j);
-          if(cx+1<cols)for(let j=head[c+cols+1];j>=0;j=next[j])pair(i,j);
+          for(let j=head[c+cols];j>=0&&lim-->0;j=next[j])pair(i,j);
+          if(cx>0)for(let j=head[c+cols-1];j>=0&&lim-->0;j=next[j])pair(i,j);
+          if(cx+1<cols)for(let j=head[c+cols+1];j>=0&&lim-->0;j=next[j])pair(i,j);
         }
       }
     }
@@ -810,7 +813,7 @@ var fmtN=(v,sig=3)=>{if(!isFinite(v))return'∞';if(v===0)return'0';v=Number(v.t
 var fmtLen=m=>m>=1000?fmtN(m/1000)+' km':m>=1?fmtN(m)+' m':m>=0.01?fmtN(m*100)+' cm':fmtN(m*1000)+' mm';
 var fmtP=p=>{var a=Math.abs(p);return a>=1000?fmtN(p/1000)+' kPa':a>=1?fmtN(p)+' Pa':a>=1e-3?fmtN(p*1000)+' mPa':fmtN(p)+' Pa';};
 var fmtAtm=p=>fmtN(p/ATM,p/ATM<0.1?2:3)+' atm';
-var fmtTime=s=>s>=3600?fmtN(s/3600)+' h':s>=60?fmtN(s/60)+' min':s>=1?fmtN(s)+' s':s>=1e-3?fmtN(s*1e3)+' ms':fmtN(s*1e6)+' µs';
+var fmtTime=s=>s>=3.156e7?(s>=3.156e10?fmtN(s/3.156e7,2)+' years':fmtN(s/3.156e7)+' years'):s>=1.728e5?fmtN(s/86400)+' days':s>=3600?fmtN(s/3600)+' h':s>=60?fmtN(s/60)+' min':s>=1?fmtN(s)+' s':s>=1e-3?fmtN(s*1e3)+' ms':fmtN(s*1e6)+' µs';
 
 var fmtF=f=>{var a=Math.abs(f);return a>=1e6?fmtN(f/1e6)+' MN':a>=1000?fmtN(f/1000)+' kN':a>=1?fmtN(f)+' N':a>=1e-3?fmtN(f*1000)+' mN':fmtN(f)+' N';};
 var fmtS=v=>Math.abs(v)<5e-4?'0 J/(mol·K)':(v>0?'+':'−')+fmtN(Math.abs(v))+' J/(mol·K)';
@@ -859,8 +862,10 @@ const st={h:0.3,gMul:1,pBr:23e3,pAir:0,T:293,speedPow:0,playing:true,emaInit:fal
 const LCOL_VAC=0.6,LCOL_AIR=0.085,C_BR=23.4,D_BR=0.091e-4;   // D of bromine in air at 1 atm, 293 K, m²/s
 function clockFactor(){
   if(!sim.valveOpen||st.pAir<=0||sim.n===0)return 1;
-  const b=st.botE[0]+st.botE[1],t=st.topE[0]+st.topE[1];
-  if(Math.abs(b-t)>0.15*Math.max(b,t))return 1;
+  // Flow or diffusion? Compare the counted share of all gas in the top half with the share it will have at balance.
+  const b=st.botE[0]+st.botE[1],t=st.topE[0]+st.topE[1];let tEq=0;
+  for(let s=0;s<2;s++){const q=qExact(s);tEq+=(st.botE[s]+st.topE[s])*q/(1+q);}
+  if(Math.abs(t-tEq)>0.08*(b+t))return 1;
   const nTot=sim.n/(2*sim.areaHalf),pTot=nTot/nRef()*(st.T/T_REF)*ATM,sg=sim.sigma(0);
   return Math.max(1,C_BR/nTot*sg*sim.S/(D_BR*(ATM/pTot)*Math.pow(st.T/293,1.75)));
 }
@@ -886,7 +891,7 @@ const gFrom=t=>0.1*Math.pow(1e6,t/100000), gTo=g=>Math.round(100000*Math.log(g/0
 function readSliders(resetting){
   st.h=sizeFrom(+$('sSize').value);
   let g=gFrom(+$('sG').value); if(Math.abs(Math.log10(g))<0.003)g=1; st.gMul=g;
-  st.pBr=+$('sP').value*1e3; st.pAir=+$('sA').value*1e3; st.T=+$('sT').value; st.speedPow=+$('sSpd').value;
+  st.pBr=+$('sP').value*1e3; st.pAir=+$('sA').value===101?101325:+$('sA').value*1e3; st.T=+$('sT').value; st.speedPow=+$('sSpd').value;
   $('vSize').textContent=fmtLen(st.h);
   $('vG').textContent=fmtN(st.gMul)+' g';
   $('vP').textContent=fmtN(st.pBr/1e3)+' kPa · '+fmtAtm(st.pBr);
@@ -1122,6 +1127,12 @@ function refState(kind){
   return psiOf(frTmp);
 }
 function ledger(){
+  // With air present this panel still counts only the bromine. Air pushing in squeezes the bromine and lowers its entropy
+  // while raising its own, so the figure is then one gas's share and not a total.
+  const withAir=st.pAir>0;
+  $('sHeadEq').innerHTML=withAir?'Bromine only: ΔS<sub>bromine</sub> − M·g·Δz̄ / T. The air\'s own entropy change is not counted in this panel, so this is not the total while air is present.'
+    :'ΔS<sub>total</sub> = ΔS<sub>gas</sub> + ΔS<sub>surroundings</sub> = ΔS<sub>gas</sub> − M·g·Δz̄ / T &nbsp;≥ 0';
+  $('sTotLab').textContent=withAir?'Bromine\'s share, now':'ΔS total, now';
   let N=0;for(let i=0;i<NB;i++)N+=emaL[i];
   if(N<=0){['sGas','sSur','sTot','sUni'].forEach(id=>$(id).textContent='—');$('sVerdict').textContent='No bromine in the apparatus.';return;}
   const start=refState('start'),eq=refState('eq'),uni=refState('uniform');
@@ -1139,7 +1150,8 @@ function ledger(){
   $('sUni').textContent=fmtS(uniT);
   const short=maxT-uniT;
   $('sUniEq').innerHTML=short<5e-3?'same as the maximum to within <b>'+fmtN(Math.max(short,1e-12),2)+'</b> J/(mol·K)':'that is <b>'+fmtN(short)+'</b> J/(mol·K) <b>below</b> the maximum';
-  $('sVerdict').innerHTML=!sim.valveOpen&&st.openedAt===null
+  $('sVerdict').innerHTML=withAir?'With air in the apparatus this panel follows the bromine alone. When the valve opens, the higher-pressure air pushes down and squeezes the bromine, so the bromine\'s share can go <b>negative</b>; the air expanding gains more than the bromine loses, and the total for both gases still rises. Remove the air to see the complete ledger for a single gas.'
+    :!sim.valveOpen&&st.openedAt===null
     ?'Sealed start: nothing has changed yet. Opening the valve can raise total entropy by up to <b>'+fmtN(maxT)+' J/(mol·K)</b>.'
     :short<5e-3
       ?'Total entropy climbs to its maximum and stays there, apart from dot-counting jitter. At this size the maximum <b>is</b> the even fill: the gravity term is too small to register. Second law satisfied, and the bench demo is exactly what it predicts.'
@@ -1324,9 +1336,12 @@ const D_REAL={5:1.6e-5,6:0.9e-5};                 // diffusion coefficient in ai
    and a real molecule about a ten-millionth of a metre. Mixing is diffusion in both, so the clock can be converted:
    real time = model time × D_model / D_real. D_model was measured for this collision setup from the spread of tracer
    dots in air (tests/diffusion-check.js): D_model = C_MODEL × thermal speed × metres per unit ÷ (dots per unit²). */
-const C_MODEL={5:2.18,6:3.08};
+const C_MODEL={5:2.5,6:4.0};
 function clockFactor(){
   if(st.pAir<=0)return 1;                          // into a vacuum nothing is diffusing: the flight times are real
+  // While the pressures either side of the rim still differ, gas is flowing, not diffusing: plain clock.
+  if(st.d<0.3*Hs(st.gas)){let c=0;for(let i=0;i<RIM;i++)c+=ema[0][i]+ema[1][i];
+    if(Math.abs(toP(c/RIM)-st.pAir)>0.12*st.pAir)return 1;}
   const nTot=st.pAir/ATM*NREF*T_REF/st.T,sg=sim.sigma(st.gas);
   const dModel=Math.min(C_MODEL[st.gas]/nTot*sg*sim.S,0.5*sg*sim.S*WZ);   // capped where the model stops being diffusive
   const dReal=D_REAL[st.gas]*(ATM/st.pAir)*Math.pow(st.T/293,1.75);
@@ -1389,7 +1404,7 @@ function measure(){
   for(let i=RIM-w;i<RIM;i++){h+=emaS[0][i];a+=emaS[1][i];}
   for(let i=RIM;i<RIM+w;i++){oh+=emaS[0][i];oa+=emaS[1][i];}
   M.inH=toP(h/w);M.inA=toP(a/w);M.in=M.inH+M.inA;M.outH=toP(oh/w);M.outA=toP(oa/w);M.out=M.outH+M.outA;
-  M.noise=Math.sqrt(M.in*M.in/Math.max(h+a,1)+M.out*M.out/Math.max(oh+oa,1))/2;   // halved: the slow average covers several independent looks
+  M.noise=Math.sqrt(M.in*M.in/Math.max(h+a,1)+M.out*M.out/Math.max(oh+oa,1))/2;   // standard error of the slow average, which spans about four independent samples
 }
 function draw(){
   const col=SPECIES[st.gas].color,yt=Y(geo.zmax),yb=Y(0),xl=X(geo.xmin),xr=X(geo.xmax);
@@ -1434,9 +1449,11 @@ function readouts(){
   $('t3PoutEq').innerHTML='air <b>'+fmtP(M.outA)+'</b> + heavy gas that has crossed <b>'+fmtP(M.outH)+'</b><br>net push at the rim: <b>'+fmtP(Math.abs(net))+(net>0?' outward':' inward')+'</b> ± '+fmtP(M.noise)+' of dot-counting scatter'+(st.pAir>0&&Math.abs(net)<2*M.noise?': balanced':'');
   const left=inside()/st.n0;if(st.half===null&&left<=0.5)st.half=st.realTime;
   $('t3Left').textContent=fmtN(Math.min(100,left*100))+'%';
-  const F=clockFactor();
+  const F=clockFactor(),dNow=st.pAir>0?D_REAL[g]*(ATM/st.pAir)*Math.pow(st.T/293,1.75):0;
   $('t3LeftEq').innerHTML=(st.pAir>0?'real-world time since start, still air: <b>':'real time since start: <b>')+fmtTime(st.realTime)+'</b>'+(st.half!==null?' · half gone after <b>'+fmtTime(st.half)+'</b>':'')+
-    (st.pAir>0?'<br>clock converted from the model by the ratio of diffusion rates (×'+fmtN(F,2)+'; real D ≈ '+fmtN(D_REAL[g]*1e4*(ATM/st.pAir)*Math.pow(st.T/293,1.75),2)+' cm²/s). A draughty room is faster.':'<br>nothing to diffuse through: these are real flight times.');
+    (st.pAir<=0?'<br>nothing to diffuse through: these are real flight times.'
+      :F<=1?'<br>the tank and the air outside are still at different pressures: that is flow, and the clock is running in plain real time.'
+      :'<br>clock converted from the model by the ratio of diffusion rates (×'+fmtN(F,2)+'; real D ≈ '+fmtN(dNow*1e4,2)+' cm²/s).'+(st.d<=3?' Pencil check for half gone: between 0.2 and 0.9 × d² / D = <b>'+fmtTime(0.2*st.d*st.d/dNow)+'</b> to <b>'+fmtTime(0.9*st.d*st.d/dNow)+'</b>, depending on how freely the gas clears the rim. Calculated for still air, not measured; a draughty room is faster.':' At this size still-air diffusion takes far longer than real air ever stays still.'));
   const rh=st.pPool*Mh/(R_GAS*st.T),ra=st.pAir*Ma/(R_GAS*st.T);
   $('t3Rho').textContent=fmtN(rh)+' kg/m³';
   $('t3RhoEq').innerHTML='at its average starting pressure · air at the ground outside: <b>'+fmtN(ra)+' kg/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+'<br>weight per m² of the pool, less the weight of the air it displaces: <b>'+fmtP(st.pPool*x-st.pAir*(1-Math.exp(-st.d/Ha)))+'</b>'+(x<0.05?' = (ρ − ρ<sub>air</sub>)·g·d':'');
@@ -1446,7 +1463,8 @@ function readouts(){
   const sep=Math.exp(-st.d*(1/Hh-1/Ha));
   $('t3REq').innerHTML='balanced against gravity, the heavy gas at the rim is <b>'+fmtN(Math.exp(-x)*100,x<0.01?5:3)+'%</b> as dense as at the floor (air: '+fmtN(Math.exp(-st.d/Ha)*100,x<0.01?5:3)+'%)';
   let v;
-  if(st.pAir===0)v='<b>No atmosphere.</b> Nothing pushes back at the rim, so the full '+fmtP(st.pPool)+' is unbalanced and the gas leaves at once. Sides alone contain nothing.';
+  if(st.pAir===0&&x>=1)v='<b>No atmosphere outside, and most of the gas is still here.</b> At this depth the heavy gas is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so its own weight holds it in an open tank beside a vacuum, with no lid. What slowly leaves is the thin gas at the rim spilling over into the empty space outside.';
+  else if(st.pAir===0)v='<b>No atmosphere.</b> Nothing pushes back at the rim, so the full '+fmtP(st.pPool)+' is unbalanced and the gas leaves at once. Sides alone contain nothing.';
   else if(st.pPool<st.pAir*0.85&&x<0.05)v='The air outside is at higher pressure than the pool, so it pushes into the tank and squeezes the heavy gas down until the two match. After that only slow mixing remains.';
   else if(st.pPool>st.pAir*1.15)v='The pool starts at higher pressure than the air, so the excess pushes out until the two match. After that only slow mixing remains.';
   else if(x<0.05)v='<b>Pressure balanced at the rim.</b> The atmosphere supplies the push a lid would supply. Unlike a lid it does not stop molecules trading places, so what remains is molecule-by-molecule mixing, which gravity is too weak to prevent at this size (d / H = '+fmtN(x,2)+'): the pool is long-lived but temporary.';
@@ -1594,14 +1612,14 @@ function readouts(){
     $('t4TopEq').innerHTML='dots per 60 frames · air pressure at that height: <b>'+fmtP(sim.top==='vacuum'?0:pTop)+'</b>';}
   $('t4Up').textContent=fmtF(FB.up);$('t4Dn').textContent=fmtF(FB.dn);$('t4Wt').textContent=fmtF(FB.wt);
   $('t4Net').textContent=fmtF(Math.abs(FB.net))+(FB.net>0?' up':FB.net<0?' down':'');
-  $('t4Note').innerHTML=noG()?'Gravity is off, so the slab has no weight: the pressure below and above it must be equal, at any height.'
+  $('t4Note').innerHTML=noG()?'Gravity is off, so the slab has no weight: the pressure below and above it must be equal, at any height. Any difference shown is dot-counting noise (about ±'+fmtF(FB.noise)+').'
     :Math.abs(FB.net)<3*FB.noise+1e-9
     ?(FB.wt>FB.noise?'Balanced to within the dot-counting noise (about ±'+fmtF(FB.noise)+'): each layer of air is held up by the layer below and held down by the layer above plus its own weight. No wall or lid appears in that sum.'
       :'Pressure below and above agree to within the dot-counting noise (about ±'+fmtF(FB.noise)+'). The slab\'s weight is real but too small for the dots to resolve at this height.')
     :'Not balanced: the air is still moving.';
   $('t4Cmp').innerHTML=ALT.map(([n,z])=>{const m=stdAtm(z),gp=st.pG*Math.exp(-z/Hh);
     return '<tr><td>'+n+'<span> '+fmtLen(z)+'</span></td><td class="m">'+fmtP(m)+'</td><td>'+fmtP(gp)+'</td><td>'+fmtP(st.pG)+'</td><td>'+fmtP(gp)+'</td></tr>';}).join('');
-  $('t4CmpEq').innerHTML='Standard atmosphere: the 1976 US Standard, a mid-latitude yearly average built from balloon and rocket soundings; a given day and place differs by a few percent (measured on Everest\'s summit: 33.7 kPa). The chart below shows a radiosonde sounding lying on the same curve. "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
+  $('t4CmpEq').innerHTML='Standard atmosphere: the 1976 US Standard, a mid-latitude yearly average built from balloon and rocket soundings; a given day and place differs by several percent (a barometer on Everest\'s surveyed summit read 33.7 kPa, about 7% above the standard; West, 1999). The chart below shows a radiosonde sounding lying on the same curve. "Dome and gravity" matches "gravity, no dome" at every height below the dome, so no pressure reading can tell them apart; the dome only adds a load of <b>'+fmtP(pTop)+'</b> at '+fmtLen(st.h)+'.';
   let v;
   if(noG()&&dome())v='<b>Dome, no gravity.</b> A sealed box: the gas spreads evenly and reads '+fmtP(st.pG)+' at every height. Barometers on mountains, aircraft and balloons do not read that.';
   else if(noG())v='<b>No gravity, no dome.</b> Nothing holds the air and it leaves. Gas does need something to keep it. The question is which thing, and the measured fall of pressure with height answers it.';
@@ -1618,17 +1636,19 @@ function readouts(){
      gravitational energy u = M g z̄           →  z̄_A = H − h/(e^x − 1),  z̄_B = h/2
    Lifting the air takes heat from the surroundings, so ΔS_total = (s_B − s_A) − M g (z̄_B − z̄_A)/T. */
 const fmtE=j=>{const a=Math.abs(j);return a>=1e21?fmtN(j):a>=1e18?fmtN(j/1e18)+' EJ':a>=1e15?fmtN(j/1e15)+' PJ':a>=1e12?fmtN(j/1e12)+' TJ':a>=1e9?fmtN(j/1e9)+' GJ':a>=1e6?fmtN(j/1e6)+' MJ':a>=1e3?fmtN(j/1e3)+' kJ':fmtN(j)+' J';};
-const A_EARTH=5.101e14,V_ESC=11186,T_EXO=1000;
+const A_EARTH=5.101e14,V_ESC=10770,T_EXO=1000;   // escape speed at about 500 km up, where molecules stop colliding
 const ESC=[['Nitrogen, N₂',0.0280134],['Oxygen, O₂',0.0319988],['Helium, He',0.0040026],['Hydrogen atoms, H',0.00100794]];
 let escDone=false;
 function ledger(){
-  if(!escDone){escDone=true;$('t4Esc').innerHTML=ESC.map(([n,M])=>{const lam=M*V_ESC*V_ESC/(2*R_GAS*T_EXO),e=Math.exp(-lam);
-    return '<tr><td>'+n+'</td><td>'+fmtN(Math.sqrt(2*R_GAS*T_EXO/M)/1000,2)+' km/s</td><td>11.2 km/s</td><td class="m">'+fmtN(lam)+'</td><td>'+(e<1e-12?'1 in 10'+sup(Math.round(lam/Math.LN10)):e<0.001?'1 in '+fmtN(1/e,2):fmtN(e*100,2)+'%')+'</td></tr>';}).join('');}
+  if(!escDone){escDone=true;$('t4Esc').innerHTML=ESC.map(([n,M])=>{const lam=M*V_ESC*V_ESC/(2*R_GAS*T_EXO);
+    // share of a Maxwell distribution above escape speed: erfc(√λ) + 2√(λ/π)·e^−λ, written for large λ
+    const lg=-lam/Math.LN10+Math.log10(2*Math.sqrt(lam/Math.PI)+(1-1/(2*lam))/Math.sqrt(Math.PI*lam)),e=Math.pow(10,lg);
+    return '<tr><td>'+n+'</td><td>'+fmtN(Math.sqrt(2*R_GAS*T_EXO/M)/1000,2)+' km/s</td><td>10.8 km/s</td><td class="m">'+fmtN(lam)+'</td><td>'+(lg<-12?'1 in 10'+sup(Math.round(-lg)):lg<-3?'1 in '+fmtN(1/e,2):'1 in '+fmtN(1/e,2))+'</td></tr>';}).join('');}
   if(noG()){['t4sGas','t4sSur','t4sTot','t4sE'].forEach(id=>$(id).textContent='0');['t4sGasEq','t4sSurEq','t4sTotEq','t4sEEq'].forEach(id=>$(id).textContent='');
     $('t4sVerdict').innerHTML='With gravity off, lifting air costs nothing, so an even fill is the maximum-entropy state: the gas spreads into whatever it is given. That is the bench demo of tab 1, and it is why a world without gravity would need a container.';return;}
   const Hh=H(),x=st.h/Hh,M=SPECIES[1].M,g=grav(),T=st.T;
   const em=-Math.expm1(-x),zA=x<1e-4?st.h/2*(1-x/6):Hh-st.h/Math.expm1(x),dz=st.h/2-zA;
-  const dSg=x<1e-3?R_GAS*x*x/12:R_GAS*(Math.log(x/em)-zA/Hh),dSs=-M*g*dz/T,dSt=x<1e-3?-R_GAS*x*x/24:R_GAS*(Math.log(x/em)-x/2);
+  const dSg=x<1e-3?R_GAS*x*x/24:R_GAS*(Math.log(x/em)-zA/Hh),dSs=-M*g*dz/T,dSt=x<1e-3?-R_GAS*x*x/24:R_GAS*(Math.log(x/em)-x/2);
   const nM2=st.pG*em/(g*M);                       // moles of air above each m² of ground, below the dome
   const sm=v=>Math.abs(v)<5e-7?(v<0?'−':'+')+fmtN(Math.abs(v),2)+' J/(mol·K)':fmtS(v);
   $('t4sGas').textContent=sm(dSg);
@@ -1642,7 +1662,7 @@ function ledger(){
   $('t4sEEq').innerHTML='M·g·Δz̄ = <b>'+fmtE(e1)+'</b> per mole · over Earth\'s whole surface: <b>'+fmtN(e1*nM2*A_EARTH,2)+' J</b>';
   $('t4sVerdict').innerHTML=x<0.05
     ?'At <b>'+fmtLen(st.h)+'</b> the two states are the same to within '+fmtN(Math.abs(dSt),2)+' J/(mol·K): an even fill <b>is</b> the gravity profile at this height. This is the regime of every bench demonstration.'
-    :'Under a dome at <b>'+fmtLen(st.h)+'</b>, an even fill would have <b>'+fmtN(Math.abs(dSt))+' J/(mol·K) less</b> total entropy than the profile gravity gives. The air gains entropy by spreading, but lifting it takes more from the surroundings than it gains. At this temperature the second law holds the air in the gravity profile; it would take '+fmtE(e1*nM2)+' of work on every square metre to pull it into an even fill, and it would fall back when the work stopped.';
+    :'Under a dome at <b>'+fmtLen(st.h)+'</b>, an even fill would have <b>'+fmtN(Math.abs(dSt))+' J/(mol·K) less</b> total entropy than the profile gravity gives. The air gains entropy by spreading, but lifting it takes more from the surroundings than it gains. At this temperature the second law holds the air in the gravity profile; it would take at least '+fmtE(-T*dSt*nM2)+' of work on every square metre (the temperature times the entropy shortfall) to pull it into an even fill, and it would fall back when the work stopped.';
 }
 let frame=0;
 function tick(){
