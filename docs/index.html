@@ -386,8 +386,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
 
       <div class="note">
         <span class="k">What to notice</span>
-        <p>Carbon dioxide and sulfur hexafluoride will sit in an open fish tank for many minutes with no lid. The reason is on the two top readouts: the gas in the tank and the air above it are at the same pressure. There is no unbalanced push at the rim, so nothing rushes out. Compare tab 1, where the gas faced a vacuum and the full pressure was unbalanced.</p>
-        <p>Press <b>Remove the air</b> and the heavy gas is gone in an instant, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it spreading upward is the atmosphere pressing down on it.</p>
+        <p>Carbon dioxide and sulfur hexafluoride will sit in an open fish tank for many minutes with no lid, long enough to float a foil boat on in a classroom. The reason is on the two top readouts: the gas in the tank and the air above it are at the same pressure. There is no unbalanced push at the rim, so nothing rushes out. Compare tab 1, where the gas faced a vacuum and the full pressure was unbalanced.</p>
+        <p>Press <b>Remove the air</b> and the heavy gas is gone in about a hundredth of a second, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it spreading upward is the atmosphere pressing down on it.</p>
         <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. In a real tank, being denser than air also keeps the gas low and stops it being stirred out (the model does not show that part), but at fish-tank size gravity cannot hold it there for ever. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
       </div>
       <div class="note steel">
@@ -398,7 +398,8 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
         <p>The outer edges of the picture are open air, not walls: a dot that crosses an edge is gone, and the surrounding air sends dots in at the rate its pressure dictates. Heavy-gas dots that leave do not come back, as if the room were large.</p>
-        <p>Mixing speed is not to scale. Dots in this model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre. The model empties a 30 cm tank in a fraction of a second of real time, where a real, undisturbed tank takes of the order of an hour or more by diffusion alone (the estimate is shown in the readout) and minutes in a room with draughts. The model also has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, and where the gas ends up.</p>
+        <p>The clock on this tab is converted to real time. Dots in the model travel about one percent of the tank width between collisions; real molecules travel about a ten-millionth of a metre, so the dots mix roughly twenty thousand times too fast. Mixing is diffusion in both cases, so the model's time is multiplied by the ratio of the two diffusion rates, the model's measured from its own dots and the real one taken from published values (about 0.09 cm²/s for SF₆ in air, 0.16 for CO₂). The result is the time for a perfectly still tank, of the order of half an hour to lose half the gas from a 30 cm tank. Real demonstrations lose it faster, in minutes, because pouring, draughts and moving objects stir it. With the air removed nothing is diffusing and no conversion is applied.</p>
+        <p>Two limits. The first instant after a change, when pressures even out at the speed of sound, is stretched by the same conversion and is really far quicker than the clock suggests. And the model has no bulk flow, so it does not show a heavy gas pouring like a liquid. What it gets right is the pressure balance, the rate of still-air mixing, and where the gas ends up.</p>
       </div>
     </div>
     <aside class="controls">
@@ -1301,8 +1302,20 @@ const NREF=260;                                   // dots per unit² per atm at 
 const geo=Object.assign({},OpenBox,{wallX:0.7,wallZ:1.6,cell:0.1}),sim=new OpenSim(geo);sim.lcol=0.05;sim.dcol=0.1;   // frequent collisions: mixing is slow next to free flight
 const NB=sim.NB,WX=geo.wallX,WZ=geo.wallZ,RIM=Math.round(WZ/sim.dzb),ABIN=2*WX*sim.dzb;
 const cnt=[new Float64Array(NB),new Float64Array(NB)],ema=[new Float64Array(NB),new Float64Array(NB)],emaS=[new Float64Array(NB),new Float64Array(NB)];
-const D_REAL={5:1.6e-5,6:0.9e-5};                 // diffusion coefficient in air at 1 atm, m²/s (approximate)
-const st={d:0.3,gMul:1,pPool:101e3,pAir:101e3,T:293,gas:6,speedPow:0,playing:true,emaInit:false,n0:1,simTime:0,half:null};
+const D_REAL={5:1.6e-5,6:0.9e-5};                 // diffusion coefficient in air at 1 atm and 20 °C, m²/s (approximate)
+/* The dots mix far faster than real molecules, because a dot travels about a hundredth of the tank between collisions
+   and a real molecule about a ten-millionth of a metre. Mixing is diffusion in both, so the clock can be converted:
+   real time = model time × D_model / D_real. D_model was measured for this collision setup from the spread of tracer
+   dots in air (tests/diffusion-check.js): D_model = C_MODEL × thermal speed × metres per unit ÷ (dots per unit²). */
+const C_MODEL={5:1.63,6:2.05};
+function clockFactor(){
+  if(st.pAir<=0)return 1;                          // into a vacuum nothing is diffusing: the flight times are real
+  const nTot=st.pAir/ATM*NREF*T_REF/st.T,sg=sim.sigma(st.gas);
+  const dModel=Math.min(C_MODEL[st.gas]/nTot*sg*sim.S,0.5*sg*sim.S*WZ);   // capped where the model stops being diffusive
+  const dReal=D_REAL[st.gas]*(ATM/st.pAir)*Math.pow(st.T/293,1.75);
+  return Math.max(1,dModel/dReal);
+}
+const st={d:0.3,gMul:1,pPool:101e3,pAir:101e3,T:293,gas:6,speedPow:0,playing:true,emaInit:false,n0:1,simTime:0,realTime:0,half:null};
 const sizeFrom=t=>0.1*Math.pow(1e5,t/100000),sizeTo=d=>Math.round(100000*Math.log(d/0.1)/Math.log(1e5));
 const gFrom=t=>0.1*Math.pow(1e6,t/100000),gTo=g=>Math.round(100000*Math.log(g/0.1)/Math.log(1e6));
 const grav=()=>st.gMul*G0,Hs=s=>R_GAS*st.T/(SPECIES[s].M*grav());
@@ -1316,7 +1329,7 @@ function reset(){
   sim.place(Math.round(nA*(geo.xmax-WX)*integ(0,WZ)),1,geo.xmin,-WX-0.01,0,WZ);
   sim.place(Math.round(nA*(geo.xmax-WX)*integ(0,WZ)),1,WX+0.01,geo.xmax,0,WZ);
   sim.place(Math.round(nA*(geo.xmax-geo.xmin)*integ(WZ,geo.zmax)),1,geo.xmin,geo.xmax,WZ,geo.zmax);
-  st.n0=Math.max(1,inside());st.emaInit=false;st.simTime=0;st.half=null;
+  st.n0=Math.max(1,inside());st.emaInit=false;st.simTime=0;st.realTime=0;st.half=null;
 }
 function inside(){let c=0;for(let i=0;i<sim.n;i++)if(sim.sp[i]===st.gas&&sim.z[i]<WZ&&Math.abs(sim.x[i])<WX)c++;return c;}
 function read(resetting){
@@ -1345,7 +1358,7 @@ function advance(){
   const sg=sim.sigma(st.gas),sa=sim.sigma(1),mult=Math.pow(2,st.speedPow);
   let nSub=Math.max(2,Math.ceil(8*mult)),dt=mult*0.03*sim.S/sg/nSub;
   dt=Math.min(dt,0.05*sg/sim.grav,0.2*sim.lcol*sim.S/sa);   // last term keeps the collision chance per step small
-  for(let k=0;k<nSub;k++)sim.step(dt);st.simTime+=dt*nSub;realPerScreenSec=dt*nSub*60;
+  for(let k=0;k<nSub;k++)sim.step(dt);const F=clockFactor();st.simTime+=dt*nSub;st.realTime+=dt*nSub*F;realPerScreenSec=dt*nSub*60*F;
 }
 const cv=$('c3'),ctx=cv.getContext('2d');
 const W=820,Hc=600,K=118,CX=158,Y0=572,X=x=>CX+x*K,Y=z=>Y0-z*K;
@@ -1402,11 +1415,11 @@ function readouts(){
   $('t3Pout').textContent=fmtP(M.out);
   const net=M.in-M.out;
   $('t3PoutEq').innerHTML='air <b>'+fmtP(M.outA)+'</b> + heavy gas that has crossed <b>'+fmtP(M.outH)+'</b><br>net push at the rim: <b>'+fmtP(Math.abs(net))+(net>0?' outward':' inward')+'</b> ± '+fmtP(M.noise)+' of dot-counting scatter'+(st.pAir>0&&Math.abs(net)<2*M.noise?': balanced':'');
-  const left=inside()/st.n0;if(st.half===null&&left<=0.5)st.half=st.simTime;
+  const left=inside()/st.n0;if(st.half===null&&left<=0.5)st.half=st.realTime;
   $('t3Left').textContent=fmtN(Math.min(100,left*100))+'%';
-  const tReal=st.d*st.d/D_REAL[g]*(st.pAir>0?st.pAir/ATM:0);
-  $('t3LeftEq').innerHTML='model time since start: <b>'+fmtTime(st.simTime)+'</b>'+(st.half!==null?' · half gone after <b>'+fmtTime(st.half)+'</b>':'')+
-    (st.pAir>0&&st.d<=10&&st.gMul===1?'<br>real tank, still air, time to mostly empty by diffusion alone, d² / D ≈ <b>'+fmtTime(tReal)+'</b> (D ≈ '+fmtN(D_REAL[g]*1e4,2)+' cm²/s at 1 atm; half empty in about a fifth of that)':'');
+  const F=clockFactor();
+  $('t3LeftEq').innerHTML=(st.pAir>0?'real-world time since start, still air: <b>':'real time since start: <b>')+fmtTime(st.realTime)+'</b>'+(st.half!==null?' · half gone after <b>'+fmtTime(st.half)+'</b>':'')+
+    (st.pAir>0?'<br>clock converted from the model by the ratio of diffusion rates (×'+fmtN(F,2)+'; real D ≈ '+fmtN(D_REAL[g]*1e4*(ATM/st.pAir)*Math.pow(st.T/293,1.75),2)+' cm²/s). A draughty room is faster.':'<br>nothing to diffuse through: these are real flight times.');
   const rh=st.pPool*Mh/(R_GAS*st.T),ra=st.pAir*Ma/(R_GAS*st.T);
   $('t3Rho').textContent=fmtN(rh)+' kg/m³';
   $('t3RhoEq').innerHTML='at its average starting pressure · air at the ground outside: <b>'+fmtN(ra)+' kg/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+'<br>weight per m² of the pool, less the weight of the air it displaces: <b>'+fmtP(st.pPool*x-st.pAir*(1-Math.exp(-st.d/Ha)))+'</b>'+(x<0.05?' = (ρ − ρ<sub>air</sub>)·g·d':'');
@@ -1423,7 +1436,7 @@ function readouts(){
   else if(x<1)v='Pressure balanced at the rim, and gravity is now helping: the heavy gas thins by '+fmtN((1-Math.exp(-x))*100,2)+'% between floor and rim. The pool leaks more slowly the deeper the container.';
   else v='<b>Gravity keeps the heavy gas low.</b> At this depth it is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so very little of it reaches the rim to mix away, and the pool outlasts the bench version many times over. That is sorting by weight under an open top. It is still not permanent: what does cross the rim sinks to the ground outside.';
   $('t3Verdict').innerHTML=v;
-  $('t3hSpd').textContent='1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
+  $('t3hSpd').textContent=st.pAir>0?'1 s on screen ≈ '+fmtTime(realPerScreenSec)+' in a real, still tank':'1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
 }
 let frame=0;
 function tick(){
