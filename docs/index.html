@@ -368,7 +368,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <div class="eq" id="t3LeftEq"></div>
         </div>
         <div class="cell">
-          <div class="lab">Density, ρ = P·M / RT</div>
+          <div class="lab">Density ρ = P·M / RT, and what gravity makes of it: weight ρ·g</div>
           <div class="big" id="t3Rho">—</div>
           <div class="eq" id="t3RhoEq"></div>
         </div>
@@ -389,13 +389,19 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
         <span class="k">What to notice</span>
         <p>Carbon dioxide and sulfur hexafluoride will sit in an open fish tank for many minutes with no lid, long enough to float a foil boat on in a classroom. Watch a real one: <a href="https://www.youtube.com/watch?v=N9vvJQniYsc" target="_blank" rel="noopener">Ship floating in air!</a>, a foil boat on a tank of SF₆, from Cal Poly Pomona's physics demonstrations. The reason is on the two top readouts: the gas in the tank and the air above it are at the same pressure. There is no unbalanced push at the rim, so nothing rushes out. Compare tab 1, where the gas faced a vacuum and the full pressure was unbalanced.</p>
         <p>Press <b>Remove the air</b> and the heavy gas is gone in about a hundredth of a second, sides or no sides. Put the air back and it stays. The sides of the tank stop it spreading sideways; what stops it bursting upward is the atmosphere pressing down on it.</p>
-        <p>Two things are at work in a real tank. Equal pressure at the rim removes the blow-out. Gravity acting on the difference in density then stops the heavy gas rising out by convection: a light gas such as helium would be just as balanced at the rim and would float away in seconds. This model shows the first and not the second.</p>
-        <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. In a real tank, being denser than air also keeps the gas low and stops it being stirred out (the model does not show that part), but at fish-tank size gravity cannot hold it there for ever. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
+        <p>Two things are at work in a real tank. Equal pressure at the rim removes the blow-out. Gravity acting on the difference in density then stops the heavy gas rising out by convection: a light gas such as helium would be just as balanced at the rim and would float away in seconds, pushed up by the heavier air that gravity pulls in underneath it. This model shows the first and not the second, because it has no bulk flow, which is how buoyancy moves a gas.</p>
+        <p>What is left is slow mixing. Molecules wander across the rim one collision at a time, and the heavy gas thins out gradually. In a real tank, gravity pulls harder on each litre of the denser gas, which keeps it low and stops it being stirred out; without gravity the difference in density would do nothing. This model has no bulk flow, so at fish-tank size it cannot show that part, and at that size gravity cannot hold the gas there for ever in any case. Make the container kilometres deep, or turn gravity up, and gravity takes over: the heavy gas stays near the floor, sorted by weight, and only a trace reaches the rim to mix away.</p>
+      </div>
+      <div class="note">
+        <span class="k">Density is not a force</span>
+        <p>Density is how much mass sits in a volume. It has no direction and it pushes on nothing. A heavy gas stays low because gravity pulls on its mass, and pulls harder on a litre of it than on a litre of air. Every place density appears on this page it is multiplied by g: the pressure gradient is ρ·g, the weight of a layer is ρ·g·Δz, the extra weight of this pool is (ρ − ρ<sub>air</sub>)·g·d. Set g to zero and each of them is zero, however large the difference in density.</p>
+        <p>Buoyancy is the same thing seen from the other side. A light gas rises because the heavier gas around it is pulled down and pushes in underneath; the push is the weight of the gas displaced, ρ·V·g. With no gravity there is no weight, no push, and no "up" for anything to rise toward.</p>
+        <p>Try it. Press <b>Make it 10 km deep</b>: with gravity on, the heavy gas stays in the bottom of the tank. Tick <b>Gravity off</b> and run it again: same gases, same densities, and it mixes away. At fish-tank size the dots look the same either way, because this model has no bulk flow, which is how buoyancy acts in a real tank; the deep tank is where the model can show gravity doing the sorting.</p>
       </div>
       <div class="note steel">
         <span class="k">Their side of it</span>
         <p>"So the gas does escape without a lid." At this size, yes, eventually, and the page shows it. An open tank of heavy gas is temporary. The claim being tested is narrower: that gas pressure always needs a solid barrier to oppose it. Here the barrier on top is another gas, and it works because it pushes back just as hard.</p>
-        <p>"Then why doesn't the atmosphere sort itself into layers, heaviest at the bottom?" Below about 100 km turbulence stirs the air far faster than gravity can sort it, so the mix is nearly uniform. Above that height stirring stops and the gases do separate by weight, with the lightest reaching highest. Both regimes are measured.</p>
+        <p>"Then why doesn't the atmosphere sort itself into layers, heaviest at the bottom?" Below about 100 km turbulence stirs the air far faster than gravity can sort it, so the mix is nearly uniform. Above that height stirring stops and gravity does sort the gases by molecular weight, with the lightest reaching highest. Both regimes are measured.</p>
       </div>
       <div class="note model">
         <span class="k">What the model is, and isn't</span>
@@ -424,9 +430,10 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
           <button class="btn small" data-t3="heavy">30,000 g gravity</button>
         </div>
       </div>
+      <label class="check"><input type="checkbox" id="t3NoG"> Gravity off (same densities, nothing pulling)</label>
       <hr>
       <div class="ctl"><div class="row"><label for="t3Size">Container depth</label><span class="val" id="t3vSize"></span></div><input type="range" id="t3Size" min="0" max="100000" value="9542"><div class="hint">Logarithmic, 10 cm to 10 km. Resets the run.</div></div>
-      <div class="ctl"><div class="row"><label for="t3G">Gravity</label><span class="val" id="t3vG"></span></div><input type="range" id="t3G" min="0" max="100000" value="16667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run.</div></div>
+      <div class="ctl"><div class="row"><label for="t3G">Gravity</label><span class="val" id="t3vG"></span></div><input type="range" id="t3G" min="0" max="100000" value="16667"><div class="hint">Logarithmic, 0.1 g to 100,000 g. Resets the run. At fish-tank size the dots show little change, because this model has no buoyant flow; use the 10 km tank to see gravity sort the gases.</div></div>
       <div class="ctl"><div class="row"><label for="t3P">Heavy gas starting pressure</label><span class="val" id="t3vP"></span></div><input type="range" id="t3P" min="10" max="200" value="101"><div class="hint">Average pressure of the heavy gas in the tank at the start. Poured in gently at bench size, it matches the air outside.</div></div>
       <div class="ctl"><div class="row"><label for="t3A">Atmospheric pressure outside</label><span class="val" id="t3vA"></span></div><input type="range" id="t3A" min="0" max="200" value="101"><div class="hint">0 is a vacuum. 101 kPa is one atmosphere.</div></div>
       <div class="ctl"><div class="row"><label for="t3T">Temperature</label><span class="val" id="t3vT"></span></div><input type="range" id="t3T" min="200" max="600" value="293"><div class="hint">Resets the run.</div></div>
@@ -541,7 +548,7 @@ footer{color:var(--muted);font-size:13px;max-width:82ch}
       </div>
       <div class="note steel">
         <span class="k">Their side of it</span>
-        <p>"The gradient is caused by density and buoyancy, not gravity." Density sorting needs a direction to sort along and a force to do the sorting. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 6 to 8.5 km depending on the temperature of the layer, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
+        <p>"The gradient is caused by density and buoyancy, not gravity." Density has no direction: it is an amount of mass in a volume, not a force. Buoyancy is the weight of the surrounding gas pushing back, ρ·V·g, so it vanishes when g does. Sorting by density therefore needs a downward force that acts on mass. Whatever that downward force is called, the measured profile fixes its size: it must give air a scale height of about 6 to 8.5 km depending on the temperature of the layer, which is RT / Mg with g = 9.8 m/s². A dome plays no part in that calculation.</p>
         <p>"The dome could be very high, where the pressure is tiny, so you would never notice it." Then it is doing no containing, which was the original claim. The argument started as "gas pressure requires a container" and has become "there may be a container where there is no pressure left to contain".</p>
         <p>"Your simulation's line misses the real curve." At one temperature it does, by the amount you would expect: the dots are held at a single temperature, and the real atmosphere is colder aloft than at the ground. The table's first column and the green curve do the same weight-of-the-air calculation with the measured temperature at each height, and there is nothing left to adjust. If you want the dots themselves closer, about 230 K is the average over the lowest 30 km.</p>
       </div>
@@ -1353,7 +1360,7 @@ function clockFactor(){
 const st={d:0.3,gMul:1,pPool:101e3,pAir:101e3,T:293,gas:6,speedPow:0,playing:true,emaInit:false,n0:1,simTime:0,realTime:0,half:null};
 const sizeFrom=t=>0.1*Math.pow(1e5,t/100000),sizeTo=d=>Math.round(100000*Math.log(d/0.1)/Math.log(1e5));
 const gFrom=t=>0.1*Math.pow(1e6,t/100000),gTo=g=>Math.round(100000*Math.log(g/0.1)/Math.log(1e6));
-const grav=()=>st.gMul*G0,Hs=s=>R_GAS*st.T/(SPECIES[s].M*grav());
+const noG=()=>$('t3NoG').checked,grav=()=>noG()?0:st.gMul*G0,Hs=s=>R_GAS*st.T/(SPECIES[s].M*grav());   // Hs is infinite with gravity off
 const toP=c=>c/ABIN/NREF*(st.T/T_REF)*ATM;
 function reset(){
   sim.clear();sim.S=st.d/WZ;sim.T=st.T;sim.grav=grav();sim.side='reservoir';sim.top='reservoir';sim.resS=1;
@@ -1378,6 +1385,7 @@ function read(resetting){
   if(resetting)reset();
 }
 ['t3Size','t3G','t3P','t3A','t3T'].forEach(id=>$(id).addEventListener('input',()=>read(true)));
+$('t3NoG').addEventListener('change',reset);
 $('t3Spd').addEventListener('input',()=>read(false));
 $('t3Reset').onclick=reset;
 $('t3Play').onclick=()=>{st.playing=!st.playing;$('t3Play').textContent=st.playing?'Pause':'Play';};
@@ -1385,7 +1393,7 @@ function legend(){$('t3Leg').textContent=SPECIES[st.gas].name.toLowerCase()+' ('
 document.querySelectorAll('#t3Gas [data-gas]').forEach(b=>b.onclick=()=>{st.gas=+b.dataset.gas;
   document.querySelectorAll('#t3Gas .btn').forEach(o=>o.classList.toggle('on',o===b));legend();reset();});
 const PRE={bench:{d:0.3,g:1,a:101},noair:{d:0.3,g:1,a:0},deep:{d:10000,g:1,a:101},heavy:{d:0.3,g:30000,a:101}};
-document.querySelectorAll('[data-t3]').forEach(b=>b.onclick=()=>{const p=PRE[b.dataset.t3];
+document.querySelectorAll('[data-t3]').forEach(b=>b.onclick=()=>{const p=PRE[b.dataset.t3];$('t3NoG').checked=false;
   $('t3Size').value=sizeTo(p.d);$('t3G').value=gTo(p.g);$('t3P').value=101;$('t3A').value=p.a;$('t3T').value=293;read(true);});
 
 let realPerScreenSec=0;
@@ -1458,21 +1466,24 @@ function readouts(){
       :F<=1?'<br>the tank and the air outside are still at different pressures: that is flow, and the clock is running in plain real time.'
       :'<br>clock converted from the model by the ratio of diffusion rates (×'+fmtN(F,2)+'; real D ≈ '+fmtN(dNow*1e4,2)+' cm²/s).'+(st.d<=3?' Pencil check for half gone: between 0.2 and 0.9 × d² / D = <b>'+fmtTime(0.2*st.d*st.d/dNow)+'</b> to <b>'+fmtTime(0.9*st.d*st.d/dNow)+'</b>, depending on how freely the gas clears the rim. Calculated for still air, not measured; a draughty room is faster.':' At this size still-air diffusion takes far longer than real air ever stays still.'));
   const rh=st.pPool*Mh/(R_GAS*st.T),ra=st.pAir*Ma/(R_GAS*st.T);
-  $('t3Rho').textContent=fmtN(rh)+' kg/m³';
-  $('t3RhoEq').innerHTML='at its average starting pressure · air at the ground outside: <b>'+fmtN(ra)+' kg/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+'<br>weight per m² of the pool, less the weight of the air it displaces: <b>'+fmtP(st.pPool*x-st.pAir*(1-Math.exp(-st.d/Ha)))+'</b>'+(x<0.05?' = (ρ − ρ<sub>air</sub>)·g·d':'');
-  $('t3H').textContent=fmtLen(Hh);
+  $('t3Rho').textContent=fmtN(rh)+' kg/m³ · '+fmtN(rh*gr)+' N/m³';
+  $('t3RhoEq').innerHTML='at its average starting pressure · air at the ground outside: <b>'+fmtN(ra)+' kg/m³ · '+fmtN(ra*gr)+' N/m³</b>'+(ra>0?' · ratio <b>'+fmtN(rh/ra)+'×</b>':'')+
+    (gr>0?'<br>weight per m² of the pool, less the weight of the air it displaces: <b>'+fmtP(st.pPool*x-st.pAir*(1-Math.exp(-st.d/Ha)))+'</b>'+(x<0.05?' = (ρ − ρ<sub>air</sub>)·<b>g</b>·d':'')+'. Density only enters multiplied by g.'
+      :'<br><b>Gravity is off: the gas is just as dense, and it weighs nothing.</b> Every term that could hold it down is density × g, so every one is zero.');
+  $('t3H').textContent=gr>0?fmtLen(Hh):'∞ (gravity off)';
   $('t3HEq').innerHTML='<b>8.314</b> × <b>'+st.T+' K</b> ÷ (<b>'+fmtN(Mh,4)+' kg/mol</b> × <b>'+fmtN(gr)+' m/s²</b>) · air: <b>'+fmtLen(Ha)+'</b>';
   $('t3R').textContent=fmtN(x);
   const sep=Math.exp(-st.d*(1/Hh-1/Ha));
-  $('t3REq').innerHTML='balanced against gravity, the heavy gas at the rim is <b>'+fmtN(Math.exp(-x)*100,x<0.01?5:3)+'%</b> as dense as at the floor (air: '+fmtN(Math.exp(-st.d/Ha)*100,x<0.01?5:3)+'%)';
+  $('t3REq').innerHTML=gr<=0?'with gravity off nothing sorts the gas by height: it ends up equally dense at the rim and the floor':'balanced against gravity, the heavy gas at the rim is <b>'+fmtN(Math.exp(-x)*100,x<0.01?5:3)+'%</b> as dense as at the floor (air: '+fmtN(Math.exp(-st.d/Ha)*100,x<0.01?5:3)+'%)';
   let v;
-  if(st.pAir===0&&x>=1)v='<b>No atmosphere outside, and most of the gas is still here.</b> At this depth the heavy gas is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so its own weight holds it in an open tank beside a vacuum, with no lid. What slowly leaves is the thin gas at the rim spilling over into the empty space outside.';
+  if(noG()&&st.pAir>0)v='<b>Gravity off.</b> The heavy gas is still '+(ra>0?fmtN(rh/ra)+' times':'far')+' denser than the air around it, and it no longer stays low. Density is an amount of mass in a volume; with nothing pulling on that mass it sorts nothing, and the gas mixes away like any other. Tick gravity back on at this depth and compare.';
+  else if(st.pAir===0&&x>=1)v='<b>No atmosphere outside, and most of the gas is still here.</b> At this depth the heavy gas is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so its own weight holds it in an open tank beside a vacuum, with no lid. What slowly leaves is the thin gas at the rim spilling over into the empty space outside.';
   else if(st.pAir===0)v='<b>No atmosphere.</b> Nothing pushes back at the rim, so the full '+fmtP(st.pPool)+' is unbalanced and the gas leaves at once. Sides alone contain nothing.';
   else if(st.pPool<st.pAir*0.85&&x<0.05)v='The air outside is at higher pressure than the pool, so it pushes into the tank and squeezes the heavy gas down until the two match. After that only slow mixing remains.';
   else if(st.pPool>st.pAir*1.15)v='The pool starts at higher pressure than the air, so the excess pushes out until the two match. After that only slow mixing remains.';
   else if(x<0.05)v='<b>Pressure balanced at the rim.</b> The atmosphere supplies the push a lid would supply. Unlike a lid it does not stop molecules trading places, so what remains is molecule-by-molecule mixing, which gravity is too weak to prevent at this size (d / H = '+fmtN(x,2)+'): the pool is long-lived but temporary.';
   else if(x<1)v='Pressure balanced at the rim, and gravity is now helping: the heavy gas thins by '+fmtN((1-Math.exp(-x))*100,2)+'% between floor and rim. The pool leaks more slowly the deeper the container.';
-  else v='<b>Gravity keeps the heavy gas low.</b> At this depth it is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so very little of it reaches the rim to mix away, and the pool outlasts the bench version many times over. That is sorting by weight under an open top. It is still not permanent: what does cross the rim sinks to the ground outside.';
+  else v='<b>Gravity keeps the heavy gas low.</b> At this depth it is only '+fmtN(Math.exp(-x)*100,2)+'% as dense at the rim as at the floor, so very little of it reaches the rim to mix away, and the pool outlasts the bench version many times over. That is gravity sorting the gases by weight under an open top; switch gravity off and the same density difference does nothing. It is still not permanent: what does cross the rim sinks to the ground outside.';
   $('t3Verdict').innerHTML=v;
   $('t3hSpd').textContent=st.pAir>0?'1 s on screen ≈ '+fmtTime(realPerScreenSec)+' in a real, still tank':'1 s on screen = '+fmtTime(realPerScreenSec)+' of real time';
 }
